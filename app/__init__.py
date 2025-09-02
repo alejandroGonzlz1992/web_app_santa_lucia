@@ -5,6 +5,7 @@ from logging import getLogger, CRITICAL
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
+from app.backend.tooling.setting.routes import route_list
 from app.backend.database.config import BASE, engine
 from app.backend.database import models
 
@@ -30,8 +31,8 @@ def fastapi_app_config() -> FastAPI:
     app.mount(Cns.STATIC_DIR.value, StaticFiles(directory=Cns.STATIC_PATH.value), name=Cns.STATIC_NAME.value)
 
     # include api routes
-    # for route in routing_list:
-    #     app.include_router(router=route)
+    for route in route_list:
+        app.include_router(router=route)
 
     # return
     return app

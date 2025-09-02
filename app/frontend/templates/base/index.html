@@ -132,13 +132,13 @@
                         <hr/>
                         <li class="sidebar-header"> MANTENIMIENTOS </li>
                         <li class="sidebar-item active">
-                            <a class="sidebar-link" href="#">
+                            <a class="sidebar-link" href="{{url_for('getting_app_crud_base_endpoint')}}">
                                 <i class="align-middle" data-feather="settings"></i>
                                 <span class="align-middle">Mantenimientos</span>
                             </a>
                         </li>
                         <li class="sidebar-item active">
-                            <a class="sidebar-link" href="#">
+                            <a class="sidebar-link" href="{{url_for('getting_app_reports_base_endpoint')}}">
                                 <i class="align-middle" data-feather="database"></i>
                                 <span class="align-middle">Reportes</span>
                             </a>
@@ -173,11 +173,11 @@
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ url_for('getting_app_user_login_endpoint') }}">
                                     <i class="align-middle me-1" data-feather="user"></i>
                                     Usuario
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ url_for('getting_app_admin_login_endpoint') }}">
                                     <i class="align-middle me-1" data-feather="user-check"></i>
                                     Administrador
                                 </a>
