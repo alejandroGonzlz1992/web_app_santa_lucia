@@ -1,6 +1,40 @@
 
 services:
 
+  db:
+    image: postgres:13
+    container_name: santalucia-db-server
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME}" ]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app_net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: santalucia-db-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - app_net
+
   santalucia:
     build:
       context: .
@@ -10,6 +44,8 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app/app:rw
+      - ./alembic:/app/alembic:rw
+      - ./alembic.ini:/app/alembic.ini:ro
     env_file:
       - ./.env
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
