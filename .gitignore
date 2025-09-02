@@ -1,0 +1,28 @@
+
+# git
+.idea/
+.git/
+
+# python
+__pycache__/
+
+# venv
+venv/
+
+# .env
+.env
+
+# frontend
+app/frontend/node_modules
+app/frontend/package-lock.json
+app/frontend/yarn.lock
+
+app/frontend/dist
+app/frontend/_builder
+
+app/frontend/.DS_Store
+app/frontend/.vscode/
+
+app/frontend/npm-debug.log*
+app/frontend/yarn-debug.log*
+app/frontend/yarn-error.log*

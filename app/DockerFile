@@ -1,0 +1,26 @@
+# runtime stack
+FROM python:3.11-slim
+
+# postgres dev libs and C compiler
+RUN apt-get update && apt-get install -y gcc libpq-dev && rm -rf /var/lib/apt/lists/*
+
+# working dir
+WORKDIR /app
+
+# copy dependencies
+COPY ./requirements.txt .
+
+# install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copy all within working dir (container image)
+COPY . /app/
+
+# expose port
+EXPOSE 8000
+
+# set PYTHONPATH env var
+ENV PYTHONPATH="/app:/app"
+
+# run server
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "info"]
