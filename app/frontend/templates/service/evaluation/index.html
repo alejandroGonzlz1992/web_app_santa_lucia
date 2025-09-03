@@ -1,0 +1,134 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Evaluaciones</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PRINCIPAL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_home_page_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_employee" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#check-circle-fill"/>
+                </svg>
+                <div>{{params.ops._evaluation._employee}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif  params.fg == "_supervisor" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#check-circle-fill"/>
+                </svg>
+                <div>{{params.ops._evaluation._supervisor}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif  params.fg == "_enable" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{params.ops._evaluation._enable}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif  params.fg == "_inactive" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._evaluation._not_active}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+<div class="mb-3">
+    <div class="row">
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Registro de Evaluaciones</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="clipboard"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Seleccione una de las opciones de abajo para iniciar las evaluaciones de empleado-supervisor
+                            y/o supervisor-empleado segun si nivel de acceso.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!--Select an Option for Permissions-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body" style="width: 25%;">
+                    <div class="flex-grow-1">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-3">
+                                <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                                <a href="{{ url_for('getting_app_evaluation_employee_endpoint') }}">
+                                    Evaluación del empleado</a>
+                            </li>
+                            <li class="mb-3">
+                                <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                                <a href="{{ url_for('getting_app_evaluation_supervisor_endpoint') }}">
+                                    Evaluación del supervisor</a>
+                            </li>
+                            <li class="mb-3">
+                                <span data-feather="folder" class="feather-lg me-1" style="color: darkblue;"></span>
+                                <a href="{{url_for('getting_app_evaluation_enable_endpoint')}}">
+                                    Habilitar Evaluaciones</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

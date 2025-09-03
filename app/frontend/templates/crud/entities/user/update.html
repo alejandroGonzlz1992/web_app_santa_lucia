@@ -1,0 +1,558 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos | Usuarios | Actualizar </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>USUARIOS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_user_base_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops.user._fail._fail}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops.user._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops.user._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Actualizar Usuario</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="user"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Completar los espacios requeridos del formulario continuación para efectuar la actualización
+                            de Usuarios al sistema. Por favor, validar que la información sea congruente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--User Role Form -->
+                    <form id="id_user_form" method="POST"
+                          action="{{ url_for('Posting_Crud_Users_Update_Endpoint') }}" novalidate>
+
+                        <!--Hidden Input Field-->
+                        <input type="hidden" value="PUT" name="method">
+                        <input type="hidden" value="{{ id }}" name="id">
+
+                        <h5 class="card-title my-3 text-start"><strong>Información de Usuario</strong></h5>
+
+                        <!--User Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Identificación</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" id="id_user_identification" class="form-control"
+                                                   style="font-size: 12px; color: cadetblue"
+                                                   placeholder="---"
+                                                   name="user_identification">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_identification_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_identification_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_identification_length_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_identification" %}
+                                        <div id="id_identification_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops.user._exc._identification }}
+                                        </div>
+                                    {% endif %}
+
+                                    <!--Span label-->
+                                    <div id="id_user_identification_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey;">
+                                                • La identificación debe contener números únicamente.
+                                            </p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--User Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Nombre</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <div class="input-group">
+                                                <input type="text" id="id_user_name" class="form-control"
+                                                       style="font-size: 12px; color: cadetblue" required
+                                                       placeholder="Ingresar nombre de usuario"
+                                                       name="user_name">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_name_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_name_chars_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_name_length_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Apellido</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <div class="input-group">
+                                                <input type="text" id="id_user_lastname" class="form-control"
+                                                       style="font-size: 12px; color: cadetblue" required
+                                                       placeholder="Ingresar apellido de usuario"
+                                                       name="user_lastname">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_lastname_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_lastname_chars_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_lastname_length_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Segundo Apellido</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <div class="input-group">
+                                                <input type="text" id="id_user_lastname2" class="form-control"
+                                                       style="font-size: 12px; color: cadetblue" required
+                                                       placeholder="Ingresar segundo apellido de usuario"
+                                                       name="user_lastname2">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_lastname2_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_lastname2_chars_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_lastname2_length_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--User Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Genero</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_user_gender"
+                                                    name="user_gender"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar el genero de usuario</option>
+                                                <option value="Masculino">Masculino</option>
+                                                <option value="Femenino">Femenino</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_user_gender_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Fecha Cumpleaños</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" id="id_user_birthday"
+                                                   name="user_birthday" style="font-size: 12px; color: cadetblue;">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_birthday_date_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_birthday_date_underage_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_birthday_date_overage_man_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_birthday_date_overage_woman_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_user_birthday_date_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Formato de fecha: mm/dd/aaaa.
+                                            </p>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Estado Civil</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_user_marital_status"
+                                                    name="user_marital_status"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar el estado civil</option>
+                                                <option value="Casado">Casado(a)</option>
+                                                <option value="Soltero">Soltero(a)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_user_marital_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Hijos</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" id="id_user_children" class="form-control"
+                                                   style="font-size: 12px; color: cadetblue"
+                                                   placeholder="---"
+                                                   name="user_children">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_user_children_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_user_children_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_user_children_max_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_user_childrens_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey;">
+                                                • De no tener hijos, ingresar 0.
+                                            </p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h5 class="card-title my-3 text-start"><strong>Información de Contacto</strong></h5>
+
+                        <!--User Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Correo Electrónico</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="id_user_email"
+                                                   name="user_email" style="font-size: 12px; color: cadetblue;"
+                                                   placeholder="@usuario.com">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_email_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_email_format_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_email" %}
+                                        <div id="id_email_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops.user._exc._email }}
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Teléfono</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="id_user_phone"
+                                                   name="user_phone" style="font-size: 12px; color: cadetblue;"
+                                                   placeholder="+506">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_phone_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_phone_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_phone_length_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_phone" %}
+                                        <div id="id_phone_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops.user._exc._phone }}
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Asignar Rol Usuario</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_user_role"
+                                                    name="user_role"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar role de usuario a asignar</option>
+                                                <option value="test">test</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_user_role_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h5 class="card-title my-3 text-start"><strong>Información Laboral</strong></h5>
+
+                        <!--User Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Ingreso Bruto</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="id_user_gross_income"
+                                                   name="user_gross_income" style="font-size: 12px; color: cadetblue;"
+                                                   placeholder="CRC">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_gross_income_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_gross_income_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_gross_income_min_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_gross_income_max_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Fecha Actualización</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" id="id_user_create_date"
+                                                   name="user_create_date" style="font-size: 12px; color: cadetblue;">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_user_create_date_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_user_create_date_before_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_user_birthday_date_text_info2" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Formato de fecha: mm/dd/aaaa.
+                                            </p>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-primary" type="submit">
+                                        <b>ACTUALIZAR USUARIO</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

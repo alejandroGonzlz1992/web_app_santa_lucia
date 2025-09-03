@@ -1,0 +1,182 @@
+<!--Inherit-->
+{% extends "base/auth.html" %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center m-0" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center m-0" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center m-0" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_restore" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-primary d-flex align-items-center m-0" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{params.ops._session._user}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_redirect" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-warning d-flex align-items-center m-0" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._as_admin}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_expire" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-warning d-flex align-items-center m-0" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._expire}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--login form-->
+{% block login_form %}
+    <div class="container d-flex flex-column">
+        <div class="row vh-100">
+            <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto d-table h-100">
+                <div class="d-table-cell align-start">
+                    <div class="text-center mt-4">
+                        <img src="{{url_for('static', path='static/ap_img/avatars/ferreteria_logo.jpg')}}" alt="Ferr Logo"
+                             class="img-fluid" style="border-radius: 5px; max-height: 120px;">
+                        <h1 class="h2 py-2">Inicio de sesión | <strong>Usuario</strong></h1>
+                        <p class="lead" style="font-size: 12px;">
+                            Debe estar registrado en el sistema para poder acceder. Consultar al administrator en
+                            caso de no contar con usuario y contraseña.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+
+                            <!--User Login Form-->
+                            <form id="id_login_form" novalidate>
+
+                                <!--Hidden Input Fields-->
+                                <input type="hidden" name="from_type" value="user">
+
+                                <!--Email Input Field-->
+                                <div class="py-2 text-start">
+                                    <label class="form-label text-center"
+                                        style="color: #3371db;">Ingresar Correo Electrónico</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="font-size: 12px;">
+                                            <i data-feather="mail"></i>
+                                        </span>
+                                        <input type="email" class="form-control text-start fs-8"
+                                               id="id_email_login_field" aria-describedby="emailHelp"
+                                               style="font-size: 12px; color: #3371db;" placeholder="usuario@email.com"
+                                               name="email_login_field">
+                                    </div>
+                                </div>
+
+                                <!--Email Validation Errors Field-->
+                                <div id="id_email_blank_field_error" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_email_format_field_error" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                                </div>
+
+                                <!--Password Input Field-->
+                                <div class="py-2 text-start">
+                                    <label class="form-label text-center"
+                                        style="color: #3371db;">Ingresar Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="font-size: 12px;">
+                                            <i data-feather="lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control text-start fs-8"
+                                               id="id_password_field" aria-describedby="emailHelp"
+                                               style="font-size: 12px; color: #3371db;" placeholder="*** *** ***"
+                                               name="password_login_field">
+                                    </div>
+                                </div>
+
+                                <!--Password Validation Errors Field-->
+                                <div id="id_password_blank_field_error" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                                </div>
+
+                                {% if params.exc == "_raise" %}
+                                    <div id="id_password_exception_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: block;">
+                                        {{ params.ops._session._fail._bad_login }}
+                                    </div>
+                                {% endif %}
+
+                                <!--Submit Form-->
+                                <div class="d-grid gap-2 mt-3">
+                                    <button class="btn btn-lg btn-primary" type="submit" id="id_login_btn">
+                                        <b>INICIAR</b>
+                                    </button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                    <div class="text-center mb-3">
+                        ¿Olvido su contraseña?
+                        <a href="{{url_for('getting_app_password_recover_endpoint')}}">Recuperar Contraseña</a>
+                    </div>
+                    <div class="text-center mb-3">
+                        Iniciar sesión como <a href="{{url_for('getting_app_admin_login_endpoint')}}">Administrador</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

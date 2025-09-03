@@ -1,0 +1,161 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos | Preguntas | Actualizar </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PREGUNTAS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_question_base_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Actualizar Pregunta Evaluativa</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="folder-plus"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Completar los espacios requeridos del formulario continuación para efectuar la actualización
+                            de preguntas evaluativas al sistema. Por favor, validar que la información sea congruente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Question Form -->
+                    <form id="id_question_form" novalidate>
+
+                        <!--Hidden Input Field-->
+                        <input type="hidden" value="PUT" name="method">
+                        <input type="hidden" value="{{ id }}" name="id">
+
+                        <h5 class="card-title my-3 text-start"><strong>Información de Pregunta Evaluativa</strong></h5>
+
+                        <!--Question Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Tipo Evaluación</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_evaluation_type"
+                                                    name="evaluation_type"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>Seleccionar tipo de evaluación</option>
+                                                {% for item in params.records %}
+                                                    <option value="{{ item._id }}">{{ item._name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_evaluation_not_selected_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--Question Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Pregunta Evaluación</label>
+                                    <div class="input-group">
+                                        <textarea class="form-control" id="id_evaluation_question"
+                                            name="evaluation_question" style="color: cadetblue;" rows="2"
+                                            placeholder="Ingresar pregunta de evaluación"></textarea>
+                                    </div>
+
+                                    <!-- Schedule Start Field Error Message -->
+                                    <div id="id_evaluation_question_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_evaluation_question_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_evaluation_question_length_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!-- Span label -->
+                                    <div id="id_identification_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-6">
+                                            <p class="p-0 m-0" style="color: darkgrey;">
+                                                • Solamente se pueden adicionar los siguientes caracteres: ¿?, ., tildes (í), letra ene (ñ).
+                                            </p>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-primary" type="submit">
+                                        <b>ACTUALIZAR PREGUNTA</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

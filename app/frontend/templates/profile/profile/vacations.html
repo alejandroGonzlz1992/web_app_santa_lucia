@@ -1,0 +1,158 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Perfil | Vacaciones</title>
+{% endblock %}
+
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PERFIL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_profile_base_endpoint')}}">
+            <i class="align-middle" data-feather="user"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+    <div class="mb-3">
+        <div class="row">
+
+            <!--Title and Filter-->
+            <div class="col-md-5 col-xl-3">
+                <div class="card mb-3">
+                    <div class="card-body text-start">
+                         <div class="card mb-3">
+                            <div class="card-header">
+                                <h2 class="card-title mb-0">Registro De Vacaciones</h2>
+                            </div>
+                            <div class="card-body text-start">
+                                <i class="align-start" data-feather="loader"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                                Consulta de histórico de vacaciones gozadas, pendientes de aprobación y rechazadas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Display Panel-->
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body text-start">
+                        <div class="card mb-3">
+                            <h3 class="card-title py-2 px-2">Estado De Vacaciones</h3>
+                            <div class="row g-3 mt-3">
+                                <!-- Disponibles -->
+                                <div class="col-md-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-subtitle mb-2 text-muted">Disponibles</h6>
+                                            <h4 class="card-text text-success">12 días</h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- En Proceso -->
+                                <div class="col-md-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-subtitle mb-2 text-muted">En Proceso</h6>
+                                            <h4 class="card-text text-warning">2 días</h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fecha Aniversario -->
+                                <div class="col-md-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-subtitle mb-2 text-muted">Fecha Aniversario</h6>
+                                            <h4 class="card-text text-primary">04/08/2026</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!--Filter By Date Field-->
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body" style="width: 25%;">
+                        <form id="id_filter_date_form" novalidate>
+                            <div class="mb-2">
+                                <h5 class="card-title mb-2">Consular por fecha de solicitud</h5>
+                                <input type="date" class="form-control"
+                                       style="font-size: 12px; color: cadetblue;" required
+                                       placeholder="" name="request_date" id="id_input_field">
+                                <button class="btn btn-primary mt-2" type="button" id="id_filter_button">
+                                    Consultar
+                                </button>
+                                <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
+                                    Limpiar Campo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <!--Breakdown Table-->
+            <div class="col">
+                <div class="col align-self-start text-start mt-3">
+                    <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th scope="col">Cod Registro</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Fecha Inicio</th>
+                                <th scope="col">Fecha Retorno</th>
+                                <th scope="col">Días</th>
+                                <th scope="col">Aprobador</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Fecha Solicitud</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><b></b>11020</th>
+                                <td>901080350</td>
+                                <td>05/18/2025</td>
+                                <td>05/19/2025</td>
+                                <td>1</td>
+                                <td>Joaquin Gonzalez Cortes</td>
+                                <td>Pendiente</td>
+                                <td>2025-04-25</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

@@ -1,0 +1,151 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos | Preguntas Evaluación </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>MANTENIMIENTOS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_crud_base_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "created" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#check-circle-fill"/>
+                </svg>
+                <div>{{params.ops.evaluation._create}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "updated" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#check-circle-fill"/>
+                </svg>
+                <div>{{params.ops.evaluation._update}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Administración de registros del sistema</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="paperclip"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Seleccione una de las opciones de abajo para registrar, actualizar y/o eliminar registros de preguntas evaluativas.
+                            Las preguntas evaluativas se utilizan para medir el desempeñó de los empleados y supervisores.
+                        </div>
+
+                        <!--Register New Role-->
+                        <a class="mb-3 px-3 text-end" href="{{url_for('getting_app_question_register_endpoint')}}">
+                            <button class="btn btn-dark"><b>Registar Pregunta Evaluativa</b></button>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!--Filter By Role Type-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body" style="width: 25%;">
+                    <form id="id_filter_role_type_form" novalidate>
+                        <div class="mb-2">
+                            <h5 class="card-title mb-2">Consular por tipo de evaluación</h5>
+                            <select class="form-select mb-2" style="font-size: 12px; color: cadetblue;"
+                                        aria-label="Default select example" name="evaluation_status" id="id_input_field">
+                                    <option value="Rendimiento de Empleado" selected>Empleado</option>
+                                    <option value="Evaluación de Liderazgo">Liderazgo</option>
+                            </select>
+                            <button class="btn btn-info mt-2" type="button" id="id_filter_button">
+                                Consultar
+                            </button>
+                            <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
+                                Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!--Breakdown Table-->
+        <div class="col">
+            <div class="col align-self-start text-start mt-3">
+                <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Cod Registro</th>
+                            <th scope="col">Tipo Evaluación</th>
+                            <th scope="col">Pregunta Evaluativa</th>
+                            <th scope="col">Fecha Registro</th>
+                            <th scope="col">Fecha Actualización</th>
+                            <th scope="col" colspan="2"
+                                style="text-align: center; vertical-align: middle;">Administrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in [1, 2, 3, 4, 5] %}
+                        <tr>
+                            <th scope="row"><b></b>{{ item }}</th>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <a href="{{url_for('getting_app_question_update_endpoint', id=item)}}">
+                                    <i class="align-center" data-feather="refresh-ccw"></i>
+                                    Actualizar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

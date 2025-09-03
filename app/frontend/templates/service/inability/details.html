@@ -1,10 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!--Inherit-->
+{% extends 'base/index.html' %}
 
-</body>
-</html>
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Incapacidades | Detalles</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>INCAPACIDADES</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_inability_base_endpoint')}}">
+            <i class="align-middle" data-feather="briefcase"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--main form-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Detalles De Incapacidad</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="briefcase"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Se presentan continuación los detalles de incapacidad registrados.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Column 1: Payroll Summary -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="card-title mb-4">Resumen de Incapacidad</h5>
+
+                    <!-- Dates -->
+                    <div class="mb-4">
+                        <p class="mb-2" style="font-size: 0.95rem;"><strong>🗓️ Fecha Inicio:</strong> {{ test }}</p>
+                        <p class="mb-0" style="font-size: 0.95rem;"><strong>🗓️ Fecha Retorno:</strong> {{ test }}</p>
+                        <br/>
+                        <p class="mb-0" style="font-size: 0.95rem;"><strong>🟰 Estado Incapacidad:</strong> {{ test }}</p>
+                    </div>
+
+                    <hr>
+
+                    <!-- File and Inability Number -->
+                    <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.85rem;">Detalles</h6>
+                    <div class="text-start" style="font-size: 0.95rem;">
+                        <p class="mb-2"><strong>📜 Número Boleta:</strong> {{ test }}</p>
+                        <p class="mb-2"><strong>🏢 Emisor Legal:</strong> C.C.S.S.</p>
+                        <p class="mb-3"><strong>💊 Motivo Incapacidad:</strong> {{ test }}</p>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.85rem;">Detalle Laboral</h6>
+                    <div class="text-start" style="font-size: 0.95rem;">
+                        <p class="mb-2"><strong>👷‍♂️ Nombre:</strong> {{ test }} {{ test }}
+                            {{ test }}</p>
+                        <p class="mb-2"><strong>🏗️ Departamento:</strong> {{ test }} </p>
+                        <p class="mb-2"><strong>✔️ Rol:</strong> {{ test }}</p>
+                        <p class="mb-0"><strong>✔️ Tipo de Rol:</strong> {{ test }}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Payment Details -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="card-title mb-4">Administrar</h5>
+
+                    <input type="hidden" value="{{ params.id }}" name="id">
+
+                    <!--Update Inability Checkin Button-->
+                    <a class="mb-3" href="{{ url_for('getting_app_inability_approvals_endpoint', id=params.id) }}">
+                        <button class="btn btn-info"><b>Actualizar Incapacidad</b></button>
+                    </a>
+
+                </div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="card-title mb-4">Descargar Documento Incapacidad</h5>
+
+                    <a class="mb-3" href="#">
+                        <button class="btn btn-secondary mb-3 px-3"><b>Descargar</b></button>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

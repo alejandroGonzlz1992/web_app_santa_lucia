@@ -98,13 +98,34 @@ class Constants(Enum):
     URL_INABILITY_PDF = f'/detalles/{URL_ID}/documento'
 
     # permission
-
+    URL_PERMISSION = '/solicitudes/ce'
+    URL_PERMISSION_CREATE_HOUR = '/registrar/horas'
+    URL_PERMISSION_CREATE_VACATION = '/registrar/vacaciones'
+    URL_PERMISSION_APPROVALS = '/aprobaciones'
+    URL_PERMISSION_APPROVALS_UPDATE = f'/actualizar/{URL_ID}'
+    URL_PERMISSION_APPROVALS_UPDATE_POST = f'/actualizar'
 
     # bonus
+    URL_BONUS = '/aguinaldos/ce'
+    URL_BONUS_DETAILS = f'/detalles/{URL_ID}'
+    URL_BONUS_ADJUST = f'/ajustes/{URL_ID}'
 
     # payroll
+    URL_PAYROLL = '/planillas/ce'
+    URL_PAYROLL_DETAILS = f'/detalles/{URL_ID}'
+    URL_PAYROLL_ADJUST = f'/ajustes/{URL_ID}'
 
     # settlement
+    URL_SETTLEMENT = '/liquidaciones/ce'
+    URL_SETTLEMENT_DETAILS = f'/detalles/{URL_ID}'
+    URL_SETTLEMENT_ADJUST = f'/ajustes/{URL_ID}'
+
+    # evaluation
+    URL_EVALUATION = '/evaluaciones/ce'
+    URL_EVALUATION_EMPLOYEE = '/empleados'
+    URL_EVALUATION_SUPERVISOR = '/supervisores'
+    URL_EVALUATION_ENABLE = '/habilitar'
+    URL_EVALUATION_POST_RESULT = '/resultados'
 
     # reports endpoint
     TRANS_REPORT = '/reportes'
@@ -222,4 +243,12 @@ class Constants(Enum):
             },
             '_expire': 'Su sesión ha expirado, ingresar credenciales nuevamente.'
         },
+    }
+
+    # calender
+    CALENDAR = {
+        "months": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+                   "Noviembre", "Diciembre"],
+        "days": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+                 29, 30, 31]
     }

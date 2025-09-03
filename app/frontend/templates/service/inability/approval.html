@@ -1,0 +1,169 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Incapacidades | Actualizar</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>DETALLES</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_inability_details_endpoint', id=params.id)}}">
+            <i class="align-middle" data-feather="briefcase"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main form-->
+{% block container %}
+<div class="mb-3">
+    <div class="row">
+        <div class="mb-3">
+            <div class="row">
+
+                <!--Left Main Menu-->
+                <div class="col-md-4 col-xl-3">
+                    <div class="card mb-3">
+                        <div class="card-body text-start">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Actualizar Incapacidad</h5>
+                            </div>
+                            <div class="card-body text-start">
+                                <i class="align-start" data-feather="briefcase"
+                                style="color: darkblue; width: 25px; height: 25px;"></i>
+                                Ingresar la información solicitada para actualizar el registro de incapacidad.
+                                Considerar los requerimientos para cada campo determinado.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Right Main Menu-->
+                <div class="col-md-8 col-xl-9">
+                    <div class="card mb-3">
+                        <div class="card-body text-start">
+
+                            <!--Inability Update Form -->
+                            <form id="id_inability_update_form" novalidate>
+
+                                <!--Hidden Fields-->
+                                <input type="hidden" value="POST" name="methods">
+                                <input type="hidden" value="{{ params.id }}" name="id">
+                                <input type="hidden" id="id_confirm_field" name="confirm_checkbox_field" value="false">
+
+                                <h5 class="card-title my-3 text-start"><strong>Estatus</strong></h5>
+
+                                <div class="row">
+
+                                    <!--Inability Status Field-->
+                                    <div class="col">
+                                        <div class="py-1 text-start">
+                                            <label class="form-label text-center"
+                                                style="color: #3371db;">Estado de Solicitud</label> *
+                                            <div class="input-group">
+                                                <select class="form-select" style="font-size: 12px; color: cadetblue;"
+                                                    aria-label="Default select example"
+                                                        name="inability_status_field" id="id_inability_status_field">
+                                                    <option value="not_select" selected>Seleccionar estado de solicitud</option>
+                                                    <option value="Aprobado">Aprobado</option>
+                                                    <option value="Denegado">Denegado</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!--Permission Status Errors Field-->
+                                        <div id="id_status_not_selected_field_error"
+                                            class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <!--Confirm Status Field-->
+                                    <div class="col">
+                                        <div class="form-check form-switch py-3">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="id_delete_switch_field"
+                                                style="width: 40px; height: 20px;" name="delete_switch_field">
+                                            <label class="form-check-label px-2" for="id_delete_switch_field">
+                                                <strong>CONFIRMAR</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!--Permission Status Errors Field-->
+                                    <div id="id_confirm_not_selected_field_error"
+                                        class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+
+                                <br/>
+
+                                <p style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                                <!--Submit Form-->
+                                <div class="d-grid mt-3">
+                                    <div class="row">
+                                        <div class="col text-end">
+                                            <button class="btn btn-lg btn-primary" type="submit">
+                                                <b>ACTUALIZAR SOLICITUD</b>
+                                            </button>
+                                        </div>
+                                        <div class="col text-start">
+                                            <button class="btn btn-lg btn-info" type="reset">
+                                                <b>LIMPIAR CAMPOS</b>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

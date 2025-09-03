@@ -1,0 +1,192 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Aguinaldo | Ajustes </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>AGUINALDOS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_bonus_base_endpoint')}}">
+            <i class="align-middle" data-feather="dollar-sign"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._year_bonus._fail}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main form-->
+{% block container %}
+<div class="mb-3">
+    <div class="row">
+
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Información Aguinaldos</h5>
+                    </div>
+                    <div class="card-body text-start">
+                        <i class="align-start" data-feather="alert-circle"
+                            style="color: darkblue; width: 25px; height: 25px;"></i>
+                        Complete los campos requeridos en el formulario para ajustar la información de aguinaldos.
+                        Es importante mantener esta información actualizada por conceptos de notificaciones y más.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Bonus Update Info Form -->
+                    <form id="id_bonus_adjustment_form" novalidate>
+                        <h5 class="card-title my-3 text-start"><strong>Ajustes Aguinaldo</strong></h5>
+
+                        <!--Address Information Field-->
+                        <div class="row">
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                            style="color: #3371db;">Mes Cuota</label> *
+                                    <div class="input-group">
+                                        <select class="form-select mb-2" id="id_bonus_month"
+                                                name="bonus_month"
+                                                style="color: cadetblue;">
+                                            <option value="not_select" selected>Seleccionar el mes del día feriado</option>
+                                            {% for month in params.calendar.months %}
+                                                <option value="{{ month }}">{{ month }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Province Validation Errors Field-->
+                                <div id="id_bonus_month_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                </div>
+
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                            style="color: #3371db;">Monto Cuota</label> *
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="id_bonus_amount"
+                                                name="bonus_amount" style="font-size: 12px; color: cadetblue;"
+                                                placeholder="0.0 CRC" required>
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_user_birthday_date_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Ingresar números únicamente. Formato 0.0 CRC
+                                            </p>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!--Province Validation Errors Field-->
+                                <div id="id_bonus_amount_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_bonus_amount_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                            style="color: #3371db;">Fecha Actualización</label> *
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" id="id_bonus_update_date"
+                                               name="bonus_update_date" style="font-size: 12px; color: cadetblue;">
+                                    </div>
+
+                                    <!--Province Validation Errors Field-->
+                                    <div id="id_bonus_update_date_blank_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_bonus_update_date_before_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "fail_update_date" %}
+                                        <div id="id_update_date_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops.user._year_bonus._bonus_update }}
+                                        </div>
+                                    {% endif %}
+
+                                    <!--Span label-->
+                                    <div id="id_user_birthday_date_text_info2" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Formato de fecha: mm/dd/aaaa.
+                                            </p>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-primary" type="submit">
+                                        <b>ADJUSTAR INFORMACION</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-info" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

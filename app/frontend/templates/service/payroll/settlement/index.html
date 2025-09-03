@@ -1,0 +1,150 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Liquidaciones</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PRINCIPAL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_home_page_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "register" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{params.ops._settlement._update}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main form-->
+{% block container %}
+<div class="mb-3">
+    <div class="row">
+
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Registro De Liquidaciones</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="folder-minus"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Consulta de histórico de liquidaciones realizadas hasta la fecha actual.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!--Filter By Role Type-->
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body" style="width: 25%;">
+                        <form id="id_filter_role_type_form" novalidate>
+                            <div class="mb-2">
+                                <h5 class="card-title mb-2">Ingresar Identificación de Usuario</h5>
+                                <input type="text" class="form-control" style="font-size: 12px; color: cadetblue;"
+                                       required placeholder="0-0000-0000" name="entity_identification"
+                                       id="id_input_field">
+                                <!--Span label-->
+                                <div id="identification_text" class="form-text text-start">
+                                    <span class="text-muted">
+                                        <p class="my-2" style="color: brown; font-size: 12px;">
+                                            • Ingresar números únicamente.
+                                        </p>
+                                    </span>
+                                </div>
+                                <button class="btn btn-info mt-2" type="button" id="id_filter_button">
+                                    Consultar
+                                </button>
+                                <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
+                                    Limpiar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <!--Breakdown Table-->
+            <div class="col">
+                <div class="col align-self-start text-start mt-3">
+                    <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                        <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Cod Registro</th>
+                            <th scope="col">Identificación</th>
+                            <th scope="col">Nombre Empleado</th>
+                            <th scope="col">Mes Liquidación</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Fecha de Registro</th>
+                            <th scope="col">Fecha de Actualización</th>
+                            <th scope="col" colspan="2"
+                                style="text-align: center; vertical-align: middle;">Administrar
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row"><b></b>11020</th>
+                            <td>901080350</td>
+                            <td>Joaquin Gonzalez Cortes</td>
+                            <td>Agosto</td>
+                            <td>Procesado</td>
+                            <td>2025-04-25</td>
+                            <td>2025-04-25</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <a href="{{url_for('getting_app_settlement_details_endpoint', id=10021)}}">
+                                    <i class="align-center" data-feather="refresh-ccw"></i>
+                                    Consultar Detalles
+                                </a>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <a href="{{url_for('getting_app_settlement_adjust_endpoint', id=10021)}}">
+                                    <i class="align-center" data-feather="refresh-ccw"></i>
+                                    Ajustar Liquidación
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

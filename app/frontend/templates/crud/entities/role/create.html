@@ -1,0 +1,319 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos | Roles Usuario | Registrar </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>ROLES USUARIO</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_roles_base_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops.role._fail._fail}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops.role._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops.role._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Registrar Rol de Usuario</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="folder-plus"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Completar los espacios requeridos del formulario continuación para efectuar el registro
+                            de un nuevo rol de Usuario al sistema. Por favor, validar que la información sea congruente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--User Role Form -->
+                    <form id="id_user_role_form" novalidate>
+
+                        <!--Hidden Input Field-->
+                        <input type="hidden" value="POST" name="form_method">
+
+                        <h5 class="card-title my-3 text-start"><strong>Información de Rol de Usuario</strong></h5>
+
+                        <!--Roles Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Nombre Rol Usuario</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" id="id_role_name" class="form-control"
+                                                   style="font-size: 12px; color: cadetblue"
+                                                   placeholder="--"
+                                                   name="role_name">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_role_name_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_role_name_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_role_name_length_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_data_error" %}
+                                        <div id="rol_name_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops.role._fail._data_error }}
+                                        </div>
+                                    {% endif %}
+
+                                    <!--Span label-->
+                                    <div id="id_role_name_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey;">
+                                                • Ingresar letras únicamente.
+                                            </p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Tipo Rol Usuario</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_role_type"
+                                                    name="role_type"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar tipo de rol de usuario </option>
+                                                <option value="Jefatura">Jefatura</option>
+                                                <option value="Empleado">Empleado</option>
+                                                <option value="Administrador">Administrador</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_role_type_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--Roles Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Departamento</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_role_department"
+                                                    name="role_department"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar el departamento </option>
+                                                {% for item in params.departments %}
+                                                    {% if item._status == "Activo" %}
+                                                        <option value="{{ item._id }}">{{ item._name }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_role_department_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Jornada Laboral</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_role_schedule"
+                                                    name="role_schedule"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar la jornada laboral</option>
+                                                {% for item in params.schedules %}
+                                                    <option value="{{ item._id }}">{{ item._name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_role_schedule_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--Roles Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Fecha Registro</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" id="id_role_create_date"
+                                                   name="role_create_date" style="font-size: 12px; color: cadetblue;">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_role_create_date_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_role_create_date_before_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_role_create_date_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Formato de fecha: mm/dd/aaaa.
+                                            </p>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Estado Rol Usuario</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_role_status"
+                                                    name="role_status"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar el estado de rol de usuario</option>
+                                                <option value="Activo">Activo</option>
+                                                <option value="Inactivo">Inactivo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_role_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-info" type="submit">
+                                        <b>REGRISTRAR ROL USUARIO</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

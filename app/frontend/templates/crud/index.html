@@ -1,0 +1,108 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PRINCIPAL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_home_page_endpoint')}}">
+            <i class="align-middle" data-feather="sliders"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+    <div class="row">
+
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Administración de registros del sistema</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="settings"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Seleccione una de las opciones de abajo para registrar, actualizar y/o eliminar registros
+                            del sistema. Considerar la importancia del orden de las operaciones.
+                            Debe existir un rol creado previo a su asignación a un determinado Usuario.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body" style="width: 25%;">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: darkblue;"></span>
+                            <a href="{{url_for('getting_app_roles_base_endpoint')}}">
+                                Roles de Usuario</a>
+                        </li>
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: darkblue;"></span>
+                            <a href="{{url_for('getting_app_user_base_endpoint')}}">
+                                Usuarios</a>
+                        </li>
+                    </ul>
+                    <hr/>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                            <a href="{{url_for('getting_app_department_base_endpoint')}}">
+                                Departamentos</a>
+                        </li>
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                            <a href="{{url_for('getting_app_schedule_base_endpoint')}}">
+                                Jornadas Laborales</a>
+                        </li>
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                            <a href="{{url_for('getting_app_deduction_base_endpoint')}}">
+                                Registro de Deducciones</a>
+                        </li>
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                            <a href="{{url_for('getting_app_payment_date_base_endpoint')}}">
+                                Fechas de Pago</a>
+                        </li>
+                        <li class="mb-3">
+                            <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                            <a href="{{url_for('getting_app_question_base_endpoint')}}">
+                                Preguntas Evaluativas</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

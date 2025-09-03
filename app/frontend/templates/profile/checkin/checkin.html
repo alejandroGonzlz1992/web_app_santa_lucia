@@ -1,0 +1,137 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Marcas | Registrar</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>MARCAS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_checkin_base_endpoint')}}">
+            <i class="align-middle" data-feather="clock"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+    <div class="mb-3">
+        <div class="row">
+
+            <!--Title and Filter-->
+            <div class="col-md-10 col-xl-5">
+                <div class="card mb-3">
+                    <div class="card-body text-start">
+                         <div class="card mb-3">
+                            <div class="card-header">
+                                <h2 class="card-title mb-0">Registro de Marcas Entrada/Salida</h2>
+                            </div>
+                            <div class="card-body text-start">
+                                <i class="align-start" data-feather="clock"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                                <p><b style="color: brown;">Advertencia</b>: Asegúrese de marcar la salida únicamente
+                                    finalizada la jornada con su intervalo de horas completo.</p>
+
+                                <!--Check-in Check-out Form -->
+                                <form id="id_checkin_checkout_form" novalidate>
+
+                                    <!--Hidden Input Fields-->
+                                    <input type="hidden" value="POST" name="method">
+                                    <input type="hidden" value="10021" name="id">
+
+                                    <!--Collecting DateTime-->
+                                    <input type="hidden" value="" id="id_checkin_value" name="checkin_value">
+                                    <input type="hidden" value="" id="id_checkout_value" name="checkout_value">
+                                    <input type="hidden" value="" id="id_hours_value" name="hours_value">
+
+                                    <!--Current Password Field-->
+                                    <div class="py-2 text-start">
+                                        <label class="form-label text-center" style="color: #3371db;">Ingresar Tiempo De Salida </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" style="font-size: 12px;">
+                                                <i data-feather="clock"></i>
+                                            </span>
+                                            <input type="time" class="form-control text-start fs-8" id="id_check_out_date_field"
+                                                aria-describedby="passwordHelp" style="font-size: 14px; color: cadetblue;"
+                                                placeholder="" name="check_out_date_field" disabled>
+                                        </div>
+
+                                        <!---form validation error fields--->
+                                        <div id="id_checkout_blank_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                        </div>
+                                        <div id="id_checkin_date_disable_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                        </div>
+                                        <div id="id_checkout_before_checkin_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                        </div>
+
+                                    </div>
+                                    <p class="text-start" style="color: darkblue; font-size: 12px;">Formato hh / mm / am-pm</p>
+
+                                    <p>Si ya se encuentra registrada una marca de ingreso, presionar el botón Marcar Ingreso
+                                        nuevamente para ingresar la marca de salida.</p>
+
+                                    <!--Submit Form-->
+                                    <div class="d-grid">
+                                        <div class="row">
+                                            <div class="col text-start px-2 py-2">
+                                                <button class="btn btn-lg btn-primary" type="button" id="id_check_in_bttn">
+                                                    <b>MARCAR INGRESO</b>
+                                                </button>
+                                                <button class="btn btn-lg btn-danger" type="submit" id="id_submit_bttn">
+                                                    <b>MARCAR SALIDA</b>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Display Panel-->
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body text-start">
+                        <div class="card mb-3">
+                            <h3 class="card-title py-2 px-2">Hora Fecha Ingreso</h3>
+                            <div class="row g-3 mt-3">
+                                <!-- Fecha Aniversario -->
+                                <div class="col">
+                                    <!---displaying checkin time--->
+                                    <div id="id_checkin_display_message" class="text-dark text-start py-2"
+                                        style="font-size: 14px; color: darkgreen; font-weight: bold; padding: 1px; display: block;"
+                                        name="tracker_finish">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

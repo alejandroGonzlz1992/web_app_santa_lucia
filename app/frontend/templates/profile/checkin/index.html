@@ -1,0 +1,133 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Marcas</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PRINCIPAL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_home_page_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "checkin" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{params.ops._profile._checkin}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+    <div class="mb-3">
+
+        <div class="row">
+
+            <!--Title-->
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body text-start">
+                         <div class="card mb-3">
+                            <div class="card-header">
+                                <h2 class="card-title mb-0">Registro De Marcas</h2>
+                            </div>
+                            <div class="card-body text-start">
+                                <i class="align-start" data-feather="clock"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                                Consulta de histórico de marcas registradas por el empleado.
+                            </div>
+                             <!--Register Checkin Button-->
+                            <a class="mb-3 px-3 text-end" href="{{url_for('getting_app_checkin_register_endpoint')}}">
+                                <button class="btn btn-info"><b>Generar Marca</b></button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <!--Filter By Date Field-->
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body" style="width: 25%;">
+                        <form id="id_filter_date_form" novalidate>
+                            <div class="mb-2">
+                                <h5 class="card-title mb-2">Consular por fecha de ingreso</h5>
+                                <input type="date" class="form-control"
+                                       style="font-size: 12px; color: cadetblue;" required
+                                       placeholder="" name="request_date" id="id_input_field">
+                                <button class="btn btn-primary mt-2" type="button" id="id_filter_button">
+                                    Consultar
+                                </button>
+                                <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
+                                    Limpiar Campo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!--Breakdown Table-->
+            <div class="col">
+                <div class="col align-self-start text-start mt-3">
+                    <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th scope="col">Cod Registro</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Jornada</th>
+                                <th scope="col">Hora Ingreso</th>
+                                <th scope="col">Hora Salida</th>
+                                <th scope="col">Horas</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Fecha Ingreso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><b></b>11020</th>
+                                <td>901080350</td>
+                                <td>Diurna</td>
+                                <td>7:00 am</td>
+                                <td>4:00 pm</td>
+                                <td>9</td>
+                                <td>Terminada</td>
+                                <td>2025-05-18</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

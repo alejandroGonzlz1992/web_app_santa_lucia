@@ -1,0 +1,216 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos | Jornada | Registrar </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>JORNADAS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_schedule_base_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Registrar Jornada Laboral</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="folder-plus"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Completar los espacios requeridos del formulario continuación para efectuar el registro
+                            de jornadas laborales al sistema. Por favor, validar que la información sea congruente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Schedule Form -->
+                    <form id="id_schedule_form" novalidate>
+
+                        <!--Hidden Input Field-->
+                        <input type="hidden" value="POST" name="form_method">
+                        <input type="hidden" value="" name="schedule_total_hours">
+
+                        <h5 class="card-title my-3 text-start"><strong>Información de Jornada</strong></h5>
+
+                        <!--Schedule Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Tipo Jornada</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_schedule_type"
+                                                    name="schedule_type"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>Seleccionar tipo de jornada</option>
+                                                <option value="Diurna">Diurna</option>
+                                                <option value="Nocturna">Nocturna</option>
+                                                <option value="Mixta">Mixta</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_schedule_type_not_selected_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_diurna_hours_exceeded_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_nocturna_hours_exceeded_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_mixta_hours_exceeded_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--Schedule Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Hora de Inicio</label>
+                                    <div class="input-group">
+                                        <input type="time" id="id_schedule_start_time" class="form-control"
+                                            style="font-size: 12px; color: cadetblue"
+                                            placeholder=""
+                                            name="schedule_start_time">
+                                    </div>
+
+                                    <!-- Schedule Start Field Error Message -->
+                                    <div id="id_start_time_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_start_time_after_end_time_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">* Hora de Finalización</label>
+                                    <div class="input-group">
+                                        <input type="time" id="id_schedule_end_time" class="form-control"
+                                            style="font-size: 12px; color: cadetblue"
+                                            placeholder=""
+                                            name="schedule_end_time">
+                                    </div>
+
+                                    <!-- Schedule Start Field Error Message -->
+                                    <div id="id_end_time_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_end_time_before_end_time_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!--Schedule Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Fecha Registro</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" id="id_schedule_create_date"
+                                                   name="schedule_create_date" style="font-size: 12px; color: cadetblue;">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_schedule_create_date_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                    <div id="id_schedule_create_date_before_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_schedule_create_date_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Formato de fecha: mm/dd/aaaa.
+                                            </p>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-info" type="submit">
+                                        <b>REGRISTRAR JORNADA</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

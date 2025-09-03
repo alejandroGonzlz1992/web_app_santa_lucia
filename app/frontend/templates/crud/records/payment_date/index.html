@@ -1,0 +1,127 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Mantenimientos | Fechas Pago </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>MANTENIMIENTOS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_crud_base_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "created" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#check-circle-fill"/>
+                </svg>
+                <div>{{params.ops.pay_date._create}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "updated" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#check-circle-fill"/>
+                </svg>
+                <div>{{params.ops.pay_date._update}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Administración de registros del sistema</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="paperclip"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Seleccione una de las opciones de abajo para registrar, actualizar y/o eliminar registros de fechas de pago.
+                            Las fechas de pago se requieren para realizar el cálculo de planilla neta.
+                        </div>
+
+                        <!--Register New Role-->
+                        <a class="mb-3 px-3 text-end" href="{{url_for('getting_app_payment_date_register_endpoint')}}">
+                            <button class="btn btn-dark"><b>Registar Fecha Pago</b></button>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!--Breakdown Table-->
+        <div class="col">
+            <div class="col align-self-start text-start mt-3">
+                <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Cod Registro</th>
+                            <th scope="col">Frecuencia</th>
+                            <th scope="col">Día Pago</th>
+                            <th scope="col">Segundo Día Pago</th>
+                            <th scope="col">Fecha Registro</th>
+                            <th scope="col">Fecha Actualización</th>
+                            <th scope="col" colspan="2"
+                                style="text-align: center; vertical-align: middle;">Administrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in [1, 2, 3, 4, 5, 6] %}
+                        <tr>
+                            <th scope="row"><b></b>{{ item }}</th>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td>{{ item }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <a href="{{url_for('getting_app_payment_date_update_endpoint', id=item)}}">
+                                    <i class="align-center" data-feather="refresh-ccw"></i>
+                                    Actualizar
+                                </a>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

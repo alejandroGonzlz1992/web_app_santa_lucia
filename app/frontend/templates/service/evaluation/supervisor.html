@@ -1,0 +1,178 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Evaluaciones | Supervisor</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>EVALUACIONES</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_evaluation_base_endpoint')}}">
+            <i class="align-middle" data-feather="clipboard"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._evaluation._not_active}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        {% if not params.eval_status %}
+        <!--Display Error Message-->
+        {% else %}
+        <!--Left Main Menu-->
+        <div class="col-md-5 col-xl-4">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Evaluación del supervisor</h5>
+                    </div>
+                    <div class="card-body text-start">
+                        <i class="align-start" data-feather="clipboard"
+                            style="color: darkblue; width: 25px; height: 25px;"></i>
+                        A continuación, asignar dentro de una escala del 1 al 5 las competencias en relación con el
+                        el liderazgo de supervisor. Todas las respuestas son obligatorias y se mantendrán
+                        dentro de la confidencialidad requerida.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Employee Evaluation Form -->
+                    <form id="id_evaluation_form" novalidate>
+
+                        <h5 class="card-title mb-3 text-center">Evaluación de liderazgo</h5>
+
+                        <!--Hidden Input Fields-->
+                        <input type="hidden" value="POST" name="method">
+
+                        <!--Employee Name Field-->
+                        <div class="py-1 text-start">
+                            <label class="form-label text-center" style="color: #3371db;">Supervisor</label>
+                            <div class="input-group">
+                                <select class="form-select mb-2" id="id_evaluation_user_name_field"
+                                        name="evaluation_user_name_field"
+                                        style="color: cadetblue;">
+                                    <option value="not_select" selected>Seleccionar supervisor a evaluar</option>
+                                    <option value="test" selected>TEST</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="id_status_not_selected_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                        </div>
+
+                        <!--Evaluation Detail Field-->
+                        <div class="py-1 text-start">
+                            <label class="form-label text-center" style="color: #3371db;">Comentarios De Evaluación</label>
+                            <div class="input-group">
+                                <textarea class="form-control" name="evaluation_detail" style="color: cadetblue;" rows="2"
+                                            placeholder="Ingresar detalle de evaluación"></textarea>
+                            </div>
+                        </div>
+
+                        <!---form validation error fields--->
+                        <div id="id_feedback_blank_field_error" class="text-danger text-start"
+                        style="font-size: 13px; display: none;">
+                        </div>
+                        <div id="id_feedback_not_special_chars_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                        </div>
+                        <div id="id_feedback_length_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                        </div>
+                        <!---->
+
+                        <div id="evaluation_text" class="form-text text-start">
+                            <span class="text-muted">
+                                <p class="p-0 m-0"> • El comentario de evaluación debe contener mínimo 15 caracteres.</p>
+                                <p class="p-0 m-0"> • El comentario de evaluación no puede contener signos de
+                                    puntuación y/o símbolos. (A excepción de los signos de interrogación,
+                                    punto, coma y espacios en blanco)</p>
+                            </span>
+                        </div>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-info" type="submit">
+                                        <b>COMPLETAR EVALUACION</b>
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

@@ -1,0 +1,122 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Planillas | Detalles</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PLANILLAS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_payroll_base_endpoint')}}">
+            <i class="align-middle" data-feather="credit-card"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+
+{% endblock %}
+
+<!--main form-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+
+        <!--Title and Filter-->
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Detalles De Planilla</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="credit-card"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Se presentan continuación los detalles de la planilla junto con las respectivas deducciones
+                            por ley y/o conceptos varios. El reporte puede ser descargado en formato PDF.
+                        </div>
+                        <!--Download PDF Button-->
+                        <a class="mb-3 px-3 text-end" href="#">
+                            <button class="btn btn-secondary" type="button">Descargar PDF</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Resumen de Pago -->
+        <div class="col-md-6">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-body p-4">
+
+                    <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Resumen de Pago</h5>
+
+                    <!-- Gross & Net -->
+                    <div class="mb-4 fs-6">
+                        <p class="mb-2"><strong>Monto Bruto:</strong> ₡1,500,000</p>
+                        <p class="mb-0"><strong>Monto Neto:</strong> ₡1,120,000</p>
+                    </div>
+
+                    <hr>
+
+                    <!-- Deductions -->
+                    <h6 class="text-uppercase text-muted mb-3 fs-6">Deducciones</h6>
+                    <ul class="list-unstyled fs-6 mb-4">
+                        <li class="mb-2">🩺 CCSS IVE: ₡100,000</li>
+                        <li class="mb-2">🧓 CCSS EME: ₡80,000</li>
+                        <li>🏦 ROP: ₡50,000</li>
+                    </ul>
+
+                    <h6 class="text-uppercase text-muted mb-3 fs-6">Otras Deducciones</h6>
+                    <ul class="list-unstyled fs-6 mb-0">
+                        <li class="mb-2">💳 Préstamo Empresa: ₡50,000</li>
+                        <li>🚌 Transporte: ₡10,000</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles del Pago -->
+        <div class="col-md-6">
+            <div class="card shadow-sm rounded-4 border-0">
+                <div class="card-body p-4">
+
+                    <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Detalles del Pago</h5>
+
+                    <ul class="list-unstyled fs-6 mb-0">
+                        <li class="mb-2"><strong>Empleado:</strong> Nombre Apellido</li>
+                        <li class="mb-2"><strong>Departamento:</strong> Ventas & Servicio al cliente</li>
+                        <li class="mb-2"><strong>Jefatura:</strong> Nombre Apellido</li>
+                        <li class="mb-2"><strong>Fecha de Pago:</strong> 31/05/2025</li>
+                        <li class="mb-2"><strong>Frecuencia:</strong> Mensual</li>
+                        <li><strong>Comentarios:</strong> Pago correspondiente al mes de mayo</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

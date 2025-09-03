@@ -1,0 +1,286 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Módulos | Incapacidades | Registrar</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>INCAPACIDADES</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_inability_base_endpoint')}}">
+            <i class="align-middle" data-feather="briefcase"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._inability._fail}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main form-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+    <!--Left Main Menu-->
+    <div class="col-md-4 col-xl-3">
+        <div class="card mb-3">
+            <div class="card-body text-start">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Registro de Incapacidad</h5>
+                </div>
+                <div class="card-body text-start">
+                    <i class="align-start" data-feather="briefcase"
+                        style="color: darkblue; width: 25px; height: 25px;"></i>
+                    Ingresar la información solicitada para generar un nuevo registro de incapacidad de empleado.
+                    Considerar los requerimientos para cada campo determinado.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Right Main Menu-->
+    <div class="col-md-8 col-xl-9">
+        <div class="card mb-3">
+            <div class="card-body text-start">
+
+                <!--Hour Extra Form -->
+                <form id="id_inability_form" novalidate>
+
+                    <!--Hidden Fields-->
+                    <input type="hidden" value="POST" name="methods">
+                    <input type="hidden" value="" name="inability_day">
+
+                    <h5 class="card-title my-3 text-start"><strong>Incapacidad</strong></h5>
+
+                    <div class="row">
+
+                        <!--Start Date Field-->
+                        <div class="col">
+                            <div class="py-1 text-start">
+                                <label class="form-label text-center"
+                                        style="color: #3371db;">Fecha Inicio</label> *
+                                <div class="input-group">
+                                    <span class="input-group-text" style="font-size: 12px;">
+                                        <i data-feather="calendar"></i>
+                                    </span>
+                                    <input type="date" class="form-control text-start fs-8" id="id_start_date"
+                                        aria-describedby="passwordHelp" style="font-size: 12px; color: cadetblue;"
+                                        placeholder="" name="start_date">
+                                </div>
+                            </div>
+
+                            <!--Start Date Validation Errors Field-->
+                            <div id="id_start_date_blank_field" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                            </div>
+                        </div>
+
+                        <!--Return Date Field-->
+                        <div class="col">
+                            <div class="py-1 text-start">
+                                <label class="form-label text-center"
+                                        style="color: #3371db;">Fecha Retorno</label> *
+                                <div class="input-group">
+                                    <span class="input-group-text" style="font-size: 12px;">
+                                        <i data-feather="calendar"></i>
+                                    </span>
+                                    <input type="date" class="form-control text-start fs-8" id="id_return_date"
+                                        aria-describedby="passwordHelp" style="font-size: 12px; color: cadetblue;"
+                                        placeholder="" name="return_date">
+                                </div>
+                            </div>
+
+                            <!--Return Date Validation Errors Field-->
+                            <div id="id_return_date_blank_field" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_return_date_before_start_date" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <!--Inability Number Field-->
+                        <div class="col">
+                            <div class="py-1 text-start">
+                                <label class="form-label text-center" style="color: #3371db;">Número Boleta</label>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" style="font-size: 12px; color: cadetblue;" required
+                                            placeholder="Ingresar número de boleta" name="inability_number">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--exception error message-->
+                            {% if params.exc == "_number" %}
+                                <div id="id_inability_exception_error" class="text-danger text-start"
+                                    style="font-size: 13px; display: block;">
+                                    {{ params.ops._inability._except }}
+                                </div>
+                            {% endif %}
+
+                            <!--Inability Number Validation Errors Field-->
+                            <div id="id_inability_number_blank_field" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_inability_number_length_field" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_inability_number_chars_field" class="text-danger text-start"
+                                    style="font-size: 13px; display: none;">
+                            </div>
+
+                        </div>
+
+                        <!--Inability File Field-->
+                        <div class="col">
+                            <div class="py-1 text-start">
+                                <label class="form-label text-center" style="color: #3371db;">
+                                    Boleta Incapacidad</label>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control"
+                                                style="font-size: 12px; color: cadetblue;" required
+                                                placeholder="Ingresar número de boleta" name="inability_file">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--Inability Number Validation Errors Field-->
+                            <div id="id_file_blank_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_file_format_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+
+                            <div id="new_file_text" class="form-text text-start">
+                                <span class="text-muted">
+                                    <p class="p-0 m-0">
+                                        • El comprobante debe ser en formatos: PNG, JPG, JPEG, PDF. Únicamente.
+                                    </p>
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col">
+                            <div class="py-1 text-start">
+                                <label class="form-label text-center" style="color: #3371db;">
+                                    Detalle Incapacidad</label>
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <textarea class="form-control" name="inability_detail"
+                                                    style="color: cadetblue;" rows="2"
+                                                    placeholder="Ingresar detalle de incapacidad"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--Inability Description Validation Errors Field-->
+                            <div id="id_detail_blank_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_detail_length_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_detail_special_chars_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+
+                            <div id="new_password_text" class="form-text text-start">
+                                <span class="text-muted">
+                                    <p class="p-0 m-0">
+                                        • El detalle de incapacidad debe contener mínimo 5 caracteres.</p>
+                                    <p class="p-0 m-0">
+                                        • El detalle de incapacidad no puede contener
+                                        caracteres especiales y/o símbolos.</p>
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                    <!--Submit Form-->
+                    <div class="d-grid gap-2 mt-3">
+                        <div class="row">
+                            <div class="col text-end">
+                                <button class="btn btn-lg btn-info" type="submit">
+                                    <b>REGISTRAR INCAPACIDAD</b>
+                                </button>
+                            </div>
+                            <div class="col text-start">
+                                <button class="btn btn-lg btn-secondary" type="reset">
+                                    <b>LIMPIAR CAMPOS</b>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

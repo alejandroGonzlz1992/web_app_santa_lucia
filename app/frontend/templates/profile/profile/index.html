@@ -1,0 +1,156 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Perfil Usuario</title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PRINCIPAL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_home_page_endpoint')}}">
+            <i class="align-middle" data-feather="settings"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "passw" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{params.ops._profile._credentials}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif  params.fg == "reset" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{params.ops._profile._info}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+
+    <div class="mb-3">
+        <div class="row">
+            <!--Left Main Menu-->
+            <div class="col-md-6 col-xl-3">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body text-center">
+                        <!-- Profile Avatar -->
+                        <img src="{{url_for('static', path='static/ap_img/avatars/avatar-1-default.png')}}"
+                             alt="Profile Base"
+                             class="img-fluid rounded-circle mb-3"
+                             width="120" height="120" />
+
+                        <!-- Personal Details -->
+                        <h5 class="fw-semibold mb-1">Nombre Apellido Apellido2</h5>
+                        <p class="text-muted mb-1" style="font-size: 0.95rem;">Vendedor & Servicio al Cliente</p>
+                        <p class="text-muted mb-2" style="font-size: 0.95rem;">Departamento - Ventas</p>
+
+                        <!-- Divider -->
+                        <hr class="my-3">
+
+                        <!-- Identity Info -->
+                        <div class="text-start" style="font-size: 0.95rem;">
+                            <p class="mb-2"><strong>Cédula:</strong> 901080350</p>
+                            <p class="mb-2"><strong>Fecha Contratación:</strong> 18/04/2022</p>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-3">
+
+                        <!-- Contact Info -->
+                        <div class="text-start" style="font-size: 0.95rem;">
+                            <h6 class="text-uppercase text-muted mb-2"><b>Contacto</b></h6>
+                            <p class="mb-2">gonzjoalejandro92@gmail.com</p>
+                            <p class="mb-2">Móvil - 88083369</p>
+                            <p class="mb-3">Otros - 22180918</p>
+
+                            <h6 class="text-uppercase text-muted mb-2"><b>Domicilio</b></h6>
+                            <p class="mb-2">San José, Desamparados, Desamparados</p>
+                            <p class="mb-2">Código Postal - 10301</p>
+                            <p class="mb-0">Barrio San José, avenida 4. Casa no 654</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Right Main Menu-->
+            <div class="col-md-8 col-xl-9">
+                <div class="card mb-3">
+                    <div class="card-body text-start">
+                        <h4 class="card-title mb-0">Ajustes de información</h4>
+                        <div class="card py-3 m-2">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-grow-1">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-3">
+                                            <span data-feather="tablet" class="feather-lg me-1"
+                                                  style="color: cadetblue;"></span>
+                                            <a href="{{url_for('getting_app_profile_address_endpoint')}}">
+                                                ACTUALIZAR INFORMACION CONTACTO </a>
+                                        </li>
+                                        <li class="mb-3">
+                                            <span data-feather="lock" class="feather-lg me-1"
+                                                  style="color: cadetblue;"></span>
+                                            <a href="{{url_for('getting_app_profile_password_endpoint')}}">
+                                                ACTUALIZAR CONTRASENA </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <h4 class="card-title mb-0">Consultas</h4>
+                        <div class="card py-3 m-2">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-grow-1">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-3">
+                                            <span data-feather="loader" class="feather-lg me-1"
+                                                  style="color: cadetblue;"></span>
+                                            <a href="{{url_for('getting_app_profile_vacation_endpoint')}}">
+                                                REGISTRO VACACIONES </a>
+                                        </li>
+                                        <li class="mb-3">
+                                            <span data-feather="clock" class="feather-lg me-1"
+                                                  style="color: cadetblue;"></span>
+                                            <a href="{{url_for('getting_app_profile_extra_hours_endpoint')}}">
+                                                REGISTRO HORAS EXTRA </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

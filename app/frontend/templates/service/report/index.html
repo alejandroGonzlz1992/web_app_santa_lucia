@@ -1,0 +1,191 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Servicios | Reportes </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PRINCIPAL</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_home_page_endpoint')}}">
+            <i class="align-middle" data-feather="sliders"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "generate" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-primary d-flex align-items-start" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{ params.ops.report._generate }}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main-->
+{% block container %}
+
+    <div class="row">
+
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Gestion Reportes</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="clipboard"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Complete la información solicitada para descargar el reporte deseado.
+                            Los reportes pueden descargarse localmente o por medio de correo electrónico en formato Excel .csv.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Reports Form -->
+                    <form id="id_reports_form" novalidate>
+
+                        <!--Hidden Input Fields-->
+                        <input type="hidden" value="POST" name="method">
+
+                        <!--Report Name Field-->
+                        <div class="py-1 text-start">
+                            <label class="form-label text-center" style="color: #3371db;">Reporte</label>
+                            <div class="input-group">
+                                <select class="form-select" style="font-size: 12px; color: cadetblue"
+                                    aria-label="Default select example" name="report_name_field"
+                                    id="id_report_name_field">
+                                    <option value="not_select" selected>Seleccionar nombre del reporte</option>
+                                    <option value="hoursTrackerReport">Registro de asistencia de marcas</option>
+                                    <option value="inabilitiesReport">Registro de incapacidades</option>
+                                    <option value="settlementReport">Liquidaciones de empleados</option>
+                                    <option value="permissionsReport">Registro de permisos</option>
+                                    <option value="aguinaldoReport">Registro de aguinaldos</option>
+                                    <option value="vacationsReport">Registro de vacaciones</option>
+                                </select>
+                            </div>
+
+                            <div id="id_report_not_selected_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+                        </div>
+
+                        <!--Report Start Date-->
+                        <div class="py-1 text-start">
+                            <label class="form-label text-center" style="color: #3371db;">Fecha de Inicio</label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="font-size: 12px;">
+                                    <i data-feather="calendar"></i>
+                                </span>
+                                <input type="date" class="form-control text-start fs-8" id="id_start_date_field"
+                                    aria-describedby="passwordHelp" style="font-size: 12px; color: cadetblue;"
+                                    placeholder="" name="start_date_field">
+                            </div>
+                        </div>
+
+                        <!---form validation error fields--->
+                        <div id="id_start_date_blank_field_error" class="text-danger text-start"
+                            style="font-size: 13px; display: none;">
+                        </div>
+                        <div id="id_start_date_after_current_date_error" class="text-danger text-start"
+                            style="font-size: 13px; display: none;">
+                        </div>
+
+                        <!--Report End Date-->
+                        <div class="py-1 text-start">
+                            <label class="form-label text-center" style="color: #3371db;">Fecha de Finalización</label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="font-size: 12px;">
+                                    <i data-feather="calendar"></i>
+                                </span>
+                                <input type="date" class="form-control text-start fs-8" id="id_end_date_field"
+                                    aria-describedby="passwordHelp" style="font-size: 12px; color: cadetblue;"
+                                    placeholder="" name="end_date_field">
+                            </div>
+                        </div>
+
+                        <!---form validation error fields--->
+                        <div id="id_end_date_blank_field_error" class="text-danger text-start"
+                            style="font-size: 13px; display: none;">
+                        </div>
+                        <div id="id_end_date_before_start_date_error" class="text-danger text-start"
+                            style="font-size: 13px; display: none;">
+                        </div>
+
+                        <div id="new_password_text" class="form-text text-start">
+                            <span class="text-muted">
+                                <p class="p-0 m-0">
+                                    • Tanto la fecha de inicio del reporte como su fecha de
+                                    finalización no deben estar después de la fecha actual.
+                                </p>
+                            </span>
+                        </div>
+
+                        <!--Report Delivery Field-->
+                        <div class="py-1 text-start">
+                            <label class="form-label text-center" style="color: #3371db;">Entrega</label>
+                            <div class="input-group">
+                                <select class="form-select" style="font-size: 12px; color: cadetblue;"
+                                    aria-label="Default select example" id="id_report_deliver"
+                                        name="report_deliver">
+                                    <option value="not_select" selected>Seleccionar método de entrega</option>
+                                    <option value="emailDelivery">Correo Electrónico</option>
+                                    <option value="download">Descargar</option>
+                                </select>
+                            </div>
+
+                            <div id="id_download_not_selected_field_error" class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+
+                        </div>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-dark" type="submit">
+                                        <b>Generar Reporte</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-info" type="reset">
+                                        <b>Limpiar Campos</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
