@@ -73,9 +73,7 @@
                                                     name="evaluation_type"
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>Seleccionar tipo de evaluación</option>
-                                                {% for item in params.records %}
-                                                    <option value="{{ item._id }}">{{ item._name }}</option>
-                                                {% endfor %}
+                                                <option value="test">Test</option>
                                             </select>
                                         </div>
                                     </div>
@@ -117,7 +115,8 @@
                                     <div id="id_identification_text_info" class="form-text text-start">
                                         <span class="text-muted fs-6">
                                             <p class="p-0 m-0" style="color: darkgrey;">
-                                                • Solamente se pueden adicionar los siguientes caracteres: ¿?, ., tildes (í), letra ene (ñ).
+                                                • Solamente se pueden adicionar los siguientes
+                                                caracteres: ¿?, ., tildes (í), letra eñe (ñ).
                                             </p>
                                         </span>
                                     </div>
@@ -157,4 +156,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {QuestionsValidator} from '{{ url_for("static", path="tooling/validators/crud/records/questions.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new QuestionsValidator('id_question_form');
+        });
+    </script>
 {% endblock %}

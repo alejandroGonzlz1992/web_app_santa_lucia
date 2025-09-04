@@ -184,11 +184,7 @@
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>
                                                     Seleccionar el departamento </option>
-                                                {% for item in params.departments %}
-                                                    {% if item._status == "Activo" %}
-                                                        <option value="{{ item._id }}">{{ item._name }}</option>
-                                                    {% endif %}
-                                                {% endfor %}
+                                                <option value="test">Test</option>
                                             </select>
                                         </div>
                                     </div>
@@ -211,9 +207,7 @@
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>
                                                     Seleccionar la jornada laboral</option>
-                                                {% for item in params.schedules %}
-                                                    <option value="{{ item._id }}">{{ item._name }}</option>
-                                                {% endfor %}
+                                                <option value="test">Test</option>
                                             </select>
                                         </div>
                                     </div>
@@ -317,4 +311,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {RolesValidator} from '{{ url_for("static", path="tooling/validators/crud/entities/roles.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new RolesValidator('id_user_role_form');
+        });
+    </script>
 {% endblock %}

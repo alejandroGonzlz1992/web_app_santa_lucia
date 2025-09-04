@@ -90,12 +90,11 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_user_form" method="POST"
-                          action="{{ url_for('Posting_Crud_Users_Update_Endpoint') }}" novalidate>
+                    <form id="id_user_form" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="PUT" name="method">
-                        <input type="hidden" value="{{ id }}" name="id">
+                        <input type="hidden" value="{{ params.id }}" name="id">
 
                         <h5 class="card-title my-3 text-start"><strong>Información de Usuario</strong></h5>
 
@@ -555,4 +554,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {UsersValidator} from '{{ url_for("static", path="tooling/validators/crud/entities/users.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new UsersValidator('id_user_form');
+        });
+    </script>
 {% endblock %}

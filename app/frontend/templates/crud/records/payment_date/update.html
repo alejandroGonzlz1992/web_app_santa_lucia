@@ -59,6 +59,7 @@
                         <!--Hidden Input Field-->
                         <input type="hidden" value="PUT" name="method">
                         <input type="hidden" value="{{ params.id }}" name="id">
+                        <input type="hidden" value="" id="id_payment2_hidden" name="payment2_hidden">
 
                         <h5 class="card-title my-3 text-start"><strong>Información de Fecha de Pago</strong></h5>
 
@@ -180,4 +181,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {PaymentDateValidator} from '{{ url_for("static", path="tooling/validators/crud/records/paymentDate.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new PaymentDateValidator('id_payment_date_form');
+        });
+    </script>
 {% endblock %}

@@ -206,4 +206,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {DeductionValidator} from '{{ url_for("static", path="tooling/validators/crud/records/deduction.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new DeductionValidator('id_deduction_form');
+        });
+    </script>
 {% endblock %}

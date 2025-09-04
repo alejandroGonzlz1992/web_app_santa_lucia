@@ -46,7 +46,9 @@ class Constants(Enum):
     CRUD_USER_BASE = '/usuarios'
     CRUD_USER_CREATE = f'{CRUD_USER_BASE}/registrar'
     CRUD_USER_UPDATE = f'{CRUD_USER_BASE}/actualizar/{URL_ID}'
+    CRUD_USER_ENABLE = f'{CRUD_USER_BASE}/estado_usuario/{URL_ID}'
     CRUD_USER_POST = f'{CRUD_USER_BASE}/actualizar'
+    CRUD_USER_ENABLE_POST = f'{CRUD_USER_BASE}/estado_usuario'
 
     CRUD_ROLE_BASE = '/roles'
     CRUD_ROLE_CREATE = f'{CRUD_ROLE_BASE}/registrar'

@@ -552,4 +552,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {UsersValidator} from '{{ url_for("static", path="tooling/validators/crud/entities/users.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new UsersValidator('id_user_form');
+        });
+    </script>
 {% endblock %}

@@ -126,7 +126,7 @@
                             <th scope="col">Fecha Registro</th>
                             <th scope="col">Fecha Actualización</th>
                             <th scope="col">Estado de Usuario</th>
-                            <th scope="col" colspan="2"
+                            <th scope="col" colspan="3"
                                 style="text-align: center; vertical-align: middle;">Administrar</th>
                         </tr>
                     </thead>
@@ -145,6 +145,12 @@
                                     <a href="{{url_for('getting_app_user_update_endpoint', id=item)}}">
                                         <i class="align-center" data-feather="refresh-ccw"></i>
                                         Actualizar
+                                    </a>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_user_enable_endpoint', id=item)}}">
+                                        <i class="align-center" data-feather="user"></i>
+                                        Estado Usuario
                                     </a>
                                 </td>
                             </tr>

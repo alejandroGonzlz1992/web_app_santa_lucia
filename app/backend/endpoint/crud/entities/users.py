@@ -63,3 +63,22 @@ async def getting_app_user_update_endpoint(
             }
         }
     )
+
+
+# GET -> Users Status Update
+@user_route.get(Cns.CRUD_USER_ENABLE.value, response_class=HTMLResponse)
+async def getting_app_user_enable_endpoint(
+        request: Request,
+        id: Annotated[Union[int, str], None],
+        fg: Annotated[str, None] = None,
+        exc: Annotated[str, None] = None,
+) -> HTMLResponse:
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'crud/entities/user/status.html', context={
+            'request': request, 'params': {
+                'id': id, 'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value
+            }
+        }
+    )
