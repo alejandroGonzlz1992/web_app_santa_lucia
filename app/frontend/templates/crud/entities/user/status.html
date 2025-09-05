@@ -90,191 +90,76 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_user_role_form" novalidate>
+                    <form id="id_user_status_form" novalidate>
 
                         <!--Hidden Input Field-->
-                        <input type="hidden" value="POST" name="form_method">
+                        <input type="hidden" value="POST" name="method">
 
-                        <h5 class="card-title my-3 text-start"><strong>Información de Rol de Usuario</strong></h5>
+                        <h5 class="card-title my-3 text-start"><strong>Información de Usuario</strong></h5>
 
                         <!--Roles Field Groups-->
                         <div class="row">
 
                             <div class="col">
                                 <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">* Nombre Rol Usuario</label>
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Estado Usuario</label>
                                     <div class="input-group">
                                         <div class="input-group">
-                                            <input type="text" id="id_role_name" class="form-control"
-                                                   style="font-size: 12px; color: cadetblue"
-                                                   placeholder="--"
-                                                   name="role_name">
+                                            <select class="form-select mb-2" id="id_user_status"
+                                                    name="user_status"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar el estado de usuario </option>
+                                                <option value="True">Activo</option>
+                                                <option value="False">Inactivo</option>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <!--Error Message Div-->
-                                    <div id="id_role_name_blank_field_error" class="text-danger text-start"
+                                    <div id="id_user_status_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                     </div>
-                                    <div id="id_role_name_chars_field_error" class="text-danger text-start"
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Fecha Terminación</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" id="id_termination_date"
+                                                   name="termination_date" style="font-size: 12px; color: cadetblue;">
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_termination_create_date_blank_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                     </div>
-                                    <div id="id_role_name_length_field_error" class="text-danger text-start"
+                                    <div id="id_termination_date_before_current_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                     </div>
 
                                     <!--Query Exception-->
-                                    {% if params.exc == "_data_error" %}
-                                        <div id="rol_name_exception_error" class="text-danger text-start"
+                                    {% if params.exc == "_termination_date" %}
+                                        <div id="termination_date_exception_error" class="text-danger text-start"
                                             style="font-size: 13px; display: block;">
-                                            {{ params.ops.role._fail._data_error }}
+                                            {{ params.ops._user._exc._termination }}
                                         </div>
                                     {% endif %}
 
                                     <!--Span label-->
-                                    <div id="id_role_name_text_info" class="form-text text-start">
-                                        <span class="text-muted fs-8">
-                                            <p class="p-0 m-0" style="color: darkgrey;">
-                                                • Ingresar letras únicamente.
-                                            </p>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Tipo Rol Usuario</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_type"
-                                                    name="role_type"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar tipo de rol de usuario </option>
-                                                <option value="Jefatura">Jefatura</option>
-                                                <option value="Empleado">Empleado</option>
-                                                <option value="Administrador">Administrador</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_role_type_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!--Roles Field Groups-->
-                        <div class="row">
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Departamento</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_department"
-                                                    name="role_department"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar el departamento </option>
-                                                <option value="test">Test</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_role_department_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Jornada Laboral</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_schedule"
-                                                    name="role_schedule"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar la jornada laboral</option>
-                                                <option value="test">Test</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_role_schedule_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!--Roles Field Groups-->
-                        <div class="row">
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Fecha Registro</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <input type="date" class="form-control" id="id_role_create_date"
-                                                   name="role_create_date" style="font-size: 12px; color: cadetblue;">
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_role_create_date_blank_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
-                                    <div id="id_role_create_date_before_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
-
-                                    <!--Span label-->
-                                    <div id="id_role_create_date_text_info" class="form-text text-start">
-                                        <span class="text-muted fs-8">
+                                    <div id="id_termination_date_text_info" class="form-text text-start">
+                                        <span class="text-muted">
                                             <p class="p-0 m-0" style="color: darkgrey">
                                                 • Formato de fecha: mm/dd/aaaa.
                                             </p>
                                         </span>
                                     </div>
 
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Estado Rol Usuario</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_status"
-                                                    name="role_status"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar el estado de rol de usuario</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_role_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
                                 </div>
                             </div>
 
@@ -287,7 +172,7 @@
                             <div class="row">
                                 <div class="col text-end">
                                     <button class="btn btn-lg btn-info" type="submit">
-                                        <b>REGRISTRAR ROL USUARIO</b>
+                                        <b>ACTUALIZAR ESTADO USUARIO</b>
                                     </button>
                                 </div>
                                 <div class="col text-start">
@@ -310,4 +195,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {UserStatusValidator} from '{{ url_for("static", path="tooling/validators/crud/entities/enableUser.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new UserStatusValidator('id_user_status_form');
+        });
+    </script>
 {% endblock %}

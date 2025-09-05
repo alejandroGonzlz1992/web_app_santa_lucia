@@ -273,6 +273,30 @@ export const Static = {
         "user_create_date"
     ],
 
+    // USER STATUS
+    USER_STATUS_FORM_DICT: {
+        "user_status": {
+            "div_id": {
+                "status": "id_user_status_field_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú."
+            }
+        },
+        "termination_date": {
+            "div_id": {
+                "blank": "id_termination_create_date_blank_field_error",
+                "before": "id_termination_date_before_current_field_error",
+            },
+            "text": {
+                "blank": "Campo Obligatorio.",
+                "before": "La fecha de terminación no puede estar antes de la fecha actual.",
+            }
+        }
+    },
+
+    USER_STATUS_BLANK_FIELDS: ["user_status", "termination_date"],
+
     // DEDUCTIONS
     DEDUCTIONS_FORM_DICT: {
         "deduction_name": {

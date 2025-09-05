@@ -191,4 +191,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {ExtraHourValidator} from '{{ url_for("static", path="tooling/validators/permission/extraHours.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new ExtraHourValidator('id_hours_extra_form');
+        });
+    </script>
 {% endblock %}

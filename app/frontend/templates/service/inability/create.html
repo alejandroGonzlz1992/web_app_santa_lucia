@@ -91,7 +91,7 @@
                 <form id="id_inability_form" novalidate>
 
                     <!--Hidden Fields-->
-                    <input type="hidden" value="POST" name="methods">
+                    <input type="hidden" value="POST" name="method">
                     <input type="hidden" value="" name="inability_day">
 
                     <h5 class="card-title my-3 text-start"><strong>Incapacidad</strong></h5>
@@ -283,4 +283,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {InabilityValidator} from '{{ url_for("static", path="tooling/validators/requests/inability.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new InabilityValidator('id_inability_form');
+        });
+    </script>
 {% endblock %}

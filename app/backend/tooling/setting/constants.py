@@ -141,6 +141,7 @@ class Constants(Enum):
                 '_identification': 'El número de identificación ingresado, ya se encuentra registrado en la base de datos.',
                 '_email': 'El correo electrónico ingresado, ya se encuentra registrado en la base de datos.',
                 '_phone': 'El número de teléfono ingresado, ya se encuentra registrado en la base de datos.',
+                '_termination': 'La fecha de terminación no puede estar antes de la fecha de contratación.'
             }
         },
         '_role': {

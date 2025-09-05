@@ -188,4 +188,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {VacationsValidator} from '{{ url_for("static", path="tooling/validators/permission/vacations.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new VacationsValidator('id_vacations_form');
+        });
+    </script>
 {% endblock %}

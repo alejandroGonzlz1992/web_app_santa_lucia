@@ -205,4 +205,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {RestoreValidator} from '{{ url_for("static", path="tooling/validators/auth/restore.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new RestoreValidator('id_reset_form');
+        });
+    </script>
 {% endblock %}

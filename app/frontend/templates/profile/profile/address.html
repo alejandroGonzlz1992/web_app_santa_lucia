@@ -276,4 +276,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {ContactValidator} from '{{ url_for("static", path="tooling/validators/profile/profile/address.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new ContactValidator('id_contact_info_form');
+        });
+    </script>
 {% endblock %}
