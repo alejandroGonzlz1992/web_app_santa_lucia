@@ -21,7 +21,31 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 <!--main-->
@@ -54,7 +78,8 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_deduction_form" novalidate>
+                    <form id="id_deduction_form" method="post"
+                          action="{{ url_for('posting_app_deduction_update_endpoint') }}" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="PUT" name="method">

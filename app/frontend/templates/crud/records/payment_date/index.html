@@ -21,25 +21,25 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "created" %}
+    {% if params.fg == "_create" %}
         <div class="px-1 pt-2">
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.pay_date._create}}</div>
+                <div>{{params.ops._pay_date._create}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    {% elif params.fg == "updated" %}
+    {% elif params.fg == "_update" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.pay_date._update}}</div>
+                <div>{{params.ops._pay_date._update}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -88,25 +88,23 @@
                         <tr>
                             <th scope="col">Cod Registro</th>
                             <th scope="col">Frecuencia</th>
-                            <th scope="col">Día Pago</th>
-                            <th scope="col">Segundo Día Pago</th>
+                            <th scope="col">Fecha Pago</th>
+                            <th scope="col">Segunda Fecha Día Pago</th>
                             <th scope="col">Fecha Registro</th>
-                            <th scope="col">Fecha Actualización</th>
                             <th scope="col" colspan="2"
                                 style="text-align: center; vertical-align: middle;">Administrar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in [1, 2, 3, 4, 5, 6] %}
+                        {% for item in params.rows %}
                         <tr>
-                            <th scope="row"><b></b>{{ item }}</th>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
+                            <th scope="row"><b></b>{{ item._id }}</th>
+                            <td>{{ item._frecuency }}</td>
+                            <td>{{ item._date }}</td>
+                            <td>{{ item._date2 }}</td>
+                            <td>{{ item._log_date.strftime('%Y-%m-%d') }}</td>
                             <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_payment_date_update_endpoint', id=item)}}">
+                                <a href="{{url_for('getting_app_payment_date_update_endpoint', id=item._id)}}">
                                     <i class="align-center" data-feather="refresh-ccw"></i>
                                     Actualizar
                                 </a>

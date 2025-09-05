@@ -21,25 +21,25 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "created" %}
+    {% if params.fg == "_create" %}
         <div class="px-1 pt-2">
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.schedule._create}}</div>
+                <div>{{params.ops._schedule._create}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    {% elif params.fg == "updated" %}
+    {% elif params.fg == "_update" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.schedule._update}}</div>
+                <div>{{params.ops._schedule._update}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -125,17 +125,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in [1, 2, 3, 4, 5, 6, 7] %}
+                        {% for item in params.rows %}
                         <tr>
-                            <th scope="row"><b></b>{{ item }}</th>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
+                            <th scope="row"><b></b>{{ item._id }}</th>
+                            <td>{{ item._name }}</td>
+                            <td>{{ item._start.strftime('%I:%M %p').lstrip('0') | lower }}</td>
+                            <td>{{ item._end.strftime('%I:%M %p').lstrip('0') | lower }}</td>
+                            <td>{{ item._hours }}</td>
+                            <td>{{ item._create }}</td>
+                            <td>{{ item._update }}</td>
                             <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_schedule_update_endpoint', id=item)}}">
+                                <a href="{{url_for('getting_app_schedule_update_endpoint', id=item._id)}}">
                                     <i class="align-center" data-feather="refresh-ccw"></i>
                                     Actualizar
                                 </a>
@@ -153,4 +153,12 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import { FilterSearching } from "{{url_for('static', path='tooling/utils/filtering.js')}}";
+        document.addEventListener("DOMContentLoaded", () => {
+            let filtering = new FilterSearching(
+                {"input": "id_input_field", "search":"id_filter_button", "reset": "id_reset_button", "row": 2}
+            );
+        });
+    </script>
 {% endblock %}

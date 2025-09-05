@@ -54,7 +54,8 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_department_form" novalidate>
+                    <form id="id_department_form" method="post"
+                          action="{{ url_for('posting_app_department_update_endpoint') }}"  novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="PUT" name="method">
@@ -95,30 +96,6 @@
                                                 • Ingresar letras únicamente.
                                             </p>
                                         </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Estado Departamento</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_type"
-                                                    name="department_status"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar el estado del departamanto </option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_department_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
                                     </div>
                                 </div>
                             </div>

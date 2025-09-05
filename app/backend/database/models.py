@@ -18,7 +18,7 @@ class Province(BASE):
     name = Column(String(75), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
-    cantons = relationship('Canton', backref='province', cascade='all, delete-orphan')
+    cantons = relationship('Canton', back_populates='province', cascade='all, delete-orphan')
 
     # __rep__
     def __repr__(self):
@@ -61,7 +61,7 @@ class District(BASE):
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     canton = relationship('Canton', back_populates='districts')
-    addresses = relationship('Address', backref='district', cascade='all, delete-orphan')
+    addresses = relationship('Address', back_populates='district', cascade='all, delete-orphan')
 
     # __rep__
     def __repr__(self):
@@ -93,7 +93,7 @@ class User(BASE):
     is_temp = Column(Boolean, nullable=False, server_default='TRUE')
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
-    addresses = relationship('Address', backref='user', cascade='all, delete-orphan')
+    addresses = relationship('Address', back_populates='user', cascade='all, delete-orphan')
     user_roles = relationship('User_Role', back_populates='user', cascade='all, delete-orphan')
 
     # __rep__
@@ -125,8 +125,8 @@ class Address(BASE):
     id_district = Column(Integer, ForeignKey('refer.district.id_record'), nullable=False)
     id_user = Column(Integer, ForeignKey('entity.user.id_record'), nullable=False)
     # backward relationship
-    user = relationship('User', backref='addresses')
-    district = relationship('District', backref='addresses')
+    user = relationship('User', back_populates='addresses')
+    district = relationship('District', back_populates='addresses')
 
     # __rep__
     def __repr__(self):

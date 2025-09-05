@@ -21,7 +21,31 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 <!--main-->
@@ -54,7 +78,8 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_department_form" novalidate>
+                    <form id="id_department_form" method="post"
+                          action="{{ url_for('posting_app_department_register_endpoint') }}" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="POST" name="method">
@@ -94,30 +119,6 @@
                                                 • Ingresar letras únicamente.
                                             </p>
                                         </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Estado Departamento</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_type"
-                                                    name="department_status"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar el estado del departamanto </option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_department_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
                                     </div>
                                 </div>
                             </div>

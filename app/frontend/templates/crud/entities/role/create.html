@@ -21,25 +21,13 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "_fail" %}
+    {% if params.fg == "_ops_error" %}
         <div class="px-1 pt-2">
             <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops.role._fail._fail}}</div>
-                <div class="col text-end">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-    {% elif params.fg == "_ops_error" %}
-        <div class="px-1 pt-2">
-            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
-                    <use xlink:href="#exclamation-triangle-fill"/>
-                </svg>
-                <div>{{params.ops.role._fail._ops_error}}</div>
+                <div>{{params.ops._session._fail._ops_error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -51,7 +39,7 @@
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops.role._fail._orm_error}}</div>
+                <div>{{params.ops._session._fail._orm_error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>

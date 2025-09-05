@@ -1,14 +1,20 @@
 # import
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from typing import Annotated, Union
+from sqlalchemy.exc import SQLAlchemyError, OperationalError
+from sqlalchemy.orm import Session
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
+from app.backend.database.config import Session_Controller
+from app.backend.db_transactions.crud.db_records import Db_Crud_Request
+from app.backend.schema.crud.entities.Roles import Create_Role, Update_Role
 
 
 # router
 roles_route = APIRouter(prefix=Cns.CRUD_BASE.value, tags=[Cns.CRUD.value])
+
 
 
 # GET -> Roles Base

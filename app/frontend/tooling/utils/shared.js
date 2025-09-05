@@ -156,7 +156,7 @@ export class Shared {
         let scheduleHours = document.querySelector(field);
 
         if(scheduleHours) {
-            scheduleHours.value = hoursTotal;
+            scheduleHours.value = Math.round(hoursTotal);
         }
 
         /* return values */

@@ -21,25 +21,25 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "created" %}
+    {% if params.fg == "_create" %}
         <div class="px-1 pt-2">
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.role._create}}</div>
+                <div>{{params.ops._role._create}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    {% elif params.fg == "updated" %}
+    {% elif params.fg == "_update" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.role._update._update}}</div>
+                <div>{{params.ops._role._update._update}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>

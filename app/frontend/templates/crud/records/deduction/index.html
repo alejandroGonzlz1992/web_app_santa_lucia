@@ -21,25 +21,25 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "created" %}
+    {% if params.fg == "_create" %}
         <div class="px-1 pt-2">
             <div class="alert alert-success d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.deduction._create}}</div>
+                <div>{{params.ops._deduction._create}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    {% elif params.fg == "updated" %}
+    {% elif params.fg == "_update" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#check-circle-fill"/>
                 </svg>
-                <div>{{params.ops.deduction._update}}</div>
+                <div>{{params.ops._deduction._update}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -80,32 +80,6 @@
     </div>
 
     <div class="row">
-        <!--Filter By Role Type-->
-        <div class="col">
-            <div class="card mb-3">
-                <div class="card-body" style="width: 25%;">
-                    <form id="id_filter_role_type_form" novalidate>
-                        <div class="mb-2">
-                            <h5 class="card-title mb-2">Consular por estado de deducción</h5>
-                            <select class="form-select mb-2" style="font-size: 12px; color: cadetblue;"
-                                        aria-label="Default select example" name="deduction_status" id="id_input_field">
-                                    <option value="Activo" selected>Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                            </select>
-                            <button class="btn btn-info mt-2" type="button" id="id_filter_button">
-                                Consultar
-                            </button>
-                            <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
-                                Limpiar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
         <!--Breakdown Table-->
         <div class="col">
             <div class="col align-self-start text-start mt-3">
@@ -116,21 +90,19 @@
                             <th scope="col">Nombre Deducción</th>
                             <th scope="col">Porcentaje Asignado</th>
                             <th scope="col">Fecha Registro</th>
-                            <th scope="col">Fecha Actualización</th>
                             <th scope="col" colspan="2"
                                 style="text-align: center; vertical-align: middle;">Administrar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in [1, 2, 3, 4, 5] %}
+                        {% for item in params.rows %}
                         <tr>
-                            <th scope="row"><b></b>{{ item }}</th>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
-                            <td>{{ item }}</td>
+                            <th scope="row"><b></b>{{ item._id }}</th>
+                            <td>{{ item._name }}</td>
+                            <td>{{ item._percentage }}</td>
+                            <td>{{ item._log_date.strftime('%Y-%m-%d') }}</td>
                             <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_deduction_update_endpoint', id=item)}}">
+                                <a href="{{url_for('getting_app_deduction_update_endpoint', id=item._id)}}">
                                     <i class="align-center" data-feather="refresh-ccw"></i>
                                     Actualizar
                                 </a>
