@@ -103,20 +103,11 @@ export const Static = {
                 "blank": "Campo Obligatorio.",
                 "before": "La fecha de registro no puede estar antes de la fecha actual.",
             }
-        },
-        "role_status": {
-            "div_id": {
-                "status": "id_role_status_field_error",
-            },
-            "text": {
-                "status": "Debe seleccionar una de las opciones del menú.",
-            }
-        },
+        }
     },
 
     USER_ROLE_BLANK_FIELDS: [
-        "role_name", "role_type", "role_department",
-        "role_schedule", "role_create_date", "role_status"
+        "role_name", "role_type", "role_department", "role_schedule", "role_create_date",
     ],
 
     // USER

@@ -29,8 +29,6 @@ export class RolesValidator {
 
         this.roleCreateDateFieldValidate('role_create_date');
 
-        this.roleStatusFieldValidate('role_status');
-
         /* form submission */
         this.form.addEventListener('submit', (e) => {
             /* prevent autoform submission */
@@ -268,39 +266,6 @@ export class RolesValidator {
                 else {
                     /* clear error message */
                     Shared.clearErrorMessages(inputField, [divBefore]);
-                    /* update flag */
-                    this.valid = true;
-                }
-            });
-        }
-    }
-
-    /* rol status */
-    roleStatusFieldValidate(fieldName){
-        /* get input element and div ids */
-        let inputField = this.form.elements.namedItem(fieldName);
-        let divStatus = document.getElementById(this.data.role_status.div_id.status);
-
-        /* validate on-time blank fields */
-        Shared.validateInputBlankFields(inputField, divStatus, this.data.role_status.text.status, this);
-
-        if(this.valid){
-            /* add event listener to input field */
-            inputField.addEventListener("input", () => {
-                /* get input field value */
-                let value = inputField.value.trim();
-                /* validate only letters are input */
-                if(value === "not_select"){
-                    /* clear prev error message */
-                    Shared.clearErrorMessages(inputField, [divStatus]);
-                    /* display error message */
-                    Shared.displayErrorMessages(inputField, divStatus, this.data.role_status.text.status);
-                    /* update flag */
-                    this.valid = false;
-                }
-                else {
-                    /* clear error message */
-                    Shared.clearErrorMessages(inputField, [divStatus]);
                     /* update flag */
                     this.valid = true;
                 }

@@ -8,14 +8,14 @@ from sqlalchemy.orm import Session
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.database.config import Session_Controller
-from app.backend.db_transactions.crud.db_records import Db_Crud_Request
+from app.backend.db_transactions.crud.db_records import Crud_Records_Manager
 from app.backend.schema.crud.records.Schedule import Create_Schedule, Update_Schedule
 
 
 # router
 schedule_route = APIRouter(prefix=Cns.CRUD_BASE.value, tags=[Cns.CRUD.value])
 # records query
-records = Db_Crud_Request()
+records = Crud_Records_Manager()
 
 
 # GET -> Schedule Base

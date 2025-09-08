@@ -14,10 +14,11 @@ logger = getLogger(__name__)
 
 
 # class
-class Db_Crud_Request:
+class Crud_Records_Manager:
 
     # init
     def __init__(self):
+
         self.models = models
         self.logger = logger
         self.re = re
@@ -254,4 +255,3 @@ class Db_Crud_Request:
 
         # commit
         db.commit()
-

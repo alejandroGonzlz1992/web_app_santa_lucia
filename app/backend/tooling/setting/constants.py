@@ -255,3 +255,12 @@ class Constants(Enum):
         "days": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
                  29, 30, 31]
     }
+
+    # exception Integrity codes
+    PG_CONSTRAINT_CODES = {
+        "23505": "unique_violation",
+        "23503": "foreign_key_violation",
+        "23502": "not_null_violation",
+        "23514": "check_violation",
+        "23P01": "exclusion_violation",
+    }

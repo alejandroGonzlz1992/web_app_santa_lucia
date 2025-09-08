@@ -78,7 +78,8 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_user_role_form" novalidate>
+                    <form id="id_user_role_form" method="post"
+                          action="{{ url_for('posting_app_roles_register_endpoint') }}" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="POST" name="form_method">
@@ -171,7 +172,9 @@
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>
                                                     Seleccionar el departamento </option>
-                                                <option value="test">Test</option>
+                                                {% for item in params.departments %}
+                                                    <option value="{{ item._id }}">{{ item._name }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -194,7 +197,9 @@
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>
                                                     Seleccionar la jornada laboral</option>
-                                                <option value="test">Test</option>
+                                                {% for item in params.schedules %}
+                                                    <option value="{{ item._id }}">{{ item._name }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -239,30 +244,6 @@
                                         </span>
                                     </div>
 
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="py-1 text-start">
-                                    <label class="form-label text-center" style="color: #3371db;">
-                                       * Estado Rol Usuario</label>
-                                    <div class="input-group">
-                                        <div class="input-group">
-                                            <select class="form-select mb-2" id="id_role_status"
-                                                    name="role_status"
-                                                    style="color: cadetblue;">
-                                                <option value="not_select" selected>
-                                                    Seleccionar el estado de rol de usuario</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!--Error Message Div-->
-                                    <div id="id_role_status_field_error" class="text-danger text-start"
-                                        style="font-size: 13px; display: none;">
-                                    </div>
                                 </div>
                             </div>
 

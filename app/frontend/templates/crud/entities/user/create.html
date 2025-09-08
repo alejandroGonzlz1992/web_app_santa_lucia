@@ -441,7 +441,11 @@
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>
                                                     Seleccionar role de usuario a asignar</option>
-                                                <option value="test">test</option>
+                                                {% for item in params.roles %}
+                                                    <option value="{{ item._id }}">
+                                                        {{ item._name }} | {{ item._type }}
+                                                    </option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
