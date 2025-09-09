@@ -22,12 +22,7 @@ class Province(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Province': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'log_date': self.log_date
-            }
-        }
+        return f"<Province(id_record={self.id_record}, name={self.name}, log_date={self.log_date})>"
 
 
 class Canton(BASE):
@@ -43,13 +38,8 @@ class Canton(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Canton': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'id_province': self.id_province,
-            'log_date': self.log_date
-            }
-        }
+        return (f"<Canton(id_record={self.id_record}, name={self.name}, id_province={self.id_province},"
+                f" log_date={self.log_date})>")
 
 
 class District(BASE):
@@ -65,13 +55,8 @@ class District(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'District': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'id_canton': self.id_canton,
-            'log_date': self.log_date
-            }
-        }
+        return (f"<District(id_record={self.id_record}, name={self.name}, id_canton={self.id_canton},"
+                f" log_date={self.log_date})>")
 
 
 class User(BASE):
@@ -98,21 +83,10 @@ class User(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'User': {
-            'id_record': self.id_record,
-            'identification': self.name,
-            'name': {
-                'name': self.name, 'lastname': self.lastname, 'lastname2': self.lastname2
-            },
-            'birthday': self.birthday,
-            'email': self.email,
-            'phone': self.phone,
-            'gender': self.gender,
-            'marital_status': self.marital_status,
-            'children': self.children,
-            'log_date': self.log_date
-            }
-        }
+        return (f"<User(id_record={self.id_record}, identification={self.identification}, name={self.name}, "
+                f"lastname={self.lastname}, lastname2={self.lastname2}, birthday={self.birthday},"
+                f" email={self.email}, phone={self.phone}, gender={self.gender},"
+                f" marital_status={self.marital_status}, children={self.children}, log_date={self.log_date})>")
 
 
 class Address(BASE):
@@ -130,15 +104,8 @@ class Address(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Address': {
-            'id_record': self.id_record,
-            'details': self.details,
-            'date_create': self.date_create,
-            'date_update': self.date_update,
-            'id_district': self.id_district,
-            'id_user': self.id_user
-            }
-        }
+        return (f"<Address(id_record={self.id_record}, details={self.details}, date_create={self.date_create}, "
+                f"date_update={self.date_update}, id_district={self.id_district}, id_user={self.id_user})>")
 
 
 class Schedule(BASE):
@@ -156,16 +123,9 @@ class Schedule(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Schedule': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'start_time': self.start_time,
-            'end_time': self.end_time,
-            'hours': self.hours,
-            'date_create': self.date_create,
-            'date_update': self.date_update
-            }
-        }
+        return (f"<Schedule(id_record={self.id_record}, name={self.name}, start_time={self.start_time}, "
+                f"end_time={self.end_time}, hours={self.hours}, date_create={self.date_create}, "
+                f"date_update={self.date_update})>")
 
 
 class Department(BASE):
@@ -180,13 +140,8 @@ class Department(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Department': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'date_create': self.date_create,
-            'date_update': self.date_update
-            }
-        }
+        return (f"<Department(id_record={self.id_record}, name={self.name}, date_create={self.date_create}, "
+                f"date_update={self.date_update})>")
 
 
 class Role(BASE):
@@ -206,16 +161,8 @@ class Role(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Role': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'type': self.type,
-            'date_create': self.date_create,
-            'date_update': self.date_update,
-            'id_schedule': self.id_schedule,
-            'id_department': self.id_department
-            }
-        }
+        return (f"<Role(id_record={self.id_record}, name={self.name}, type={self.type}, date_create={self.date_create}, "
+                f"date_update={self.date_update}, id_schedule={self.id_schedule}, id_department={self.id_department})>")
 
 
 class User_Role(BASE):
@@ -236,17 +183,10 @@ class User_Role(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'User_Role': {
-            'id_record': self.id_record,
-            'gross_income': self.gross_income,
-            'status': self.status,
-            'hire_date': self.hire_date,
-            'termination_date': self.termination_date,
-            'id_user': self.id_user,
-            'id_role': self.id_role,
-            'log_date': self.log_date
-            }
-        }
+        return (
+            f"<User_Role(id_record={self.id_record}, gross_income={self.gross_income}, status={self.status}, "
+            f"hire_date={self.hire_date}, termination_date={self.termination_date}, id_user={self.id_user}, "
+            f"id_role={self.id_role}, log_date={self.log_date})>")
 
 
 class Extra_Hour(BASE):
@@ -265,15 +205,10 @@ class Extra_Hour(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Extra_Hour': {
-            'id_record': self.id_record,
-            'hours': self.hours,
-            'date_request': self.date_request,
-            'is_holiday': self.is_holiday,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Extra_Hour(id_record={self.id_record}, hours={self.hours}, date_request={self.date_request}, "
+            f"is_holiday={self.is_holiday}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
+            f"log_date={self.log_date})>")
 
 
 class Vacation(BASE):
@@ -291,15 +226,9 @@ class Vacation(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Vacation': {
-            'id_record': self.id_record,
-            'available': self.available,
-            'used_days': self.used_days,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Extra_Hour(id_record={self.id_record}, available={self.available}, used_days={self.used_days}, "
+            f"id_subject={self.id_subject}, id_approver={self.id_approver}, log_date={self.log_date})>")
 
 
 class Request_Extra_Hour(BASE):
@@ -319,17 +248,10 @@ class Request_Extra_Hour(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Request_Extra_Hour': {
-            'id_record': self.id_record,
-            'hours': self.hours,
-            'date_request': self.date_request,
-            'type': self.type,
-            'status': self.status,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Request_Extra_Hour(id_record={self.id_record}, hours={self.hours}, date_request={self.date_request}, "
+            f"type={self.type}, status={self.status}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
+            f"log_date={self.log_date})>")
 
 
 class Request_Vacation(BASE):
@@ -350,18 +272,10 @@ class Request_Vacation(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Request_Vacation': {
-            'id_record': self.id_record,
-            'days': self.days,
-            'date_start': self.date_start,
-            'date_return': self.date_return,
-            'type': self.type,
-            'status': self.status,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Request_Vacation(id_record={self.id_record}, days={self.days}, date_start={self.date_start}, "
+            f"date_return={self.date_return}, type={self.type}, status={self.status}, id_subject={self.id_subject}, "
+            f"id_approver={self.id_approver}, log_date={self.log_date})>")
 
 
 class Bonus(BASE):
@@ -380,16 +294,10 @@ class Bonus(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Bonus': {
-            'id_record': self.id_record,
-            'total_amount': self.total_amount,
-            'month_amount': self.month_amount,
-            'month': self.month,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Bonus(id_record={self.id_record}, total_amount={self.total_amount}, month_amount={self.month_amount}, "
+            f"month={self.month}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
+            f"log_date={self.log_date})>")
 
 
 class Settlement(BASE):
@@ -409,17 +317,10 @@ class Settlement(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Settlement': {
-            'id_record': self.id_record,
-            'total_amount': self.total_amount,
-            'status': self.status,
-            'type': self.type,
-            'details': self.details,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Settlement(id_record={self.id_record}, total_amount={self.total_amount}, status={self.status}, "
+            f"type={self.type}, details={self.details}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
+            f"log_date={self.log_date})>")
 
 
 class Inability(BASE):
@@ -443,21 +344,11 @@ class Inability(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Inability': {
-            'id_record': self.id_record,
-            'date_start': self.date_start,
-            'date_return': self.date_return,
-            'days': self.days,
-            'type': self.type,
-            'details': self.details,
-            'document': self.document,
-            'doc_number': self.doc_number,
-            'status': self.status,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Inability(id_record={self.id_record}, date_start={self.date_start}, date_return={self.date_return}, "
+            f"days={self.days}, type={self.type}, details={self.details}, document={self.document}, "
+            f"doc_number={self.doc_number}, status={self.status}, id_subject={self.id_subject}, "
+            f"id_approver={self.id_approver}, log_date={self.log_date})>")
 
 
 class Evaluation_Type(BASE):
@@ -472,13 +363,9 @@ class Evaluation_Type(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Evaluation_Type': {
-            'id_record': self.id_record,
-            'type': self.type,
-            'status': self.status,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Evaluation_Type(id_record={self.id_record}, type={self.type}, status={self.status}, "
+            f"log_date={self.log_date})>")
 
 
 class Evaluation_Question(BASE):
@@ -493,13 +380,9 @@ class Evaluation_Question(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Evaluation_Question': {
-            'id_record': self.id_record,
-            'question': self.question,
-            'id_evaluation_type': self.id_evaluation_type,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Evaluation_Question(id_record={self.id_record}, question={self.question}, "
+            f"id_evaluation_type={self.id_evaluation_type}, log_date={self.log_date})>")
 
 
 class Evaluation(BASE):
@@ -519,17 +402,10 @@ class Evaluation(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Evaluation': {
-            'id_record': self.id_record,
-            'score': self.score,
-            'average': self.average,
-            'details': self.details,
-            'questions': self.questions,
-            'id_subject': self.id_subject,
-            'id_approver': self.id_approver,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Evaluation(id_record={self.id_record}, score={self.score}, average={self.average}, details={self.details},"
+            f"questions={self.questions}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
+            f"log_date={self.log_date})>")
 
 
 class Deduction(BASE):
@@ -545,13 +421,9 @@ class Deduction(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Deduction': {
-            'id_record': self.id_record,
-            'name': self.name,
-            'percentage': self.percentage,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Deduction(id_record={self.id_record}, name={self.name}, percentage={self.percentage}, "
+            f"log_date={self.log_date})>")
 
 
 class Deduction_Payroll(BASE):
@@ -569,14 +441,9 @@ class Deduction_Payroll(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Deduction_Payroll': {
-            'id_record': self.id_record,
-            'amount': self.amount,
-            'id_user': self.id_user,
-            'id_deduction': self.id_deduction,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Deduction_Payroll(id_record={self.id_record}, amount={self.amount}, id_user={self.id_user}, "
+            f"id_deduction={self.id_deduction}, log_date={self.log_date})>")
 
 
 class Payment_Date(BASE):
@@ -592,14 +459,9 @@ class Payment_Date(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Payment_Date': {
-            'id_record': self.id_record,
-            'date_payment': self.date_payment,
-            'date_payment2': self.date_payment2,
-            'frecuency': self.frecuency,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Payment_Date(id_record={self.id_record}, date_payment={self.date_payment}, "
+            f"date_payment2={self.date_payment2}, frecuency={self.frecuency}, log_date={self.log_date})>")
 
 
 class Payroll(BASE):
@@ -617,12 +479,7 @@ class Payroll(BASE):
 
     # __rep__
     def __repr__(self):
-        return {'Payment_Date': {
-            'id_record': self.id_record,
-            'net_amount': self.net_amount,
-            'details': self.details,
-            'id_deduction_payroll': self.id_deduction_payroll,
-            'id_payment_date': self.id_payment_date,
-            'log_date': self.log_date
-        }
-    }
+        return (
+            f"<Payroll(id_record={self.id_record}, net_amount={self.net_amount}, details={self.details}, "
+            f"id_deduction_payroll={self.id_deduction_payroll}, id_payment_date={self.id_payment_date}, "
+            f"log_date={self.log_date})>")

@@ -90,7 +90,8 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_user_form" novalidate>
+                    <form id="id_user_form" method="post"
+                          action="{{ url_for('posting_app_user_register_endpoint') }}" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="POST" name="method">
@@ -127,7 +128,7 @@
                                     {% if params.exc == "_identification" %}
                                         <div id="id_identification_exception_error" class="text-danger text-start"
                                             style="font-size: 13px; display: block;">
-                                            {{ params.ops.user._exc._identification }}
+                                            {{ params.ops._user._exc._identification }}
                                         </div>
                                     {% endif %}
 

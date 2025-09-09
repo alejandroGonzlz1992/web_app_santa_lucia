@@ -69,3 +69,16 @@ class Update_User(BaseModel):
                    user_marital_status=user_marital_status, user_children=user_children, user_email=user_email,
                    user_phone=user_phone, user_role=user_role, user_gross_income=user_gross_income,
                    user_create_date=user_create_date, method=method)
+
+
+# update user status
+class User_Status(BaseModel):
+    id: Union[int, str]
+    user_status: bool
+    termination_date: date
+
+    @classmethod
+    def formatting(cls, id: Union[int, str] = Form(...), user_status: bool = Form(...),
+                   termination_date: date = Form(...)):
+        # return
+        return cls(id=id, user_status=user_status, termination_date=termination_date)

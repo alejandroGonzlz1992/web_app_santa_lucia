@@ -172,22 +172,29 @@
                                      alt="Iniciar Sesión"/>
                                 <span class="text-dark">Sesión</span>
                             </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="{{ url_for('getting_app_user_login_endpoint') }}">
-                                    <i class="align-middle me-1" data-feather="user"></i>
-                                    Usuario
-                                </a>
-                                <a class="dropdown-item" href="{{ url_for('getting_app_admin_login_endpoint') }}">
-                                    <i class="align-middle me-1" data-feather="user-check"></i>
-                                    Administrador
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">
-                                    <i class="align-middle me-1" data-feather="corner-down-left"></i>
-                                    Cerrar Sesión
-                                </a>
-                            </div>
+                            {% if params.user_session %}
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" href="{{ url_for('getting_app_profile_base_endpoint') }}">
+                                        <i class="align-middle me-1" data-feather="user"></i>
+                                        {{ params.user_session._name }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url_for('getting_sign_out_session') }}">
+                                        <i class="align-middle me-1" data-feather="corner-down-left"></i>
+                                        Cerrar Sesión
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div>
+                                    <a class="dropdown-item" href="{{ url_for('getting_app_user_login_endpoint') }}">
+                                        <i class="align-middle me-1" data-feather="user"></i>
+                                        Usuario
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url_for('getting_app_admin_login_endpoint') }}">
+                                        <i class="align-middle me-1" data-feather="user-check"></i>
+                                        Administrador
+                                    </a>
+                                </div>
+                            {% endif %}
                         </li>
                     </ul>
                 </div>
@@ -225,9 +232,18 @@
                                                 <h6 class="card-title">Última visita</h6>
 
                                                 <span class="text-info">
-                                                    <i class="mdi mdi-arrow-bottom-right"></i><b>Bienvenido</b>
+                                                    {% if params.user_session._gender == "Femenino" %}
+                                                        <i class="mdi mdi-arrow-bottom-right"></i><b>Bienvenida</b>
+                                                    {% else %}
+                                                        <i class="mdi mdi-arrow-bottom-right"></i><b>Bienvenido</b>
+                                                    {% endif %}
                                                 </span>
-                                                <span class="text-muted pt-4"><strong>Nombre Usuario</strong></span>
+                                                <span class="text-muted pt-4">
+                                                    <strong>
+                                                        {{ params.user_session._name }} {{ params.user_session._lastname }}
+                                                        {{ params.user_session._lastname2 }}
+                                                    </strong>
+                                                </span>
 
                                             </div>
                                         </div>

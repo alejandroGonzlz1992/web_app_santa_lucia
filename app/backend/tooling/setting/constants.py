@@ -25,10 +25,17 @@ class Constants(Enum):
     # general
     CR_TIME_ZONE = datetime.now(ZoneInfo('America/Costa_Rica')).strftime("%d-%m-%Y | %-I:%M %p")
 
+    # labels
+    LABEL_ADMIN = "Administrador"
+
+    # redirecting
+    URL_REDIRECT_TO_PASSWORD_RESTORE = "http://127.0.0.1:8000/sesion/restablecer"
+
     # tags
     AUTH, CRUD, SERV, TRANS = 'AUTH', 'CRUD', 'SERV' ,'TRANS'
 
     # endpoint
+    OAUTH2_SCHEMA_URL = 'http://127.0.0.1:8000/sesion/usuario'
     ROOT = '/santalucia/api/v/'
     BASE = '/'
     URL_ID = '{id}'
@@ -42,6 +49,7 @@ class Constants(Enum):
 
     # crud endpoint
     CRUD_BASE = '/mantenimientos'
+    URL_SIGN_OUT = "/cerrar_sesion"
 
     CRUD_USER_BASE = '/usuarios'
     CRUD_USER_CREATE = f'{CRUD_USER_BASE}/registrar'
@@ -137,6 +145,7 @@ class Constants(Enum):
         '_user': {
             '_create': 'El registro de usuario fue creado de forma exitosa.',
             '_update': 'El registro de usuario fue actualizado de forma exitosa.',
+            '_status': 'El estado de usuario fue actualizado a Inactivo de forma exitosa.',
             '_exc': {
                 '_identification': 'El número de identificación ingresado, ya se encuentra registrado en la base de datos.',
                 '_email': 'El correo electrónico ingresado, ya se encuentra registrado en la base de datos.',
@@ -233,6 +242,7 @@ class Constants(Enum):
             '_admin': 'La contraseña de administrador fue establecida correctamente. Iniciar Sesión.',
             '_as_admin': 'Su usuario no cuenta con los permisos para iniciar sesión como administrador.',
             '_as_user': 'Iniciar sesión como administrador.',
+            '_inactive': 'Su usuario se encuentra en estado inactivo. Comunicarse con su jefatura para su activacion.',
             '_recover': {
                 '_fail': 'No existe registros con el correo electrónico ingresado. No se puede restablecer la contraseña.',
                 '_recover': 'Se ha enviado un enlace para restablecer su contraseña al correo electrónico ingresado.',

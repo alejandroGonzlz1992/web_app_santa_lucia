@@ -27,7 +27,7 @@
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops.user._fail._fail}}</div>
+                <div>{{params.ops._session._fail._error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -39,7 +39,7 @@
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops.user._fail._ops_error}}</div>
+                <div>{{params.ops._session._fail._ops_error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -51,7 +51,7 @@
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops.user._fail._orm_error}}</div>
+                <div>{{params.ops._session._fail._orm_error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -90,7 +90,8 @@
                 <div class="card-body text-start">
 
                     <!--User Role Form -->
-                    <form id="id_user_form" novalidate>
+                    <form id="id_user_form" method="post"
+                          action="{{ url_for('posting_app_user_update_endpoint') }}" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="PUT" name="method">

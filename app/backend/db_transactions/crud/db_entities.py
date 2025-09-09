@@ -1,5 +1,6 @@
 # import
 import string, random
+from fastapi import HTTPException, status
 from logging import getLogger
 from typing import Union
 
@@ -24,6 +25,7 @@ class Crud_Entities_Manager:
         self.to_hash = getting_password_to_hash
         self.string = string
         self.random = random
+        self.exc = None
 
     # logger messages
     async def logger_sql_alchemy_error(self, exception: Union[object, str]) -> None:
@@ -42,25 +44,16 @@ class Crud_Entities_Manager:
             if hasattr(exception.orig, 'pgerror'):
                 self.logger.error(f'PostgreSQL error message: {exception.orig.pgerror}')
 
-    async def logger_sql_integrity_error(self, exception: Union[object, str]) -> None:
-        self.logger.error(f'Integrity Error: {str(exception)}')
-        self.logger.error(f'Statement: {getattr(exception, "statement", None)}')
-        self.logger.error(f'Params: {getattr(exception, "params", None)}')
-
-        orig = getattr(exception, 'orig', None)
-
-        if orig is not None:
-            self.logger.error(f'Original error: {orig}')
-
-            pgcode = getattr(orig, 'pgcode', None)
-            if pgcode:
-                label = self.codes.get(pgcode, "unknown_code")
-                self.logger.error(f'Postgresql error code: {pgcode} ({label})')
-
-            #pg error message
-            pgerror = getattr(orig, 'pgerror', None)
-            if pgerror:
-                self.logger.error(f'Postgresql error message: {pgerror}')
+    # catching integrity error field
+    async def identify_error_integrity(self, catcher: object) -> str:
+        to_string = str(catcher)
+        if "user_identification_key" in to_string:
+            self.exc = "_identification"
+        elif "user_email_key" in to_string:
+            self.exc = "_email"
+        elif "user_phone_key" in to_string:
+            self.exc = "_phone"
+        return self.exc
 
     # generate random password / hash password
     async def generating_random_password(self, length: int = 12) -> str:
@@ -74,7 +67,7 @@ class Crud_Entities_Manager:
 
         # fill password length
         all_chars = lower + upper + digits + symbols
-        chars += self.random.choice(all_chars, k=length - len(chars))
+        chars += self.random.choices(all_chars, k=length - len(chars))
 
         # shuffle password
         self.random.shuffle(chars)
@@ -168,6 +161,7 @@ class Crud_Entities_Manager:
     async def registering_crud_users(self, db: object, model: Union[dict, object]) -> object:
         # generate hash password
         password = await self.generating_random_password()
+
         # hash password
         to_hash = self.to_hash(password)
 
@@ -178,7 +172,7 @@ class Crud_Entities_Manager:
             lastname=model['user_lastname'].title(),
             lastname2=model['user_lastname2'].title(),
             birthday=model['user_birthday'],
-            email=model['user_email'],
+            email=model['user_email'].lower(),
             phone=model['user_phone'],
             gender=model['user_gender'],
             marital_status=model['user_marital_status'],
@@ -201,10 +195,10 @@ class Crud_Entities_Manager:
     async def registering_crud_user_role_entity(
             self, db: object, user_id: Union[int, str], model: Union[dict, object]) -> None:
         entity = self.models.User_Role(
-            gross_income="",
-            hire_date="",
-            id_user="",
-            id_role=""
+            gross_income=model['user_gross_income'],
+            hire_date=model['user_create_date'],
+            id_user=user_id,
+            id_role=model['user_role']
         )
         # add to db
         db.add(instance=entity)
@@ -216,34 +210,71 @@ class Crud_Entities_Manager:
     # update user
     async def updating_crud_users(self, db: object, model: Union[dict, object]) -> None:
         entity = db.query(self.models.User).filter(
-            self.models.User.identification == model['identification']).first()
+            self.models.User.identification == model['user_identification']).first()
 
         if entity:
-            entity.identification = ""
-            entity.name = "",
-            entity.lastname = "",
-            entity.lastname2 = "",
-            entity.birthday = "",
-            entity.email = "",
-            entity.phone = "",
-            entity.gender = "",
-            entity.marital_status = "",
-            entity.children = "",
+            entity.identification = model['user_identification']
+            entity.name = model['user_name'].title()
+            entity.lastname = model['user_lastname'].title()
+            entity.lastname2 = model['user_lastname2'].title()
+            entity.birthday = model['user_birthday']
+            entity.email = model['user_email'].lower()
+            entity.phone = model['user_phone']
+            entity.gender = model['user_gender']
+            entity.marital_status = model['user_marital_status']
+            entity.children = model['user_children']
 
         # db commit
         db.commit()
 
     # update User_Role entity
     async def updating_crud_user_role_entity(
-            self, db: object, user_id: Union[int, str], model: Union[dict, object]) -> None:
+            self, db: object, model: Union[dict, object]) -> None:
         entity_role = db.query(self.models.User_Role).filter(
-            self.models.User.id_record == model['id']).first()
+            self.models.User_Role.id_record == model['id']).first()
 
         if entity_role:
-            entity_role.gross_income = ""
-            entity_role.hire_date = ""
-            entity_role.id_user = user_id
-            entity_role.id_role = ""
+            entity_role.gross_income = model['user_gross_income']
+            entity_role.hire_date = model['user_create_date']
+            entity_role.id_role = model['user_role']
 
         # db commit
         db.commit()
+
+    # update user status
+    async def updating_crud_user_status(self, db: object, model: Union[dict, object]) -> None:
+        entity = db.query(self.models.User_Role).filter(self.models.User_Role.id_record == model['id']).first()
+
+        if entity:
+            # activate or deactivate
+            if bool(model["user_status"]):
+                entity.status = model['user_status']
+                entity.termination_date = None
+
+                # user password, temp_password and is_temp
+                user = db.query(self.models.User).filter(self.models.User.id_record == entity.id_user).first()
+
+                if user:
+                    # generate hash password
+                    password = await self.generating_random_password()
+                    # hash password
+                    to_hash = self.to_hash(password)
+
+                    user.password = to_hash
+                    user.temp_password = to_hash
+                    user.is_temp = True
+
+                # db commit
+                db.commit()
+
+            else:
+                # hire date
+                if entity.hire_date > model["termination_date"]:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST, detail="Hire date cannot be after termination date.")
+
+                entity.status = model['user_status']
+                entity.termination_date = model['termination_date']
+
+                # db commit
+                db.commit()
