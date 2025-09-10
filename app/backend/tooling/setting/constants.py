@@ -25,6 +25,16 @@ class Constants(Enum):
     # general
     CR_TIME_ZONE = datetime.now(ZoneInfo('America/Costa_Rica')).strftime("%d-%m-%Y | %-I:%M %p")
 
+    # email
+    EMAIL_SANTALUCIA_SENDER = "notificacionesferreteriasantal@gmail.com"
+
+    # email subject
+    SUBJECT_EMAIL_NEW_PASSWORD_CONFIRM = "Ferretería Santa Lucía. Confirmación de cambio de contraseña."
+    SUBJECT_EMAIL_TEMP_PASSWORD_CONFIRM = "Ferretería Santa Lucía. Generación de contraseña temporal."
+
+    # email links
+    EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
+
     # labels
     LABEL_ADMIN = "Administrador"
 
@@ -145,7 +155,8 @@ class Constants(Enum):
         '_user': {
             '_create': 'El registro de usuario fue creado de forma exitosa.',
             '_update': 'El registro de usuario fue actualizado de forma exitosa.',
-            '_status': 'El estado de usuario fue actualizado a Inactivo de forma exitosa.',
+            '_inactive': 'El estado de usuario fue actualizado a Inactivo de forma exitosa.',
+            '_active': 'El estado de usuario fue actualizado a Activo de forma exitosa.',
             '_exc': {
                 '_identification': 'El número de identificación ingresado, ya se encuentra registrado en la base de datos.',
                 '_email': 'El correo electrónico ingresado, ya se encuentra registrado en la base de datos.',
@@ -252,7 +263,9 @@ class Constants(Enum):
                 '_ident': 'No existen registros con el número de identificación ingresado.',
                 '_bad_login': 'Correo electronico y/o contraseña incorrectos.',
                 '_ops_error': "Se presentan interrupciones a nivel de conexión de base de datos. Se está trabajando para solucionar el inconveniente.",
-                '_orm_error': "Existen errores en el registro de la información. No se puede completar la operación."
+                '_orm_error': "Existen errores en el registro de la información. No se puede completar la operación.",
+                '_user_as_inactive': 'El usuario seleccionado ya se encuentra en estado Inactivo.',
+                '_user_as_active': 'El usuario seleccionado ya se encuentra en estado Activo.'
             },
             '_expire': 'Su sesión ha expirado, ingresar credenciales nuevamente.'
         },

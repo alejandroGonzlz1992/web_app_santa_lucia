@@ -15,18 +15,6 @@
                 </div>
             </div>
         </div>
-    {% elif params.fg == "_reset" %}
-        <div class="px-1 pt-2">
-            <div class="alert alert-primary d-flex align-items-center" role="alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
-                    <use xlink:href="#info-fill"/>
-                </svg>
-                <div>{{params.ops._session._recover._recover}}</div>
-                <div class="col text-end">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
     {% endif %}
 {% endblock %}
 
@@ -48,7 +36,8 @@
                         <div class="card-body">
 
                             <!--Password Recover Form-->
-                            <form id="id_recover_form" novalidate>
+                            <form id="id_recover_form" method="post"
+                                  action="{{url_for('posting_app_password_recover_endpoint')}}" novalidate>
 
                                 <!--Hidden Input Fields-->
                                 <input type="hidden" name="from_type" value="user">

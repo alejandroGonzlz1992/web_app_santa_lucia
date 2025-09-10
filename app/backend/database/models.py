@@ -74,7 +74,9 @@ class User(BASE):
     marital_status = Column(String(25), nullable=False)
     children = Column(Integer, nullable=False, server_default='0')
     password = Column(String(275), nullable=False)
-    temp_password = Column(String(275), nullable=False)
+    # do revision to set column to nullable=True
+    # temp_password = Column(String(275), nullable=False)
+    temp_password = Column(String(275), nullable=True)
     is_temp = Column(Boolean, nullable=False, server_default='TRUE')
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship

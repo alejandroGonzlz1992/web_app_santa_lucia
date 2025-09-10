@@ -130,3 +130,8 @@ class Temporary_Invalid_Password_Exception(Exception):
 # user as inactive status
 class User_Inactive_Status_Exception(Exception):
     pass
+
+
+# user as active status
+class User_Active_Status_Exception(Exception):
+    pass

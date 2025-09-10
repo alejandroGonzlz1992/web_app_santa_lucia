@@ -241,40 +241,60 @@ class Crud_Entities_Manager:
         # db commit
         db.commit()
 
-    # update user status
-    async def updating_crud_user_status(self, db: object, model: Union[dict, object]) -> None:
-        entity = db.query(self.models.User_Role).filter(self.models.User_Role.id_record == model['id']).first()
+    # query current user status
+    async def querying_user_status_entity(self, db: object, model: Union[dict, object]) -> object:
+        entity = (db.query(
+            self.models.User_Role.id_record.label('_id'),
+            self.models.User_Role.status.label('_status'),
+            self.models.User_Role.hire_date.label('_hire'),
+            self.models.User_Role.id_user.label('_id_user'),
+            self.models.User_Role.id_role.label('_id_role'),
+            self.models.User.email.label('_email')
+        ).join(
+            self.models.User_Role, self.models.User.id_record == self.models.User_Role.id_user).filter(
+            self.models.User_Role.id_record == model['id']).first())
 
-        if entity:
-            # activate or deactivate
-            if bool(model["user_status"]):
-                entity.status = model['user_status']
-                entity.termination_date = None
+        # return
+        return entity
 
-                # user password, temp_password and is_temp
-                user = db.query(self.models.User).filter(self.models.User.id_record == entity.id_user).first()
+    # update current user status
+    async def updating_user_status(self, db: object, record: Union[object, None], model: Union[dict, object]) -> dict:
+        # flag to email
+        deliver_mail = True
 
-                if user:
-                    # generate hash password
-                    password = await self.generating_random_password()
-                    # hash password
-                    to_hash = self.to_hash(password)
+        # generate random password
+        temp_password = self.generating_random_password()
 
-                    user.password = to_hash
-                    user.temp_password = to_hash
-                    user.is_temp = True
+        # query entity
+        user_role = db.query(self.models.User_Role).filter(self.models.User_Role.id_record == model['id']).first()
 
-                # db commit
-                db.commit()
+        # status
+        if bool(model["user_status"]):
+            user_role.status = True
+            user_role.termination_date = None
 
-            else:
-                # hire date
-                if entity.hire_date > model["termination_date"]:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST, detail="Hire date cannot be after termination date.")
+            # query current user
+            user = db.query(self.models.User).filter(self.models.User.id_record == record._id_user).first()
 
-                entity.status = model['user_status']
-                entity.termination_date = model['termination_date']
+            if user:
+                to_hash = self.to_hash(password=temp_password)
 
-                # db commit
-                db.commit()
+                user.password = to_hash
+                user.temp_password = to_hash
+                user.is_temp = True
+
+            # db commit
+            db.commit()
+
+        else:
+            user_role.status = False
+            user_role.termination_date = model["termination_date"]
+
+            # update flag
+            deliver_mail = False
+
+            # db commit
+            db.commit()
+
+        # return
+        return {"flag": deliver_mail, "temp": temp_password}

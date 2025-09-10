@@ -30,3 +30,20 @@ class Token_Data(BaseModel):
     # ignore "exp" from token encode portion
     class Config:
         extra = "ignore"
+
+
+# restore password
+class Restore_Password(BaseModel):
+    user_identification: Union[str, int]
+    temp_password_field: str
+    new_password_field: str
+    confirm_password_field: str
+
+    @classmethod
+    def formatting(
+            cls, user_identification: Union[int, str] = Form(...), temp_password_field: str = Form(...),
+            new_password_field: str = Form(...), confirm_password_field: str = Form(...)):
+
+        # return
+        return cls(user_identification=user_identification, temp_password_field=temp_password_field,
+                   new_password_field=new_password_field, confirm_password_field=confirm_password_field)

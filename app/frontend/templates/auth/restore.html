@@ -36,7 +36,8 @@
                         <div class="card-body">
 
                             <!--Password Reset Form-->
-                            <form id="id_reset_form" novalidate>
+                            <form id="id_reset_form" method="post"
+                                  action="{{url_for('posting_app_password_restore_endpoint')}}" novalidate>
 
                                 <!--Hidden Input Fields-->
                                 <input type="hidden" value="POST" name="method">

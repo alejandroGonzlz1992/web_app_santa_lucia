@@ -1,5 +1,6 @@
 # import
-from fastapi import APIRouter, Request, Depends, HTTPException, status
+from logging import getLogger
+from fastapi import APIRouter, Request, Depends, HTTPException, status, BackgroundTasks, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -12,14 +13,17 @@ from app.backend.tooling.setting.security import (verifying_hash_password, loadi
                                                   generating_access_token, Privilege_Access_As_User_Exception,
                                                   Privilege_Access_As_Admin_Exception, User_Inactive_Status_Exception,
                                                   Temporary_Invalid_Password_Exception)
-from app.backend.schema.auth.Login import User_Login
+from app.backend.schema.auth.Login import User_Login, Restore_Password
 from app.backend.database.config import Session_Controller
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
+from app.backend.tooling.bg_tasks import bg_tasks
 
 # router
 auth_route = APIRouter(prefix=Cns.AUTH_SESSION.value, tags=[Cns.AUTH.value])
 # transactions
 trans = Auth_Manager()
+# logger error
+logger = getLogger(__name__)
 
 
 # GET -> User Login
@@ -207,6 +211,40 @@ async def getting_app_password_recover_endpoint(
     )
 
 
+# POST -> Password Recover
+@auth_route.post(Cns.AUTH_PASSWORD_RECOVER.value, response_class=HTMLResponse)
+async def posting_app_password_recover_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(Session_Controller)],
+        email_recover_field: Annotated[str, Form(...)],
+        background_tasks: BackgroundTasks
+) -> HTMLResponse:
+
+    try:
+        # query entity
+        record = await trans.user_current_password_recover(db=db, input_email=email_recover_field)
+
+        # update db model records
+        await trans.updating_temp_password_field(db=db, entity=record)
+
+        # background task
+        background_tasks.add_task(
+            bg_tasks.bg_task_temp_password_confirmation, record['email'], record['temp_password'])
+
+    except HTTPException as http:
+        logger.error(f' [http_exception] -> A http exception has been raised. \n Details: {http.detail}')
+        return await getting_app_password_recover_endpoint(request=request, fg='_fail')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'auth/user.html', context={
+            'request': request, 'params': {
+                'fg': '_reset', 'ops': Cns.OPS_CRUD.value
+            }
+        }
+    )
+
+
 # GET -> Password Restore
 @auth_route.get(Cns.AUTH_PASSWORD_RESTORE.value, response_class=HTMLResponse)
 async def getting_app_password_restore_endpoint(
@@ -223,3 +261,39 @@ async def getting_app_password_restore_endpoint(
             }
         }
     )
+
+
+# POST -> Password Restore
+@auth_route.post(Cns.AUTH_PASSWORD_RESTORE.value, response_class=RedirectResponse)
+async def posting_app_password_restore_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(Session_Controller)],
+        model: Annotated[Restore_Password, Depends(Restore_Password.formatting)],
+        background_tasks: BackgroundTasks,
+) -> RedirectResponse:
+
+    try:
+        # query current entity
+        entity = await trans.user_restore_entity(db=db, model=model.model_dump())
+
+        # validate password
+        if not verifying_hash_password(plain=model.temp_password_field, hash_password=entity._temp):
+            raise Temporary_Invalid_Password_Exception('Invalid Temporal Password')
+
+        # update record in db
+        await trans.user_updating_new_password(db=db, id=entity._id, model=model.model_dump())
+
+        # send confirmation email
+        background_tasks.add_task(bg_tasks.bg_task_new_password_confirmation, entity._email.strip().lower())
+
+    except HTTPException as http:
+        logger.error(f' [http_exception] -> A http exception has been raised. \n Details: {http.detail}')
+        return await getting_app_password_restore_endpoint(request=request, fg='_fail', exc='_identification')
+
+    except Temporary_Invalid_Password_Exception:
+        return await getting_app_password_restore_endpoint(request=request, fg='_fail', exc='_temp_password')
+
+    # response
+    resp = RedirectResponse(url=f'{Cns.OAUTH2_SCHEMA_URL.value}?fg=_restore', status_code=status.HTTP_303_SEE_OTHER)
+    # return
+    return resp

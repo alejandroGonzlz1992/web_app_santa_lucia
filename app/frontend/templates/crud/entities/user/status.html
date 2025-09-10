@@ -123,6 +123,20 @@
                                     <div id="id_user_status_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                     </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_as_inactive" %}
+                                        <div id="termination_date_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._session._fail._user_as_inactive }}
+                                        </div>
+                                    {% elif params.exc == "_as_active" %}
+                                        <div id="termination_date_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._session._fail._user_as_active }}
+                                        </div>
+                                    {% endif %}
+
                                 </div>
                             </div>
 

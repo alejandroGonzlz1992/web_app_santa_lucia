@@ -183,17 +183,6 @@
                                         Cerrar Sesión
                                     </a>
                                 </div>
-                            {% else %}
-                                <div>
-                                    <a class="dropdown-item" href="{{ url_for('getting_app_user_login_endpoint') }}">
-                                        <i class="align-middle me-1" data-feather="user"></i>
-                                        Usuario
-                                    </a>
-                                    <a class="dropdown-item" href="{{ url_for('getting_app_admin_login_endpoint') }}">
-                                        <i class="align-middle me-1" data-feather="user-check"></i>
-                                        Administrador
-                                    </a>
-                                </div>
                             {% endif %}
                         </li>
                     </ul>
