@@ -77,7 +77,8 @@
                 <div class="card-body text-start">
 
                     <!--Enable Evaluation Form -->
-                    <form id="id_enable_evaluation_form" novalidate>
+                    <form id="id_enable_evaluation_form" method="post"
+                          action="{{url_for('posting_app_evaluation_enable_endpoint')}}" novalidate>
                         <h5 class="card-title my-3 text-start"><strong>Evaluación</strong></h5>
 
                         <!--Hidden Fields-->
@@ -89,11 +90,13 @@
                         <div class="py-1 text-start">
                             <label class="form-label text-center" style="color: #3371db;">Solicitud</label>
                             <div class="input-group">
-                                <select class="form-select" style="font-size: 12px; color: cadetblue;"
+                                <select class="form-select" style="font-size: 14px; color: cadetblue;"
                                     aria-label="Default select example"
                                         name="evaluation_type" id="id_evaluation_type">
                                     <option value="not_select" selected>Seleccionar tipo de evaluación</option>
-                                    <option value="test" selected>Test</option>
+                                    {% for item in params.eval_types %}
+                                        <option value="{{ item._id }}">{{ item._type }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
@@ -145,4 +148,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {EvaluationEnableValidator} from '{{ url_for("static", path="tooling/validators/services/evaluationEnable.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new EvaluationEnableValidator('id_enable_evaluation_form');
+        });
+    </script>
 {% endblock %}

@@ -6,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.application import MIMEApplication
-from typing import Union
+from typing import Union, Literal
 
 # local import
 from app.backend.tooling.setting.constants import Constants
@@ -93,3 +93,59 @@ class Email_Manager:
                 # when passing a raw string as email content
                 gmail_server.sendmail(sender, recipients, msg)
 
+    # temp password confirmation with url_login
+    async def temp_password_confirmation_with_url_login(self, rec: str, password: str) -> str:
+        # header
+        msg = self.builder["multipart"]("alternative")
+        msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
+        msg["To"] = rec
+        msg["Subject"] = self.cns.SUBJECT_EMAIL_TEMP_PASSWORD_FIRST_SIGNIN.value
+
+        # html template
+        content = self.builder["text"](
+            self.template.html_temp_password_with_url_sending(
+                temp=password, login_url=self.cns.EMAIL_TO_LOGIN_SESSION.value), "html")
+
+        # attach content
+        msg.attach(content)
+
+        # return msg as string
+        return msg.as_string()
+
+    # evaluation enable status
+    async def send_evaluation_enable_notification(
+            self, rec: dict[list], audience: Literal["employee", "supervisor"]) -> str:
+        # header
+        msg = self.builder["multipart"]("alternative")
+        msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
+
+        if audience == "employee":
+            recipients = rec["employees"]
+            msg["Subject"] = self.cns.SUBJECT_EVALUATION_ENABLE_SUPERVISOR.value
+
+            # html template
+            content = self.builder["text"](
+                self.template.html_evaluation_activate_with_url_sending(
+                    type_of="supervisor", login_url=self.cns.EMAIL_TO_LOGIN_SESSION.value), "html")
+
+            # attach content
+            msg.attach(content)
+            # to
+            msg["To"] = ", ".join(recipients)
+
+        elif audience == "supervisor":
+            recipients = rec["supervisors"]
+            msg["Subject"] = self.cns.SUBJECT_EVALUATION_ENABLE_EMPLOYEE.value
+
+            # html template
+            content = self.builder["text"](
+                self.template.html_evaluation_activate_with_url_sending(
+                    type_of="empleado", login_url=self.cns.EMAIL_TO_LOGIN_SESSION.value), "html")
+
+            # attach content
+            msg.attach(content)
+            # to
+            msg["To"] = ", ".join(recipients)
+
+        # return
+        return msg.as_string()

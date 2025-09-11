@@ -1,5 +1,5 @@
 # import
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from typing import Annotated, Union
 from sqlalchemy.exc import SQLAlchemyError, OperationalError, IntegrityError
@@ -13,6 +13,7 @@ from app.backend.schema.crud.entities.Users import Create_User, Update_User, Use
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.tooling.setting.security import User_Active_Status_Exception, User_Inactive_Status_Exception
+from app.backend.tooling.bg_tasks import bg_tasks
 
 
 # router
@@ -81,6 +82,7 @@ async def posting_app_user_register_endpoint(
         db: Annotated[Session, Depends(dependency=Session_Controller)],
         user_login: Annotated[object, Depends(dependency=getting_current_user)],
         model: Annotated[Create_User, Depends(dependency=Create_User.formatting)],
+        background_tasks: BackgroundTasks,
 ) -> HTMLResponse:
 
     try:
@@ -88,14 +90,17 @@ async def posting_app_user_register_endpoint(
         user = await entities.registering_crud_users(db=db, model=model.model_dump())
 
         # collect the user id
-        user_id = user.id_record
+        user_id = user["user"].id_record
 
         # commit to db (user_role)
         await entities.registering_crud_user_role_entity(db=db, user_id=user_id, model=model.model_dump())
 
         # enable one-day of vacation per registration date
+        await entities.fetching_vacation_days(db=db, user_id=user_id, approver=user_login.user_role_id)
 
         # add background tasks -> deliver email instructions
+        background_tasks.add_task(
+            bg_tasks.bg_task_temp_password_url_login_confirmation, user["user"].email, user["temp"])
 
     except IntegrityError as ie:
         db.rollback() # db rollback ops
@@ -229,7 +234,8 @@ async def posting_app_user_enable_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],
         user_login: Annotated[object, Depends(dependency=getting_current_user)],
-        model: Annotated[User_Status, Depends(dependency=User_Status.formatting)]
+        model: Annotated[User_Status, Depends(dependency=User_Status.formatting)],
+        background_tasks: BackgroundTasks
 ) -> HTMLResponse:
 
     try:
@@ -247,7 +253,8 @@ async def posting_app_user_enable_endpoint(
 
         if to_deliver["flag"]:
             # background task
-            pass
+            background_tasks.add_task(
+                bg_tasks.bg_task_temp_password_url_login_confirmation, record._email, to_deliver["temp"])
 
     except HTTPException:
         db.rollback() # db rollback ops

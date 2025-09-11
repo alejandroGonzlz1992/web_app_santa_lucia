@@ -157,7 +157,7 @@ export class AdjustValidator {
         }
     }
 
-    /* bonus update field field */
+    /* bonus update field */
     bonusAmountUpdateDateFieldValidate(fieldName) {
         /* get input element and div ids */
         let inputField = this.form.elements.namedItem(fieldName);

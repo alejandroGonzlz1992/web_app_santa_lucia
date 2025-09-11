@@ -26,6 +26,7 @@ class Crud_Entities_Manager:
         self.string = string
         self.random = random
         self.exc = None
+        self.cns = Cns
 
     # logger messages
     async def logger_sql_alchemy_error(self, exception: Union[object, str]) -> None:
@@ -158,7 +159,7 @@ class Crud_Entities_Manager:
         return user
 
     # register user
-    async def registering_crud_users(self, db: object, model: Union[dict, object]) -> object:
+    async def registering_crud_users(self, db: object, model: Union[dict, object]) -> dict:
         # generate hash password
         password = await self.generating_random_password()
 
@@ -189,7 +190,7 @@ class Crud_Entities_Manager:
         db.refresh(instance=user)
 
         # return
-        return user
+        return {"user": user, "temp": password}
 
     # register User_Role entity
     async def registering_crud_user_role_entity(
@@ -263,7 +264,7 @@ class Crud_Entities_Manager:
         deliver_mail = True
 
         # generate random password
-        temp_password = self.generating_random_password()
+        temp_password = await self.generating_random_password()
 
         # query entity
         user_role = db.query(self.models.User_Role).filter(self.models.User_Role.id_record == model['id']).first()
@@ -298,3 +299,22 @@ class Crud_Entities_Manager:
 
         # return
         return {"flag": deliver_mail, "temp": temp_password}
+
+    # fetching vacations date after user create
+    async def fetching_vacation_days(self, db: object, user_id: Union[int, str], approver: Union[int, str]) -> None:
+        # query user role
+        id_user_role_current = db.query(self.models.User_Role.id_record.label('_id')).filter(
+            self.models.User_Role.id_user == user_id).first()
+
+        # temp model
+        vacations = self.models.Vacation(
+            available=self.cns.VACATIONS_QUEUE.value,
+            id_subject=id_user_role_current._id,
+            id_approver=approver
+        )
+        # add to model
+        db.add(instance=vacations)
+        # commit
+        db.commit()
+        # refresh
+        db.refresh(instance=vacations)

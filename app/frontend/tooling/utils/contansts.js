@@ -29,7 +29,7 @@ export const Static = {
     ALLOW_FILE_EXT: ["png", "jpg", "jpeg", "pdf"],
     ADDRESS_LENGTH: 10,
     MILLISECONDS_PER_DAY: 86_400_000,
-    REGEX_RADIO_BUTTONS: /^ratings\[(\d+)\/]$/,
+    REGEX_RADIO_BUTTONS: /^ratings\[(\d+)\]$/,
 
     ENABLE_USER_RESTORE_PASSWORD: [
         ["#id_temp_password_field", "#id_new_password_field", "#id_confirm_password_field"],

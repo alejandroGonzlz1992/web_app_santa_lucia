@@ -66,7 +66,10 @@
 
     <div class="row">
 
-
+        <!--Display Error Message-->
+        {% if not params.eval_type._status %}
+            <!--None-->
+        {% else %}
         <div class="col-md-5 col-xl-4">
             <div class="card mb-3">
                 <div class="card-body text-start">
@@ -105,7 +108,13 @@
                                         name="evaluation_user_name_field"
                                         style="color: cadetblue;">
                                     <option value="not_select" selected>Seleccionar empleado a evaluar</option>
-                                    <option value="test" selected>TEST</option>
+                                    {% for item in params.users %}
+                                        {% if item._role == "Empleado" %}
+                                        <option value="{{ item._id }}">
+                                            {{ item._name }} {{ item._lastname }} {{ item._lastname2 }}
+                                        </option>
+                                        {% endif %}
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
@@ -113,6 +122,42 @@
                         <div id="id_status_not_selected_field_error" class="text-danger text-start"
                                 style="font-size: 13px; display: none;">
                         </div>
+
+                        <!-- Evaluation Item Questions -->
+                        {% for item in params.questions if item._type == "Rendimiento Empleado" %}
+                            <input type="hidden" value="{{ item._type }}" name="evaluation_type">
+
+                            <div class="py-1 text-start">
+                                <label class="form-label text-center" style="color: #3371db;">
+                                    {{ loop.index }}. {{ item._question }}
+                                </label>
+
+                                <div class="col py-2 text-start">
+                                    <div class="radio-wrapper">
+                                        <div class="row">
+                                            {% for num in range(1, 7) %}
+                                            <div class="col">
+                                                <div class="py-2">
+                                                    {% set rid = "id_question_%s_%s"|format(item._id, num) %}
+                                                    <input type="radio" id="{{ rid }}" name="ratings[{{ item._id }}]"
+                                                           value="{{ num }}">
+                                                    <label for="{{ rid }}" style="font-size: 15px;">
+                                                        <b class="px-3">{{ num }}</b>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <!---form validation error fields--->
+                        <div id="id_radio_button_not_check" class="text-danger text-start"
+                            style="font-size: 13px; display: none;">
+                        </div>
+                        <!---->
 
                         <!--Evaluation Detail Field-->
                         <div class="py-1 text-start">
@@ -166,7 +211,6 @@
             </div>
         </div>
         {% endif %}
-
     </div>
 </div>
 {% endblock %}
@@ -174,4 +218,10 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import {EvaluationValidator} from '{{ url_for("static", path="tooling/validators/services/evaluation.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new EvaluationValidator('id_evaluation_form');
+        });
+    </script>
 {% endblock %}

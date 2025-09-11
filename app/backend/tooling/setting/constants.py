@@ -31,6 +31,10 @@ class Constants(Enum):
     # email subject
     SUBJECT_EMAIL_NEW_PASSWORD_CONFIRM = "Ferretería Santa Lucía. Confirmación de cambio de contraseña."
     SUBJECT_EMAIL_TEMP_PASSWORD_CONFIRM = "Ferretería Santa Lucía. Generación de contraseña temporal."
+    SUBJECT_EMAIL_TEMP_PASSWORD_FIRST_SIGNIN = "Ferretería Santa Lucía. Inicio de Sesión por primera vez."
+
+    SUBJECT_EVALUATION_ENABLE_EMPLOYEE = "Ferretería Santa Lucía. Evaluación de empleado."
+    SUBJECT_EVALUATION_ENABLE_SUPERVISOR = "Ferretería Santa Lucía. Evaluación de supervisor."
 
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
@@ -38,8 +42,16 @@ class Constants(Enum):
     # labels
     LABEL_ADMIN = "Administrador"
 
+    # evaluation types
+    EMPLOYEE_EVALUATION = "Rendimiento Empleado"
+    SUPERVISOR_EVALUATION = "Evaluación Liderazgo"
+
+    # vacations queue
+    VACATIONS_QUEUE = 5
+
     # redirecting
     URL_REDIRECT_TO_PASSWORD_RESTORE = "http://127.0.0.1:8000/sesion/restablecer"
+    URL_REDIRECT_TO_EVALUATION_MAIN = "http://127.0.0.1:8000/evaluaciones/ce/"
 
     # tags
     AUTH, CRUD, SERV, TRANS = 'AUTH', 'CRUD', 'SERV' ,'TRANS'
