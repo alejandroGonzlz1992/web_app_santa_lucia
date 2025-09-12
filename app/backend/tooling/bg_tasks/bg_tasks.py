@@ -83,3 +83,20 @@ async def bg_task_send_evaluation_status_recipients(rec: dict[list], audience: L
         # log
         logger.info(f" [BG_task] -> Fail to send Temporarily password confirmation email to recipients. \n Details: {e}")
 
+
+# send evaluation results
+async def bg_task_send_evaluation_results(
+        rec: list[str], subject: object, audience: Literal["_employee", "_supervisor"]) -> None:
+
+    try:
+        # build email content
+        msg = await emailing.send_evaluation_results(rec=rec, subject=subject, audience=audience)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=rec, msg=msg)
+
+        # logs
+        logger.info("[BG] Evaluation Results notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Evaluation Results notification email to recipients: {e}')

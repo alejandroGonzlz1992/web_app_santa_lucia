@@ -4,7 +4,7 @@ from fastapi import Form, Depends
 from typing import Union
 
 # local import
-from app.backend.db_transactions.services.db_services import Service_Trans_Manager
+from app.backend.db_transactions.services.db_evaluation import Service_Trans_Manager
 
 
 # instance

@@ -9,7 +9,7 @@ from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
-from app.backend.db_transactions.services.db_services import Service_Trans_Manager
+from app.backend.db_transactions.services.db_evaluation import Service_Trans_Manager
 from app.backend.schema.service.Evaluation import Create_Evaluation, Enable_Evaluation
 from app.backend.database.config import Session_Controller
 from app.backend.tooling.bg_tasks import bg_tasks
@@ -138,12 +138,19 @@ async def posting_app_evaluation_results(
         records = await serv.collecting_evaluation_records(
             db=db, model=model.model_dump(), approver=user_login.user_role_id)
 
-        # flag for audience in bg tasks
+        # print(f'\n {records} \n')
+
+        # flag for returning and bg tasks
+        to_return = '_employee' if model.evaluation_type == 'Rendimiento Empleado' else '_supervisor'
 
         # bg tasks
+        if to_return == '_employee':
+            background_tasks.add_task(
+                bg_tasks.bg_task_send_evaluation_results, [records._subj_email, records._sup_email], records, "_employee")
 
-        # flag for returning
-        to_return = '_employee' if model.evaluation_type == 'Rendimiento Empleado' else '_supervisor'
+        elif to_return == '_supervisor':
+            background_tasks.add_task(
+                bg_tasks.bg_task_send_evaluation_results, [records._subj_email, records._sup_email], records, "_supervisor")
 
     except SQLAlchemyError as op:
         db.rollback()  # db rollback

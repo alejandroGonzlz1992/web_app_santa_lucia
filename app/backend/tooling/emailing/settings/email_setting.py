@@ -149,3 +149,41 @@ class Email_Manager:
 
         # return
         return msg.as_string()
+
+    # evaluation results delivery
+    async def send_evaluation_results(
+            self, rec: list[str], subject: object, audience: Literal["_employee", "_supervisor"]) -> str:
+        # header
+        msg = self.builder["multipart"]("alternative")
+        msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
+
+        if audience == "_employee":
+            msg["Subject"] = self.cns.SUBJECT_EVALUATION_RESULT_SUPERVISOR.value
+
+            # html template
+            content = self.builder["text"](
+                self.template.html_evaluation_results_sending(
+                    type_of="supervisor", subject=subject), "html")
+
+            # attach content
+            msg.attach(content)
+            # to
+            msg["To"] = ", ".join(rec)
+
+        elif audience == "_supervisor":
+            msg["Subject"] = self.cns.SUBJECT_EVALUATION_RESULT_EMPLOYEE.value
+
+            # html template
+            content = self.builder["text"](
+                self.template.html_evaluation_results_sending(
+                    type_of="empleado", subject=subject), "html")
+
+            # attach content
+            msg.attach(content)
+            # to
+            msg["To"] = ", ".join(rec)
+
+        # return
+        return msg.as_string()
+
+

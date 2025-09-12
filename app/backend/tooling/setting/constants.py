@@ -36,6 +36,9 @@ class Constants(Enum):
     SUBJECT_EVALUATION_ENABLE_EMPLOYEE = "Ferretería Santa Lucía. Evaluación de empleado."
     SUBJECT_EVALUATION_ENABLE_SUPERVISOR = "Ferretería Santa Lucía. Evaluación de supervisor."
 
+    SUBJECT_EVALUATION_RESULT_EMPLOYEE = "Ferretería Santa Lucía. Resultado Evaluación de empleado."
+    SUBJECT_EVALUATION_RESULT_SUPERVISOR = "Ferretería Santa Lucía. Resultado Evaluación de supervisor."
+
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
 
@@ -131,11 +134,15 @@ class Constants(Enum):
 
     # permission
     URL_PERMISSION = '/solicitudes/ce'
-    URL_PERMISSION_CREATE_HOUR = '/registrar/horas'
+    URL_PERMISSION_EXTRA_HOURS_MAIN = '/horas_extra'
+    URL_PERMISSION_CREATE_EXTRA_HOURS = '/registrar/horas'
+    URL_PERMISSION_UPDATE_EXTRA_HOURS = f'/actualizar/horas/{URL_ID}'
+    URL_PERMISSION_UPDATE_EXTRA_HOURS_POST = '/actualizar/horas'
+
+    URL_PERMISSION_VACATION_MAIN = '/vacaciones'
     URL_PERMISSION_CREATE_VACATION = '/registrar/vacaciones'
-    URL_PERMISSION_APPROVALS = '/aprobaciones'
-    URL_PERMISSION_APPROVALS_UPDATE = f'/actualizar/{URL_ID}'
-    URL_PERMISSION_APPROVALS_UPDATE_POST = f'/actualizar'
+    URL_PERMISSION_UPDATE_VACATION = f'/actualizar/vacaciones/{URL_ID}'
+    URL_PERMISSION_UPDATE_VACATION_POST = '/actualizar/vacaciones'
 
     # bonus
     URL_BONUS = '/aguinaldos/ce'

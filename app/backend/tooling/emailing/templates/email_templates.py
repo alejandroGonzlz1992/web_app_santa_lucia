@@ -283,3 +283,70 @@ def html_evaluation_activate_with_url_sending(type_of: str, login_url: str) -> s
                 </tbody>
             </table>
         """
+
+
+# html evaluation results
+def html_evaluation_results_sending(type_of: str, subject: object) -> str:
+    return f"""
+            <table border="0" cellspacing="0" cellpadding="0" style="max-width:600px">
+                <tbody>
+                    <tr height="16"></tr>
+                    <tr>
+                        <td>
+                            <table bgcolor="#4184F3" width="100%" border="0" cellspacing="0" cellpadding="0"
+                                style="min-width:332px;max-width:600px;border:1px solid #e0e0e0;border-bottom:0;border-top-left-radius:3px;border-top-right-radius:3px">
+                                <tbody>
+                                    <tr>
+                                        <td height="72px" colspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="32px"></td>
+                                        <td
+                                            style="font-family:Roboto-Regular,Helvetica,Arial,sans-serif;font-size:24px;color:#ffffff;line-height:1.25">
+                                            Resultado de Evaluación | <b>{type_of.capitalize()}</b>
+                                        </td>
+                                        <td width="32px"></td>
+                                    </tr>
+                                    <tr>
+                                        <td height="18px" colspan="3"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table bgcolor="#FAFAFA" width="100%" border="0" cellspacing="0" cellpadding="0"
+                                style="min-width:332px;max-width:600px;border:1px solid #f0f0f0;border-bottom:1px solid #c0c0c0;border-top:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px">
+                                <tbody>
+                                    <tr height="16px">
+                                        <td width="32px" rowspan="3"></td>
+                                        <td></td>
+                                        <td width="32px" rowspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Estimado(a) {subject._subj_name} {subject._subj_lastname} {subject._subj_lastname2}.</p>
+                                            <p>Se encuentra a continuación los resultados de su evaluación {type_of.upper()}.</p>
+                                            <p>
+                                               Promedio de evaluación. <h3>{subject._avg}</h3>
+                                            </p>
+                                            <p>
+                                               Encuentre su documento de evaluación adjunto para más detalles.
+                                            </p>
+                                            <p>
+                                                Las respuestas contenidas en la evaluación son de carácter confidencial 
+                                                y serán evaluadas y discutidas con su persona a cargo.
+                                            </p>
+                                            <p>Estamos para servirle!</p>
+                                            <p>Ferretería Santa Lucía, Desamparados, Calle Fallas</p>
+                                        </td>
+                                    </tr>
+                                    <tr height="32px"></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        """
