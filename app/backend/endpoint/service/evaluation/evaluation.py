@@ -117,6 +117,65 @@ async def getting_app_evaluation_supervisor_endpoint(
     )
 
 
+# POST -> Evaluation Results
+@evaluation_route.post(Cns.URL_EVALUATION_POST_RESULT.value, response_class=HTMLResponse)
+async def posting_app_evaluation_results(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Create_Evaluation, Depends(Create_Evaluation.formatting)],
+        background_tasks: BackgroundTasks
+) -> HTMLResponse:
+
+    try:
+        # collecting evaluation results
+        await serv.registering_evaluation_results(db=db, model=model.model_dump(), sup_id=user_login.user_role_id)
+
+        # disable evaluation form
+        await serv.disabling_evaluation_module(db=db, model=model.model_dump())
+
+        # complex: querying evaluation data
+        records = await serv.collecting_evaluation_records(
+            db=db, model=model.model_dump(), approver=user_login.user_role_id)
+
+        # flag for audience in bg tasks
+
+        # bg tasks
+
+        # flag for returning
+        to_return = '_employee' if model.evaluation_type == 'Rendimiento Empleado' else '_supervisor'
+
+    except SQLAlchemyError as op:
+        db.rollback()  # db rollback
+        await serv.logger_sql_alchemy_error(exception=op)  # log errors
+        if model.evaluation_type == "Rendimiento Empleado":
+            return await getting_app_evaluation_employee_endpoint(
+                request=request, db=db, user_login=user_login, fg='_ops_error')
+        else:
+            return await getting_app_evaluation_supervisor_endpoint(
+                request=request, db=db, user_login=user_login, fg='_ops_error')
+
+    except OperationalError as op:
+        db.rollback()  # db rollback
+        await serv.logger_sql_alchemy_ops_error(exception=op)  # log errors
+        if model.evaluation_type == "Rendimiento Empleado":
+            return await getting_app_evaluation_employee_endpoint(
+                request=request, db=db, user_login=user_login, fg='_ops_error')
+        else:
+            return await getting_app_evaluation_supervisor_endpoint(
+                request=request, db=db, user_login=user_login, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'base/redirect.html', context={
+            'request': request, 'params': {
+                'domain': 'evaluaciones', 'redirect': 'ce', 'fg': to_return
+            }
+        },
+        background=background_tasks
+    )
+
+
 # GET -> Evaluation Enable
 @evaluation_route.get(Cns.URL_EVALUATION_ENABLE.value, response_class=HTMLResponse)
 async def getting_app_evaluation_enable_endpoint(
@@ -140,8 +199,6 @@ async def getting_app_evaluation_enable_endpoint(
             }
         }
     )
-
-
 
 
 # POST -> Evaluation Enable

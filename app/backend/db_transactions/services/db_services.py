@@ -4,6 +4,10 @@ from re import compile
 from fastapi import HTTPException, status, Request
 from logging import getLogger
 from typing import Union, Dict
+from sqlalchemy import or_, func, true
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import lateral
+from sqlalchemy.dialects.postgresql import aggregate_order_by
 
 # local import
 from app.backend.database import models
@@ -111,6 +115,11 @@ class Service_Trans_Manager:
         # return
         return ratings
 
+    # parsing average value
+    async def parsing_average_value(self, values: list) -> float:
+        average = round(float(sum(values)/len(values)), 2)
+        return average
+
     # query evaluation questions
     async def query_evaluation_questions(self, db: object) -> object:
         questions = db.query(
@@ -202,3 +211,107 @@ class Service_Trans_Manager:
 
         # return
         return {"employees": emp_list, "supervisors": sup_list}
+
+    # registering evaluation results
+    async def registering_evaluation_results(self, db: object, model: Union[dict, object], sup_id: Union[int, str]) -> None:
+        # temp model
+        evaluation = self.models.Evaluation(
+            score=list(model["ratings"].values()),
+            average=await self.parsing_average_value(values=list(model["ratings"].values())),
+            details=model["evaluation_detail"].capitalize(),
+            questions=list(model["ratings"].keys()),
+            id_subject=model["evaluation_user_name_field"],
+            id_approver=sup_id
+        )
+        # add model to db
+        db.add(instance=evaluation)
+        # db commit
+        db.commit()
+        # db refresh
+        db.refresh(instance=evaluation)
+
+    # disable evaluation form
+    async def disabling_evaluation_module(self, db: object, model: Union[dict, object]) -> None:
+        eval_status = db.query(
+            self.models.Evaluation_Type
+        ).filter(
+            self.models.Evaluation_Type.type == model["evaluation_type"]
+        ).first()
+
+        if eval_status:
+            eval_status.status = False
+
+        # db commit
+        db.commit()
+
+    # query aliases
+    async def query_aliases_for_evaluation(self) -> dict:
+        return {
+            'subj_role': aliased(self.models.User_Role), 'subj_user': aliased(self.models.User),
+            'subj_job': aliased(self.models.Role), 'sup_role': aliased(self.models.User_Role),
+            'sup_user': aliased(self.models.User), 'sup_job': aliased(self.models.Role),
+            'questions': aliased(self.models.Evaluation_Question)
+        }
+
+    # query evaluation results
+    async def collecting_evaluation_records(
+            self, db: object, model: Union[dict, object], approver: Union[int, str]) -> object:
+        # input ids
+        subject_user_role_id = int(model["evaluation_user_name_field"])
+        supervisor_user_role_id = int(approver)
+
+        # aliases for subject and approver
+        entities = await self.query_aliases_for_evaluation()
+
+        pos = lateral(
+            func.generate_subscripts(self.models.Evaluation.questions, 1).table_valued('pos')
+        ).alias('pos')
+
+        # query records
+        records = db.query(
+            self.models.Evaluation.id_record.label('_eval_id'),
+            # subject
+            entities["subj_user"].name.label('_subj_name'),
+            entities["subj_user"].lastname.label('_subj_lastname'), entities["subj_user"].lastname2.label('_subj_lastname2'),
+            entities["subj_user"].email.label('_subj_email'), entities["subj_job"].name.label('_subj_role_name'),
+            # supervisor
+            entities["sup_user"].name.label('_sup_name'), entities["sup_user"].lastname.label('_sup_lastname'),
+            entities["sup_user"].lastname2.label('_sup_lastname2'), entities["sup_user"].email.label('_sup_email'),
+            entities["sup_job"].name.label('_sup_role_name'),
+            # evaluation fields
+            self.models.Evaluation.average.label('_avg'),
+            self.models.Evaluation.questions.label('_ques_ids'), self.models.Evaluation.score.label('_scores'),
+            self.models.Evaluation.details.label('_feedback'),
+            # order question texts
+            func.array_agg(aggregate_order_by(entities["questions"].question, pos.c.pos)).label('_ques_texts')
+        ).select_from(
+            self.models.Evaluation
+        ).join(
+            entities["subj_role"], entities["subj_role"].id_record == self.models.Evaluation.id_subject
+        ).join(
+            entities["sup_role"], entities["sup_role"].id_record == self.models.Evaluation.id_approver
+        ).join(
+            entities["subj_user"], entities["subj_user"].id_record == entities["subj_role"].id_user
+        ).join(
+            entities["sup_user"], entities["sup_user"].id_record == entities["sup_role"].id_user
+        ).join(
+            entities["subj_job"], entities["subj_job"].id_record == entities["subj_role"].id_role
+        ).join(
+            entities["sup_job"], entities["sup_job"].id_record == entities["sup_role"].id_role
+        ).join(
+            pos, true()
+        ).join(
+            entities["questions"], entities["questions"].id_record == self.models.Evaluation.questions[pos.c.pos]
+        ).filter(
+            entities["subj_role"].id_record == subject_user_role_id,
+            entities["sup_role"].id_record == supervisor_user_role_id
+        ).group_by(
+            self.models.Evaluation.id_record,
+            entities["subj_user"].id_record, entities["sup_user"].id_record,
+            entities["subj_job"].id_record, entities["sup_job"].id_record,
+            self.models.Evaluation.average, self.models.Evaluation.questions,
+            self.models.Evaluation.score, self.models.Evaluation.details
+        )
+
+        # return
+        return records.first()

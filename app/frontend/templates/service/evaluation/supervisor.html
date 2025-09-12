@@ -93,7 +93,8 @@
                     <div class="card-body text-start">
 
                         <!--Employee Evaluation Form -->
-                        <form id="id_evaluation_form" novalidate>
+                        <form id="id_evaluation_form" method="post"
+                              action="{{ url_for('posting_app_evaluation_results') }}" novalidate>
 
                             <h5 class="card-title mb-3 text-center">Evaluación de liderazgo</h5>
 

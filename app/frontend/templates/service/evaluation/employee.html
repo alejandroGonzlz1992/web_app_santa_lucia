@@ -93,7 +93,8 @@
                 <div class="card-body text-start">
 
                     <!--Employee Evaluation Form -->
-                    <form id="id_evaluation_form" novalidate>
+                    <form id="id_evaluation_form" method="post"
+                          action="{{ url_for('posting_app_evaluation_results') }}" novalidate>
 
                         <h5 class="card-title mb-3 text-center">Rendimiento del empleado</h5>
 
@@ -110,7 +111,7 @@
                                     <option value="not_select" selected>Seleccionar empleado a evaluar</option>
                                     {% for item in params.users %}
                                         {% if item._role == "Empleado" %}
-                                        <option value="{{ item._id }}">
+                                        <option value="{{ item._id_user_role }}">
                                             {{ item._name }} {{ item._lastname }} {{ item._lastname2 }}
                                         </option>
                                         {% endif %}

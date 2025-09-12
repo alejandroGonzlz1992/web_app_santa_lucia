@@ -21,7 +21,6 @@ class Crud_Entities_Manager:
     def __init__(self):
         self.models = models
         self.logger = logger
-        self.codes = Cns.PG_CONSTRAINT_CODES.value
         self.to_hash = getting_password_to_hash
         self.string = string
         self.random = random
