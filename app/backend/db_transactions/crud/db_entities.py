@@ -198,7 +198,8 @@ class Crud_Entities_Manager:
             gross_income=model['user_gross_income'],
             hire_date=model['user_create_date'],
             id_user=user_id,
-            id_role=model['user_role']
+            id_role=model['user_role'],
+            approver=model['user_approver']
         )
         # add to db
         db.add(instance=entity)
@@ -237,6 +238,7 @@ class Crud_Entities_Manager:
             entity_role.gross_income = model['user_gross_income']
             entity_role.hire_date = model['user_create_date']
             entity_role.id_role = model['user_role']
+            entity_role.approver = model['user_approver']
 
         # db commit
         db.commit()

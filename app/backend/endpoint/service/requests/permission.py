@@ -63,3 +63,27 @@ async def getting_app_permission_extra_hours_base_endpoint(
             }
         }
     )
+
+
+# GET -> Extra Hours Register
+@permission_route.get(Cns.URL_PERMISSION_CREATE_EXTRA_HOURS.value, response_class=HTMLResponse)
+async def getting_app_permission_extra_hours_register_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        fg: Annotated[str, None] = None
+) -> HTMLResponse:
+
+    # fetching current User logged-in
+    user_session = await trans.fetching_current_user(db=db, user=user_login)
+
+    # fetch request extra hours info
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'service/permission/extra_hours/register.html', context={
+            'request': request, 'params': {
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+            }
+        }
+    )

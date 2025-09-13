@@ -175,6 +175,9 @@ class User_Role(BASE):
     status = Column(Boolean, nullable=False, server_default='TRUE')
     hire_date = Column(Date, nullable=False)
     termination_date = Column(Date, nullable=True)
+    # revision -> id approver
+    approver = Column(Integer, nullable=False)
+    # -------------------------------------------
     id_user = Column(Integer, ForeignKey('entity.user.id_record'), nullable=False)
     id_role = Column(Integer, ForeignKey('entity.role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
@@ -199,18 +202,19 @@ class Extra_Hour(BASE):
     date_request = Column(Date, nullable=False)
     is_holiday = Column(Boolean, nullable=False, server_default='FALSE')
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # ----------
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Extra_Hour(id_record={self.id_record}, hours={self.hours}, date_request={self.date_request}, "
-            f"is_holiday={self.is_holiday}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
-            f"log_date={self.log_date})>")
+            f"is_holiday={self.is_holiday}, id_subject={self.id_subject}, log_date={self.log_date})>")
 
 
 class Vacation(BASE):
@@ -220,17 +224,18 @@ class Vacation(BASE):
     available = Column(Integer, nullable=False, server_default='0')
     used_days = Column(Integer, nullable=False, server_default='0')
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Extra_Hour(id_record={self.id_record}, available={self.available}, used_days={self.used_days}, "
-            f"id_subject={self.id_subject}, id_approver={self.id_approver}, log_date={self.log_date})>")
+            f"id_subject={self.id_subject}, log_date={self.log_date})>")
 
 
 class Request_Extra_Hour(BASE):
@@ -242,18 +247,18 @@ class Request_Extra_Hour(BASE):
     type = Column(String(25), nullable=False, server_default='Horas Extra')
     status = Column(String(25), nullable=False, server_default='En Proceso') # En Proceso, Aprobado, Rechazado
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Request_Extra_Hour(id_record={self.id_record}, hours={self.hours}, date_request={self.date_request}, "
-            f"type={self.type}, status={self.status}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
-            f"log_date={self.log_date})>")
+            f"type={self.type}, status={self.status}, id_subject={self.id_subject}, log_date={self.log_date})>")
 
 
 class Request_Vacation(BASE):
@@ -266,18 +271,19 @@ class Request_Vacation(BASE):
     type = Column(String(25), nullable=False, server_default='Vacaciones')
     status = Column(String(25), nullable=False, server_default='En Proceso') # En Proceso, Aprobado, Rechazado
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Request_Vacation(id_record={self.id_record}, days={self.days}, date_start={self.date_start}, "
             f"date_return={self.date_return}, type={self.type}, status={self.status}, id_subject={self.id_subject}, "
-            f"id_approver={self.id_approver}, log_date={self.log_date})>")
+            f"log_date={self.log_date})>")
 
 
 class Bonus(BASE):
@@ -288,18 +294,18 @@ class Bonus(BASE):
     month_amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
     month = Column(String(25), nullable=False)
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Bonus(id_record={self.id_record}, total_amount={self.total_amount}, month_amount={self.month_amount}, "
-            f"month={self.month}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
-            f"log_date={self.log_date})>")
+            f"month={self.month}, id_subject={self.id_subject}, log_date={self.log_date})>")
 
 
 class Settlement(BASE):
@@ -311,18 +317,18 @@ class Settlement(BASE):
     type = Column(String(25), nullable=False)
     details = Column(String(250), nullable=False)
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Settlement(id_record={self.id_record}, total_amount={self.total_amount}, status={self.status}, "
-            f"type={self.type}, details={self.details}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
-            f"log_date={self.log_date})>")
+            f"type={self.type}, details={self.details}, id_subject={self.id_subject}, log_date={self.log_date})>")
 
 
 class Inability(BASE):
@@ -338,11 +344,12 @@ class Inability(BASE):
     doc_number = Column(String(75), nullable=False, unique=True)
     status = Column(String(25), nullable=False, server_default='En Proceso') # En Proceso, Aprobado, Rechazado
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision in here --> drop column foreign key
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
+    # approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
@@ -350,7 +357,7 @@ class Inability(BASE):
             f"<Inability(id_record={self.id_record}, date_start={self.date_start}, date_return={self.date_return}, "
             f"days={self.days}, type={self.type}, details={self.details}, document={self.document}, "
             f"doc_number={self.doc_number}, status={self.status}, id_subject={self.id_subject}, "
-            f"id_approver={self.id_approver}, log_date={self.log_date})>")
+            f"log_date={self.log_date})>")
 
 
 class Evaluation_Type(BASE):

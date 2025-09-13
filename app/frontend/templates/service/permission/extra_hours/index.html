@@ -68,7 +68,8 @@
                             Consulta de histórico de horas extras solicitadas por el empleado y su respectivo estado.
                         </div>
                             <!--Register Checkin Button-->
-                        <a class="mb-3 px-3 text-end" href="#">
+                        <a class="mb-3 px-3 text-end"
+                           href="{{ url_for('getting_app_permission_extra_hours_register_endpoint') }}">
                             <button class="btn btn-info"><b>Registrar Solicitud</b></button>
                         </a>
                     </div>
@@ -92,7 +93,7 @@
                                     aria-label="Default select example" name="item_status" id="id_input_field">
                                 <option value="En Proceso" selected>En Proceso</option>
                                 <option value="Aprobado">Aprobado</option>
-                                <option value="Denegado">Denegado</option>
+                                <option value="Rechazado">Rechazado</option>
                             </select>
                             <button class="btn btn-primary mt-2" type="button" id="id_filter_button">
                                 Consultar
@@ -116,12 +117,11 @@
                     <thead class="table-secondary">
                         <tr>
                             <th scope="col">Cod Registro</th>
-                            <th scope="col">Identificación</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Fecha Salida</th>
-                            <th scope="col">Fecha Retorno</th>
-                            <th scope="col">Número Boleta</th>
-                            <th scope="col">Estado</th>
+                            <th scope="col">Día Solicitud</th>
+                            <th scope="col">Horas</th>
+                            <th scope="col">Empleado</th>
+                            <th scope="col">Jefatura</th>
+                            <th scope="col">Estado Solicitud</th>
                             <th scope="col" colspan="2"
                                 style="text-align: center; vertical-align: middle;">Administrar</th>
                         </tr>
@@ -130,7 +130,6 @@
                         {% for item in [1, 2, 3, 4, 5, 6, 7] %}
                             <tr>
                                 <th scope="row"><b></b>{{ item }}</th>
-                                <td>{{ item }}</td>
                                 <td>{{ item }}</td>
                                 <td>{{ item }}</td>
                                 <td>{{ item }}</td>

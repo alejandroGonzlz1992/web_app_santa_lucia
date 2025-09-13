@@ -41,6 +41,8 @@ export class UsersValidator {
 
         this.userRoleFieldValidate('user_role');
 
+        this.userApprovalFieldValidate('user_approval');
+
         this.userGrossIncomeFieldValidate('user_gross_income');
 
         this.userCreateUpdateDateFieldValidate('user_create_date');
@@ -639,6 +641,39 @@ export class UsersValidator {
                 else {
                     /* clear error message */
                     Shared.clearErrorMessages(inputField, [divBefore]);
+                    /* update flag */
+                    this.valid = true;
+                }
+            });
+        }
+    }
+
+    /* user approval */
+    userApprovalFieldValidate(fieldName){
+        /* get input element and div ids */
+        let inputField = this.form.elements.namedItem(fieldName);
+        let divStatus = document.getElementById(this.data.user_approver.div_id.status);
+
+        /* validate on-time blank fields */
+        Shared.validateInputBlankFields(inputField, divStatus, this.data.user_approver.text.status, this);
+
+        if(this.valid){
+            /* add event listener to input field */
+            inputField.addEventListener("input", () => {
+                /* get input field value */
+                let value = inputField.value.trim();
+                /* validate only letters are input */
+                if(value === "not_select"){
+                    /* clear prev error message */
+                    Shared.clearErrorMessages(inputField, [divStatus]);
+                    /* display error message */
+                    Shared.displayErrorMessages(inputField, divStatus, this.data.user_approver.text.status);
+                    /* update flag */
+                    this.valid = false;
+                }
+                else {
+                    /* clear error message */
+                    Shared.clearErrorMessages(inputField, [divStatus]);
                     /* update flag */
                     this.valid = true;
                 }
