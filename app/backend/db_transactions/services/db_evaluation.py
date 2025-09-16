@@ -4,7 +4,7 @@ from re import compile
 from fastapi import HTTPException, status, Request
 from logging import getLogger
 from typing import Union, Dict
-from sqlalchemy import or_, func, true
+from sqlalchemy import func, true, and_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import lateral
 from sqlalchemy.dialects.postgresql import aggregate_order_by
@@ -135,6 +135,17 @@ class Service_Trans_Manager:
         # return
         return questions
 
+    # query evaluation approver
+    async def query_evaluation_approver(self, db: object, id_session: Union[int, str]) -> object:
+        approver = db.query(
+            self.models.User_Role.approver.label('_id_approver'),
+        ).filter(
+            self.models.User_Role.id_record == id_session
+        ).first()
+
+        # return
+        return approver
+
     # query user-specific records
     async def query_evaluation_user_specific_record(self, db: object) -> object:
         users = db.query(
@@ -143,7 +154,8 @@ class Service_Trans_Manager:
             self.models.User.lastname.label('_lastname'),
             self.models.User.lastname2.label('_lastname2'),
             self.models.Role.type.label('_role'),
-            self.models.User_Role.id_record.label('_id_user_role')
+            self.models.User_Role.id_record.label('_id_user_role'),
+            self.models.User_Role.approver.label('_approver')
         ).select_from(
             self.models.User_Role
         ).join(
@@ -220,8 +232,7 @@ class Service_Trans_Manager:
             average=await self.parsing_average_value(values=list(model["ratings"].values())),
             details=model["evaluation_detail"].capitalize(),
             questions=list(model["ratings"].keys()),
-            id_subject=model["evaluation_user_name_field"],
-            id_approver=sup_id
+            id_subject=model["evaluation_user_name_field"]
         )
         # add model to db
         db.add(instance=evaluation)
@@ -255,10 +266,10 @@ class Service_Trans_Manager:
 
     # query evaluation results
     async def collecting_evaluation_records(
-            self, db: object, model: Union[dict, object], approver: Union[int, str]) -> object:
+            self, db: object, model: Union[dict, object]) -> object:
         # input ids
         subject_user_role_id = int(model["evaluation_user_name_field"])
-        supervisor_user_role_id = int(approver)
+        # supervisor_user_id = int(model["evaluation_approver_field"])
 
         # aliases for subject and approver
         entities = await self.query_aliases_for_evaluation()
@@ -268,7 +279,7 @@ class Service_Trans_Manager:
         ).alias('pos')
 
         # query records
-        records = db.query(
+        records = (db.query(
             self.models.Evaluation.id_record.label('_eval_id'),
             # subject
             entities["subj_user"].name.label('_subj_name'),
@@ -289,13 +300,17 @@ class Service_Trans_Manager:
         ).join(
             entities["subj_role"], entities["subj_role"].id_record == self.models.Evaluation.id_subject
         ).join(
-            entities["sup_role"], entities["sup_role"].id_record == self.models.Evaluation.id_approver
-        ).join(
             entities["subj_user"], entities["subj_user"].id_record == entities["subj_role"].id_user
         ).join(
-            entities["sup_user"], entities["sup_user"].id_record == entities["sup_role"].id_user
-        ).join(
             entities["subj_job"], entities["subj_job"].id_record == entities["subj_role"].id_role
+
+        ).join(
+            entities["sup_user"], entities["sup_user"].id_record == entities["subj_role"].approver
+        ).join(
+            entities["sup_role"], and_(
+                entities["sup_role"].id_user == entities["sup_user"].id_record,
+                entities["sup_role"].status.is_(True),
+            )
         ).join(
             entities["sup_job"], entities["sup_job"].id_record == entities["sup_role"].id_role
         ).join(
@@ -303,15 +318,14 @@ class Service_Trans_Manager:
         ).join(
             entities["questions"], entities["questions"].id_record == self.models.Evaluation.questions[pos.c.pos]
         ).filter(
-            entities["subj_role"].id_record == subject_user_role_id,
-            entities["sup_role"].id_record == supervisor_user_role_id
+            entities["subj_role"].id_record == subject_user_role_id
         ).group_by(
             self.models.Evaluation.id_record,
             entities["subj_user"].id_record, entities["sup_user"].id_record,
             entities["subj_job"].id_record, entities["sup_job"].id_record,
             self.models.Evaluation.average, self.models.Evaluation.questions,
             self.models.Evaluation.score, self.models.Evaluation.details
-        )
+        ))
 
         # return
         return records.first()

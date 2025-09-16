@@ -127,21 +127,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in [1, 2, 3, 4, 5, 6, 7] %}
-                            <tr>
-                                <th scope="row"><b></b>{{ item }}</th>
-                                <td>{{ item }}</td>
-                                <td>{{ item }}</td>
-                                <td>{{ item }}</td>
-                                <td>{{ item }}</td>
-                                <td>{{ item }}</td>
-                                <td style="text-align: center; vertical-align: middle;">
-                                    <a href="#">
-                                        <i class="align-center" data-feather="refresh-ccw"></i>
-                                        Actualizar Solicitud
-                                    </a>
-                                </td>
-                            </tr>
+                        {% for item in params.records %}
+                        <tr>
+                            <th scope="row"><b></b>{{ item._id }}</th>
+                            <td>{{ item._date_request }}</td>
+                            <td>{{ item._hours }}</td>
+                            <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
+                            <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
+                            <td>{{ item._status }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <a href="#">
+                                    <i class="align-center" data-feather="refresh-ccw"></i>
+                                    Actualizar Solicitud
+                                </a>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -154,4 +154,12 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import { FilterSearching } from "{{url_for('static', path='tooling/utils/filtering.js')}}";
+        document.addEventListener("DOMContentLoaded", () => {
+            let filtering = new FilterSearching(
+                {"input": "id_input_field", "search":"id_filter_button", "reset": "id_reset_button", "row": 6}
+            );
+        });
+    </script>
 {% endblock %}

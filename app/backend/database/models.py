@@ -403,18 +403,17 @@ class Evaluation(BASE):
     details = Column(String(250), nullable=False)
     questions = Column(ARRAY(Integer), nullable=False)
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # revision -> remove id_approver fk
+    # id_approver = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     subject = relationship('User_Role', foreign_keys=[id_subject])
-    approver = relationship('User_Role', foreign_keys=[id_approver])
 
     # __rep__
     def __repr__(self):
         return (
             f"<Evaluation(id_record={self.id_record}, score={self.score}, average={self.average}, details={self.details},"
-            f"questions={self.questions}, id_subject={self.id_subject}, id_approver={self.id_approver}, "
-            f"log_date={self.log_date})>")
+            f"questions={self.questions}, id_subject={self.id_subject}, log_date={self.log_date})>")
 
 
 class Deduction(BASE):

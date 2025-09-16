@@ -23,7 +23,7 @@ class Create_Evaluation(BaseModel):
                    ratings: dict[int, int] = Depends(trans.parsing_evaluation_details),
                    evaluation_detail: str = Form(...)):
         # return
-        return cls(evaluation_user_name_field=evaluation_user_name_field, evaluation_type=evaluation_type,
+        return cls(evaluation_user_name_field=evaluation_user_name_field,evaluation_type=evaluation_type,
                    ratings=ratings, evaluation_detail=evaluation_detail)
 
 

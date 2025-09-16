@@ -332,9 +332,6 @@ def html_evaluation_results_sending(type_of: str, subject: object) -> str:
                                                Promedio de evaluación. <h3>{subject._avg}</h3>
                                             </p>
                                             <p>
-                                               Encuentre su documento de evaluación adjunto para más detalles.
-                                            </p>
-                                            <p>
                                                 Las respuestas contenidas en la evaluación son de carácter confidencial 
                                                 y serán evaluadas y discutidas con su persona a cargo.
                                             </p>

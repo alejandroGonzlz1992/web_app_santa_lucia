@@ -128,17 +128,13 @@ async def posting_app_evaluation_results(
 ) -> HTMLResponse:
 
     try:
-        # collecting evaluation results
         await serv.registering_evaluation_results(db=db, model=model.model_dump(), sup_id=user_login.user_role_id)
 
         # disable evaluation form
         await serv.disabling_evaluation_module(db=db, model=model.model_dump())
 
         # complex: querying evaluation data
-        records = await serv.collecting_evaluation_records(
-            db=db, model=model.model_dump(), approver=user_login.user_role_id)
-
-        # print(f'\n {records} \n')
+        records = await serv.collecting_evaluation_records(db=db, model=model.model_dump())
 
         # flag for returning and bg tasks
         to_return = '_employee' if model.evaluation_type == 'Rendimiento Empleado' else '_supervisor'
@@ -209,7 +205,7 @@ async def getting_app_evaluation_enable_endpoint(
 
 
 # POST -> Evaluation Enable
-@evaluation_route.post(Cns.URL_EVALUATION_POST_RESULT.value, response_class=RedirectResponse)
+@evaluation_route.post(Cns.URL_EVALUATION_ENABLE.value, response_class=RedirectResponse)
 async def posting_app_evaluation_enable_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],

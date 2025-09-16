@@ -76,7 +76,8 @@
                 <div class="card-body text-start">
 
                     <!--Hour Extra Form -->
-                    <form id="id_hours_extra_form" novalidate>
+                    <form id="id_hours_extra_form" method="post"
+                          action="{{ url_for('posting_app_permission_extra_hours_register_endpoint') }}" novalidate>
 
                         <!--Hidden Fields-->
                         <input type="hidden" value="POST" name="method">
