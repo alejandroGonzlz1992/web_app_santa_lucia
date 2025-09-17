@@ -1,5 +1,5 @@
 # import
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
@@ -96,15 +96,21 @@ async def posting_app_permission_extra_hours_register_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],
         user_login: Annotated[object, Depends(dependency=getting_current_user)],
-        model: Annotated[Create_Extra_Hours, Depends(Create_Extra_Hours.formatting)]
+        model: Annotated[Create_Extra_Hours, Depends(Create_Extra_Hours.formatting)],
+        background_tasks: BackgroundTasks
 ) -> HTMLResponse:
 
     try:
         # insert record on db
-        await serv.registering_extra_hour_record(db=db, model=model.model_dump(), id_session=user_login.user_role_id)
+        current = await serv.registering_extra_hour_record(db=db, model=model.model_dump(), id_session=user_login.user_role_id)
 
         # collecting emails
         emails_ = await serv.collecting_subject_approver_emails(db=db, id_login=user_login.user_role_id)
+
+        # records
+        records = await serv.current_extra_hour_request_record(db=db, id_request=current.id_record)
+
+        # bg tasks
 
 
     except SQLAlchemyError as op:

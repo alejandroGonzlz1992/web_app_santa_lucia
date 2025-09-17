@@ -3,9 +3,9 @@ import string, random
 from re import compile
 from fastapi import HTTPException, status
 from logging import getLogger
-from typing import Union, Dict
+from typing import Union
 from sqlalchemy.orm import aliased
-from sqlalchemy import and_
+from sqlalchemy import or_
 
 # local import
 from app.backend.database import models
@@ -91,14 +91,13 @@ class Permission_Trans_Manager:
 
         role_types = await self.fetching_active_role_type(db=db, id_session=id_login)
 
-        print(role_types)
-
         if "Administrador" in role_types:
             # see all
             pass
 
         elif "Jefatura" in role_types:
-            record = record.filter(sub_user_role.approver == id_login)
+            record = record.filter(or_(
+                sub_user_role.approver == id_login, sub_user_role.id_user == id_login))
 
         else:
             record = record.filter(sub_user_role.id_user == id_login)
@@ -107,7 +106,7 @@ class Permission_Trans_Manager:
         return record.order_by(self.models.Request_Extra_Hour.id_record.desc()).all()
 
     # register record on db
-    async def registering_extra_hour_record(self, db: object, model: Union[dict, object], id_session: int) -> None:
+    async def registering_extra_hour_record(self, db: object, model: Union[dict, object], id_session: int) -> object:
         extra_hours = self.models.Request_Extra_Hour(
             hours=model["hour_quantity_field"],
             date_request=model["hour_date_field"],
@@ -120,6 +119,9 @@ class Permission_Trans_Manager:
         db.commit()
         # refresh
         db.refresh(instance=extra_hours)
+
+        # return
+        return extra_hours
 
     # collecting subject and approvers email
     async def collecting_subject_approver_emails(self, db: object, id_login: Union[int, str]) -> object:
@@ -142,3 +144,18 @@ class Permission_Trans_Manager:
 
         # return
         return {"user_email": getattr(row, "_subj_email", None), "approver_email": getattr(row, "_appr_email", None)}
+
+    # current request record
+    async def current_extra_hour_request_record(self, db: object, id_request: Union[int, str]) -> object:
+        record = db.query(
+            self.models.Request_Extra_Hour.id_record.label('_id'),
+            self.models.Request_Extra_Hour.date_request.label('_date_request'),
+            self.models.Request_Extra_Hour.hours.label('_hours'),
+            self.models.Request_Extra_Hour.status.label('_status'),
+            self.models.Request_Extra_Hour.id_subject.label('_id_user_role'),
+        ).filter(
+            self.models.Request_Extra_Hour.id_record == id_request
+        ).first()
+
+        # return
+        return record

@@ -39,6 +39,9 @@ class Constants(Enum):
     SUBJECT_EVALUATION_RESULT_EMPLOYEE = "Ferretería Santa Lucía. Resultado Evaluación de empleado."
     SUBJECT_EVALUATION_RESULT_SUPERVISOR = "Ferretería Santa Lucía. Resultado Evaluación de supervisor."
 
+    SUBJECT_PERMISSION_EXTRA_HOURS_REQUEST = "Ferretería Santa Lucía. Solicitud de Permiso. Horas Extra."
+    SUBJECT_PERMISSION_VACATIONS_REQUEST = "Ferretería Santa Lucía. Solicitud de Permiso. Vacaciones."
+
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
 
