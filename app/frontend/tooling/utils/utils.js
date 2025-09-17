@@ -172,4 +172,17 @@ export class Utils {
 
     }
 
+    static identifyingNotSunday(selectedDay) {
+        /* get year, month, day */
+        let [year_, month_, day_] = selectedDay.split("-").map(Number);
+
+        let dateFormat = new Date(Date.UTC(year_, month_ - 1, day_));
+
+        if(dateFormat.getUTCDay() === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

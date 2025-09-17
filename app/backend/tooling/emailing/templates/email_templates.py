@@ -392,6 +392,9 @@ def html_permission_extra_hours_request(record: object, login_url: str) -> str:
                                         <td>
                                             <p>Notificaciones Ferretería Santa Lucía.</p>
                                             <p>Se encuentra a continuación el estado actual de la solicitud.</p>
+                                            <p> Solicitante. 
+                                                <h4>{record._subj_name} {record._subj_lastname} {record._subj_lastname2}</h4> 
+                                            </p>
                                             <p>
                                                Estado de Solicitud. <h3>{record._status}</h3>
                                                Fecha de Solicitud. <h3>{record._date_request}</h3>

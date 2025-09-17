@@ -187,11 +187,32 @@ class Email_Manager:
         return msg.as_string()
 
     # extra hours request send
-    async def send_extra_hours_request_notification(self, record: Union[object, dict], rec: Union[list[str], str]) -> str:
+    async def send_extra_hours_request_notification(
+            self, record: Union[object, dict], rec: Union[list[str], str]) -> str:
         # header
         msg = self.builder["multipart"]("alternative")
         msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
         msg["Subject"] = self.cns.SUBJECT_PERMISSION_EXTRA_HOURS_REQUEST.value
+
+        # html content
+        content = self.builder["text"](
+            self.template.html_permission_extra_hours_request(
+                record=record, login_url=self.cns.EMAIL_TO_LOGIN_SESSION.value), "html")
+
+        # attach content
+        msg.attach(content)
+        # message to
+        msg["To"] = ", ".join(rec)
+        # return
+        return msg.as_string()
+
+    # extra hours request update
+    async def send_extra_hours_update_request_notification(
+            self, record: Union[object, dict], rec: Union[list[str], str]) -> str:
+        # header
+        msg = self.builder["multipart"]("alternative")
+        msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
+        msg["Subject"] = self.cns.SUBJECT_PERMISSION_EXTRA_HOURS_UPDATE_REQUEST.value
 
         # html content
         content = self.builder["text"](

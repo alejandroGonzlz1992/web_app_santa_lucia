@@ -669,10 +669,12 @@ export const Static = {
             "div_id": {
                 "blank": "id_hour_date_blank_field",
                 "before": "id_hour_date_before_current_date_field",
+                "sunday": "id_hour_date_on_sunday_date_field"
             },
             "text": {
                 "blank": "Campo Obligatorio.",
                 "before": "La fecha de solicitud de hora extra no puede estar antes de la fecha actual.",
+                "sunday": "La fecha de solicitud de hora extra no puede ser los Domingos."
             }
         },
         "hour_schedule_type": {

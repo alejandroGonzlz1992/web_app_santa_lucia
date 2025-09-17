@@ -2,7 +2,7 @@
 from fastapi.templating import Jinja2Templates
 from enum import Enum
 from zoneinfo import ZoneInfo
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 
 # local import
@@ -40,6 +40,8 @@ class Constants(Enum):
     SUBJECT_EVALUATION_RESULT_SUPERVISOR = "Ferretería Santa Lucía. Resultado Evaluación de supervisor."
 
     SUBJECT_PERMISSION_EXTRA_HOURS_REQUEST = "Ferretería Santa Lucía. Solicitud de Permiso. Horas Extra."
+    SUBJECT_PERMISSION_EXTRA_HOURS_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Permiso. Horas Extra."
+
     SUBJECT_PERMISSION_VACATIONS_REQUEST = "Ferretería Santa Lucía. Solicitud de Permiso. Vacaciones."
 
     # email links
@@ -299,4 +301,20 @@ class Constants(Enum):
                    "Noviembre", "Diciembre"],
         "days": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
                  29, 30, 31]
+    }
+
+    # cr current year
+    CR_YEAR = datetime.now(ZoneInfo("America/Costa_Rica")).year
+
+    # holiday calendar
+    HOLIDAY_CALENDAR = {
+        "new_year": date(CR_YEAR, 1, 1),
+        "juan_santamaria": date(CR_YEAR, 4, 11),
+        "holy_thurs": date(CR_YEAR, 4, 17),
+        "holy_friday": date(CR_YEAR, 4, 18),
+        "labor_day": date(CR_YEAR, 5, 1),
+        "nicoya": date(CR_YEAR, 7, 25),
+        "mother_day": date(CR_YEAR, 8, 15),
+        "independence": date(CR_YEAR, 9, 15),
+        "christmas": date(CR_YEAR, 12, 25),
     }

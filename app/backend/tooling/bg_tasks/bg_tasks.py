@@ -100,3 +100,36 @@ async def bg_task_send_evaluation_results(
 
     except Exception as e:
         logger.exception(f'[BG]: Failed sending Evaluation Results notification email to recipients: {e}')
+
+# send permission request
+async def bg_task_send_permission_extra_hour_requests(recipients: Union[list[str], str], record: object) -> None:
+
+    try:
+        # build email content
+        msg = await emailing.send_extra_hours_request_notification(record=record, rec=recipients)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Permission Extra Hours Request notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Permission Extra Hours notification email to recipients: {e}')
+
+
+# send permission update request
+async def bg_task_send_permission_extra_hour_update_request(recipients: Union[list[str], str], record: object) -> None:
+
+    try:
+        # build email content
+        msg = await emailing.send_extra_hours_update_request_notification(record=record, rec=recipients)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Permission Extra Hours Update Request notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Update Permission Extra Hours notification email to recipients: {e}')

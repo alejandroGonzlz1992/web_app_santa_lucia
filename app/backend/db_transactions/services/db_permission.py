@@ -147,15 +147,129 @@ class Permission_Trans_Manager:
 
     # current request record
     async def current_extra_hour_request_record(self, db: object, id_request: Union[int, str]) -> object:
-        record = db.query(
+        # alias
+        subject_role = aliased(self.models.User_Role)
+        subject_user = aliased(self.models.User)
+
+        record = (db.query(
             self.models.Request_Extra_Hour.id_record.label('_id'),
             self.models.Request_Extra_Hour.date_request.label('_date_request'),
             self.models.Request_Extra_Hour.hours.label('_hours'),
             self.models.Request_Extra_Hour.status.label('_status'),
             self.models.Request_Extra_Hour.id_subject.label('_id_user_role'),
+            # subject's user fields
+            subject_user.name.label('_subj_name'),
+            subject_user.lastname.label('_subj_lastname'),
+            subject_user.lastname2.label('_subj_lastname2'),
+        ).select_from(
+            self.models.Request_Extra_Hour
+        ).join(
+            subject_role, subject_role.id_record == self.models.Request_Extra_Hour.id_subject
+        ).join(
+            subject_user, subject_user.id_record == subject_role.id_user
         ).filter(
             self.models.Request_Extra_Hour.id_record == id_request
-        ).first()
+        ).first())
 
         # return
         return record
+
+    # update record on db
+    async def updating_extra_hour_record(self, db: object, model: Union[dict, object]) -> object:
+        # record
+        record = db.query(
+            self.models.Request_Extra_Hour
+        ).filter(
+            self.models.Request_Extra_Hour.id_record == model["id"]
+        ).first()
+
+        if record:
+            record.status = model["permission_status_field"]
+
+            # db commit
+            db.commit()
+            # db refresh
+            db.refresh(instance=record)
+
+        # return
+        return record
+
+    # register extra hours
+    async def registering_user_extra_hours(
+            self, db: object, model: Union[dict, object]) -> object:
+        # query record from request
+        request_record = db.query(
+            self.models.Request_Extra_Hour.id_record.label('_id'),
+            self.models.Request_Extra_Hour.hours.label('_hours'),
+            self.models.Request_Extra_Hour.date_request.label('_date_request'),
+            self.models.Request_Extra_Hour.id_subject.label('_id_subject')
+        ).filter(
+            self.models.Request_Extra_Hour.id_record == model["id"]
+        ).first()
+
+        # calendar
+        holidays = self.cns.HOLIDAY_CALENDAR.value
+        # build a set
+        holiday_set = set(holidays.values())
+        # is_holiday
+        is_holiday_in = request_record._date_request in holiday_set
+
+        new_hours = self.models.Extra_Hour(
+            hours = request_record._hours,
+            date_request = request_record._date_request,
+            is_holiday = is_holiday_in,
+            id_subject = request_record._id_subject,
+        )
+        # add to model
+        db.add(instance=new_hours)
+        # db commit
+        db.commit()
+        # db refresh
+        db.refresh(instance=new_hours)
+
+    # query vacations object
+    async def querying_vacations_details(self, db: object, id_login: Union[int, str]) -> object:
+        # alias
+        sub_user_role = aliased(self.models.User_Role)
+        subject = aliased(self.models.User)
+        approver = aliased(self.models.User)
+
+        record = db.query(
+            self.models.Request_Extra_Hour.id_record.label('_id'),
+            self.models.Request_Extra_Hour.date_request.label('_date_request'),
+            self.models.Request_Extra_Hour.hours.label('_hours'),
+            # subject info
+            subject.name.label('_subj_name'),
+            subject.lastname.label('_subj_lastname'),
+            subject.lastname2.label('_subj_lastname2'),
+            # approver info
+            approver.name.label('_appr_name'),
+            approver.lastname.label('_appr_lastname'),
+            approver.lastname2.label('_appr_lastname2'),
+            # request status
+            self.models.Request_Extra_Hour.status.label('_status')
+        ).select_from(
+            self.models.Request_Extra_Hour
+        ).join(
+            sub_user_role, sub_user_role.id_record == self.models.Request_Extra_Hour.id_subject
+        ).join(
+            subject, subject.id_record == sub_user_role.id_user
+        ).join(
+            approver, approver.id_record == sub_user_role.approver
+        )
+
+        role_types = await self.fetching_active_role_type(db=db, id_session=id_login)
+
+        if "Administrador" in role_types:
+            # see all
+            pass
+
+        elif "Jefatura" in role_types:
+            record = record.filter(or_(
+                sub_user_role.approver == id_login, sub_user_role.id_user == id_login))
+
+        else:
+            record = record.filter(sub_user_role.id_user == id_login)
+
+        # return
+        return record.order_by(self.models.Request_Extra_Hour.id_record.desc()).all()

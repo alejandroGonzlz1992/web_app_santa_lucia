@@ -95,6 +95,7 @@ export class ExtraHourValidator {
         let inputField = this.form.elements.namedItem(fieldName);
         let divBlank = document.getElementById(this.data.hour_date_field.div_id.blank);
         let divBefore = document.getElementById(this.data.hour_date_field.div_id.before);
+        let divSunday = document.getElementById(this.data.hour_date_field.div_id.sunday);
 
         /* blank field listener */
         Shared.validateInputBlankFields(inputField, divBlank, this.data.hour_date_field.text.blank, this);
@@ -109,16 +110,25 @@ export class ExtraHourValidator {
 
                 if(dateField.start < dateField.current) {
                     /* clear previous errors */
-                    Shared.clearErrorMessages(inputField, [divBefore]);
+                    Shared.clearErrorMessages(inputField, [divSunday]);
                     /* display error message */
                     Shared.displayErrorMessages(inputField, divBefore, this.data.hour_date_field.text.before);
                     /* update flag */
                     this.valid = false;
                 }
 
-                else {
+                else if(Utils.identifyingNotSunday(inputField.value)) {
                     /* clear previous errors */
                     Shared.clearErrorMessages(inputField, [divBefore]);
+                    /* display error message */
+                    Shared.displayErrorMessages(inputField, divSunday, this.data.hour_date_field.text.sunday);
+                    /* update flag */
+                    this.valid = false;
+                }
+
+                else {
+                    /* clear previous errors */
+                    Shared.clearErrorMessages(inputField, [divBefore, divSunday]);
                     /* update flag */
                     this.valid = true;
                 }
