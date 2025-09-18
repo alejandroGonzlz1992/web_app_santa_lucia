@@ -707,20 +707,28 @@ export const Static = {
             "div_id": {
                 "blank": "id_start_date_blank_field",
                 "current": "id_start_date_before_current_date_field",
+                "on_saturday": "id_start_date_on_saturday_field",
+                "on_sunday": "id_start_date_on_sunday_field",
             },
             "text": {
                 "blank": "Campo Obligatorio.",
                 "current": "La fecha de inicio no puede estar antes de la fecha actual.",
+                "on_saturday": "La fecha de inicio de vacación no puede ser un sábado.",
+                "on_sunday": "La fecha de inicio de vacación no puede ser un domingo.",
             }
         },
         "end_date_field": {
             "div_id": {
                 "blank": "id_return_date_blank_field",
                 "before": "id_return_date_before_start_date_field",
+                "on_saturday": "id_return_date_on_saturday_field",
+                "on_sunday": "id_return_date_on_sunday_field",
             },
             "text": {
                 "blank": "Campo Obligatorio.",
                 "before": "La fecha de retorno no puede estar antes de la fecha de inicio.",
+                "on_saturday": "La fecha de retorno de vacación no puede ser un sábado.",
+                "on_sunday": "La fecha de retorno de vacación no puede ser un domingo.",
             }
         },
     },

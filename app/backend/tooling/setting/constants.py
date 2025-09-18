@@ -43,6 +43,7 @@ class Constants(Enum):
     SUBJECT_PERMISSION_EXTRA_HOURS_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Permiso. Horas Extra."
 
     SUBJECT_PERMISSION_VACATIONS_REQUEST = "Ferretería Santa Lucía. Solicitud de Permiso. Vacaciones."
+    SUBJECT_PERMISSION_VACATIONS_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Permiso. Vacaciones."
 
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
@@ -289,7 +290,8 @@ class Constants(Enum):
                 '_ops_error': "Se presentan interrupciones a nivel de conexión de base de datos. Se está trabajando para solucionar el inconveniente.",
                 '_orm_error': "Existen errores en el registro de la información. No se puede completar la operación.",
                 '_user_as_inactive': 'El usuario seleccionado ya se encuentra en estado Inactivo.',
-                '_user_as_active': 'El usuario seleccionado ya se encuentra en estado Activo.'
+                '_user_as_active': 'El usuario seleccionado ya se encuentra en estado Activo.',
+                '_available': 'No cuenta con las vacaciones disponibles para procesar su solicitud.'
             },
             '_expire': 'Su sesión ha expirado, ingresar credenciales nuevamente.'
         },

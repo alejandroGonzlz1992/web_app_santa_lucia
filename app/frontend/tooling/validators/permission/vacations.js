@@ -93,6 +93,8 @@ export class VacationsValidator {
         let inputField = this.form.elements.namedItem(fieldName);
         let divBlank = document.getElementById(this.data.start_date_field.div_id.blank);
         let divCurrent = document.getElementById(this.data.start_date_field.div_id.current);
+        let divSaturday = document.getElementById(this.data.start_date_field.div_id.on_saturday);
+        let divSunday = document.getElementById(this.data.start_date_field.div_id.on_sunday);
 
         /* blank field listener */
         Shared.validateInputBlankFields(inputField, divBlank, this.data.start_date_field.text.blank, this);
@@ -108,16 +110,34 @@ export class VacationsValidator {
 
                 if(dateField.start < dateField.current) {
                     /* clear prev errors */
-                    Shared.clearErrorMessages(inputField, [divCurrent]);
+                    Shared.clearErrorMessages(inputField, [divSaturday, divSunday]);
                     /* display errors */
                     Shared.displayErrorMessages(inputField, divCurrent, this.data.start_date_field.text.current);
                     /* update flag */
                     this.valid = false;
                 }
 
+                else if(Utils.identifyingNotSaturday(inputField.value)) {
+                    /* clear prev errors */
+                    Shared.clearErrorMessages(inputField, [divCurrent, divSunday]);
+                    /* display errors */
+                    Shared.displayErrorMessages(inputField, divSaturday, this.data.start_date_field.text.on_saturday);
+                    /* update flag */
+                    this.valid = false;
+                }
+
+                else if(Utils.identifyingNotSunday(inputField.value)) {
+                    /* clear prev errors */
+                    Shared.clearErrorMessages(inputField, [divCurrent, divSaturday]);
+                    /* display errors */
+                    Shared.displayErrorMessages(inputField, divSunday, this.data.start_date_field.text.on_sunday);
+                    /* update flag */
+                    this.valid = false;
+                }
+
                 else {
                     /* clear prev errors */
-                    Shared.clearErrorMessages(inputField, [divCurrent]);
+                    Shared.clearErrorMessages(inputField, [divCurrent, divSaturday, divSunday]);
                     /* update flag */
                     this.valid = true;
                 }
@@ -133,6 +153,8 @@ export class VacationsValidator {
 
         let divBlank = document.getElementById(this.data.end_date_field.div_id.blank);
         let divBefore = document.getElementById(this.data.end_date_field.div_id.before);
+        let divSaturday = document.getElementById(this.data.end_date_field.div_id.on_saturday);
+        let divSunday = document.getElementById(this.data.end_date_field.div_id.on_sunday);
 
         /* blank field listener */
         Shared.validateInputBlankFields(inputEndDateField, divBlank, this.data.end_date_field.text.blank, this);
@@ -148,16 +170,34 @@ export class VacationsValidator {
 
                 if(dateField.end < dateField.start) {
                     /* clear prev errors */
-                    Shared.clearErrorMessages(inputEndDateField, [divBefore]);
+                    Shared.clearErrorMessages(inputEndDateField, [divSaturday, divSunday]);
                     /* display errors */
                     Shared.displayErrorMessages(inputEndDateField, divBefore, this.data.end_date_field.text.before);
                     /* update flag */
                     this.valid = false;
                 }
 
+                else if(Utils.identifyingNotSaturday(inputEndDateField.value)) {
+                    /* clear prev errors */
+                    Shared.clearErrorMessages(inputEndDateField, [divBefore, divSunday]);
+                    /* display errors */
+                    Shared.displayErrorMessages(inputEndDateField, divSaturday, this.data.end_date_field.text.on_saturday);
+                    /* update flag */
+                    this.valid = false;
+                }
+
+                else if(Utils.identifyingNotSunday(inputEndDateField.value)) {
+                    /* clear prev errors */
+                    Shared.clearErrorMessages(inputEndDateField, [divBefore, divSaturday]);
+                    /* display errors */
+                    Shared.displayErrorMessages(inputEndDateField, divSunday, this.data.end_date_field.text.on_sunday);
+                    /* update flag */
+                    this.valid = false;
+                }
+
                 else {
                     /* clear prev errors */
-                    Shared.clearErrorMessages(inputEndDateField, [divBefore]);
+                    Shared.clearErrorMessages(inputEndDateField, [divBefore, divSaturday, divSunday]);
 
                     /* fetch number of days */
                     Utils.fetchingDaysVacation(dateField, "id_day_field", "day_field_total");

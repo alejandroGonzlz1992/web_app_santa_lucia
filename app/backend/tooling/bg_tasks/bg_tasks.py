@@ -101,7 +101,8 @@ async def bg_task_send_evaluation_results(
     except Exception as e:
         logger.exception(f'[BG]: Failed sending Evaluation Results notification email to recipients: {e}')
 
-# send permission request
+
+# send permission request extra hours
 async def bg_task_send_permission_extra_hour_requests(recipients: Union[list[str], str], record: object) -> None:
 
     try:
@@ -118,7 +119,7 @@ async def bg_task_send_permission_extra_hour_requests(recipients: Union[list[str
         logger.exception(f'[BG]: Failed sending Permission Extra Hours notification email to recipients: {e}')
 
 
-# send permission update request
+# send permission update request extra hours
 async def bg_task_send_permission_extra_hour_update_request(recipients: Union[list[str], str], record: object) -> None:
 
     try:
@@ -133,3 +134,37 @@ async def bg_task_send_permission_extra_hour_update_request(recipients: Union[li
 
     except Exception as e:
         logger.exception(f'[BG]: Failed sending Update Permission Extra Hours notification email to recipients: {e}')
+
+
+# send permission request vacations
+async def bg_task_send_permission_vacations_requests(recipients: Union[list[str], str], record: object) -> None:
+
+    try:
+        # build email content
+        msg = await emailing.send_vacations_request_notification(record=record, rec=recipients)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Permission Vacation Request notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Permission Vacation notification email to recipients: {e}')
+
+
+# send permission update request vacations
+async def bg_task_send_permission_vacations_update_request(recipients: Union[list[str], str], record: object) -> None:
+
+    try:
+        # build email content
+        msg = await emailing.send_vacations_update_request_notification(record=record, rec=recipients)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Permission Vacations Update Request notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Update Permission Vacations notification email to recipients: {e}')

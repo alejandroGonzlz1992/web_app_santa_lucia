@@ -1,10 +1,224 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!--Inherit-->
+{% extends 'base/index.html' %}
 
-</body>
-</html>
+<!--Page Title-->
+{% block title %}
+    <title>Ferretería Santa Lucía | Solicitudes | Vacaciones | Registrar </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>PERMISOS</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{ url_for('getting_app_permission_vacations_base_endpoint') }}">
+            <i class="align-middle" data-feather="check-square"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_fail_available" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._available}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--login form-->
+{% block container %}
+<div class="mb-3">
+    <div class="row">
+
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Solicitud Vacaciones</h5>
+                    </div>
+                    <div class="card-body text-start">
+                        <i class="align-start" data-feather="check-square"
+                            style="color: darkblue; width: 25px; height: 25px;"></i>
+                        Ingresar la información solicitada para generar una nueva solicitud de permiso de vacaciones.
+                        Considerar los requerimientos para cada campo determinado.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Hour Extra Form -->
+                    <form id="id_vacations_form" method="post"
+                          action="{{ url_for('posting_app_permission_vacations_register_endpoint') }}" novalidate>
+
+                        <!--Hidden Fields-->
+                        <input type="hidden" value="POST" name="method">
+                        <input type="hidden" value="Vacaciones" name="request_vacation">
+                        <input type="hidden" value="" name="day_field_total">
+
+                        <h5 class="card-title my-3 text-start"><strong>Vacaciones</strong></h5>
+
+                        <div class="row">
+
+                            <!--Start Date Field-->
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                           style="color: #3371db;">Fecha Inicio</label> *
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="font-size: 12px;">
+                                            <i data-feather="calendar"></i>
+                                        </span>
+                                        <input type="date" class="form-control text-start fs-8"
+                                               id="id_start_date_field" aria-describedby="passwordHelp"
+                                               style="font-size: 12px; color: cadetblue;" placeholder=""
+                                               name="start_date_field">
+                                    </div>
+                                </div>
+
+                                <!--Start Date Validation Errors Field-->
+                                <div id="id_start_date_blank_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_start_date_before_current_date_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_start_date_on_saturday_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_start_date_on_sunday_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                            </div>
+
+                            <!--Return Date Field-->
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                           style="color: #3371db;">Fecha Retorno</label> *
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="font-size: 12px;">
+                                            <i data-feather="calendar"></i>
+                                        </span>
+                                        <input type="date" class="form-control text-start fs-8"
+                                               id="id_end_date_field" aria-describedby="passwordHelp"
+                                               style="font-size: 12px; color: cadetblue;" placeholder=""
+                                               name="end_date_field">
+                                    </div>
+                                </div>
+
+                                <!--Return Date Validation Errors Field-->
+                                <div id="id_return_date_blank_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_return_date_before_start_date_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_return_date_on_saturday_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_return_date_on_sunday_field"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                            </div>
+
+                            <!--Total Days-->
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                           style="color: #3371db;"> Días</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control text-start fs-8"
+                                               id="id_day_field" aria-describedby="passwordHelp"
+                                               style="font-size: 12px; color: cadetblue;" placeholder=""
+                                               name="day_field" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-info" type="submit">
+                                        <b>REGISTRAR SOLICITUD</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+    <script type="module">
+        import {VacationsValidator} from '{{ url_for("static", path="tooling/validators/permission/vacations.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new VacationsValidator('id_vacations_form');
+        });
+    </script>
+{% endblock %}

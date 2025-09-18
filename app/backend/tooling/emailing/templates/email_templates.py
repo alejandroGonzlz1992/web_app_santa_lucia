@@ -349,7 +349,7 @@ def html_evaluation_results_sending(type_of: str, subject: object) -> str:
         """
 
 
-# html permission request notification
+# html permission request notification : extra hours
 def html_permission_extra_hours_request(record: object, login_url: str) -> str:
     return f"""
             <table border="0" cellspacing="0" cellpadding="0" style="max-width:600px">
@@ -402,6 +402,81 @@ def html_permission_extra_hours_request(record: object, login_url: str) -> str:
                                             </p>
                                             <p>
                                                 Recordar la importancia de una atención pronta a las horas extras de los 
+                                                colaboradores. Siempre y cuando cuenten con el visto 
+                                                bueno de su jefatura a cargo.
+                                            </p>
+                                            <p>
+                                                Para dar resolución a la presente solicitud.
+                                                <a href="{login_url}"><b>Iniciar Sesión</b></a>
+                                            </p>
+                                            <p>Estamos para servirle!</p>
+                                            <p>Ferretería Santa Lucía, Desamparados, Calle Fallas</p>
+                                        </td>
+                                    </tr>
+                                    <tr height="32px"></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        """
+
+
+# html permission request notification : vacations
+def html_permission_vacations_request(record: object, login_url: str) -> str:
+    return f"""
+            <table border="0" cellspacing="0" cellpadding="0" style="max-width:600px">
+                <tbody>
+                    <tr height="16"></tr>
+                    <tr>
+                        <td>
+                            <table bgcolor="#4184F3" width="100%" border="0" cellspacing="0" cellpadding="0"
+                                style="min-width:332px;max-width:600px;border:1px solid #e0e0e0;border-bottom:0;border-top-left-radius:3px;border-top-right-radius:3px">
+                                <tbody>
+                                    <tr>
+                                        <td height="72px" colspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="32px"></td>
+                                        <td
+                                            style="font-family:Roboto-Regular,Helvetica,Arial,sans-serif;font-size:24px;color:#ffffff;line-height:1.25">
+                                            Solicitud de Vacaciones
+                                        </td>
+                                        <td width="32px"></td>
+                                    </tr>
+                                    <tr>
+                                        <td height="18px" colspan="3"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table bgcolor="#FAFAFA" width="100%" border="0" cellspacing="0" cellpadding="0"
+                                style="min-width:332px;max-width:600px;border:1px solid #f0f0f0;border-bottom:1px solid #c0c0c0;border-top:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px">
+                                <tbody>
+                                    <tr height="16px">
+                                        <td width="32px" rowspan="3"></td>
+                                        <td></td>
+                                        <td width="32px" rowspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Notificaciones Ferretería Santa Lucía.</p>
+                                            <p>Se encuentra a continuación el estado actual de la solicitud.</p>
+                                            <p> Solicitante. 
+                                                <h4>{record._subj_name} {record._subj_lastname} {record._subj_lastname2}</h4> 
+                                            </p>
+                                            <p>
+                                               Estado de Solicitud. <h3>{record._status}</h3>
+                                               Fecha de Inicio. <h3>{record._start}</h3>
+                                               Fecha de Retorno. <h3>{record._return}</h3>
+                                               Días. <h3>{record._days} </h3>
+                                            </p>
+                                            <p>
+                                                Recordar la importancia de una atención pronta a las vacaciones de los 
                                                 colaboradores. Siempre y cuando cuenten con el visto 
                                                 bueno de su jefatura a cargo.
                                             </p>

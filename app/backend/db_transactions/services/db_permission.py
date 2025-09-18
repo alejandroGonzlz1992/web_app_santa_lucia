@@ -235,9 +235,10 @@ class Permission_Trans_Manager:
         approver = aliased(self.models.User)
 
         record = db.query(
-            self.models.Request_Extra_Hour.id_record.label('_id'),
-            self.models.Request_Extra_Hour.date_request.label('_date_request'),
-            self.models.Request_Extra_Hour.hours.label('_hours'),
+            self.models.Request_Vacation.id_record.label('_id'),
+            self.models.Request_Vacation.date_start.label('_start'),
+            self.models.Request_Vacation.date_return.label('_return'),
+            self.models.Request_Vacation.days.label('_days'),
             # subject info
             subject.name.label('_subj_name'),
             subject.lastname.label('_subj_lastname'),
@@ -247,11 +248,11 @@ class Permission_Trans_Manager:
             approver.lastname.label('_appr_lastname'),
             approver.lastname2.label('_appr_lastname2'),
             # request status
-            self.models.Request_Extra_Hour.status.label('_status')
+            self.models.Request_Vacation.status.label('_status')
         ).select_from(
-            self.models.Request_Extra_Hour
+            self.models.Request_Vacation
         ).join(
-            sub_user_role, sub_user_role.id_record == self.models.Request_Extra_Hour.id_subject
+            sub_user_role, sub_user_role.id_record == self.models.Request_Vacation.id_subject
         ).join(
             subject, subject.id_record == sub_user_role.id_user
         ).join(
@@ -272,4 +273,134 @@ class Permission_Trans_Manager:
             record = record.filter(sub_user_role.id_user == id_login)
 
         # return
-        return record.order_by(self.models.Request_Extra_Hour.id_record.desc()).all()
+        return record.order_by(self.models.Request_Vacation.id_record.desc()).all()
+
+    # register record on db
+    async def registering_vacations_record(self, db: object, model: Union[dict, object], id_session: int) -> object:
+        vacations = self.models.Request_Vacation(
+            days=model["day_field_total"],
+            date_start=model["start_date_field"],
+            date_return=model["end_date_field"],
+            type=model["request_vacation"],
+            id_subject=id_session
+        )
+        # add to model
+        db.add(instance=vacations)
+        # commit
+        db.commit()
+        # refresh
+        db.refresh(instance=vacations)
+
+        # return
+        return vacations
+
+    # query current vacation record
+    async def current_vacation_available_record(self, db: object, id_session: Union[int, str]) -> object:
+        # row
+        row = db.query(
+            self.models.Vacation.available.label('_available')
+        ).filter(
+            self.models.Vacation.id_subject == id_session
+        ).first()
+
+        if row._available < 1:
+            raise self.http_exec(status_code=self.status.HTTP_400_BAD_REQUEST,
+                                 detail='Vacation available is less than 1')
+
+    # current vacation record
+    async def current_vacation_request_record(self, db: object, id_request: Union[int, str]) -> object:
+        # alias
+        subject_role = aliased(self.models.User_Role)
+        subject_user = aliased(self.models.User)
+
+        record = (db.query(
+            self.models.Request_Vacation.id_record.label('_id'),
+            self.models.Request_Vacation.days.label('_days'),
+            self.models.Request_Vacation.date_start.label('_start'),
+            self.models.Request_Vacation.date_return.label('_return'),
+            self.models.Request_Vacation.type.label('_type'),
+            self.models.Request_Vacation.status.label('_status'),
+            self.models.Request_Vacation.id_subject.label('_id_user_role'),
+            # subject's user fields
+            subject_user.name.label('_subj_name'),
+            subject_user.lastname.label('_subj_lastname'),
+            subject_user.lastname2.label('_subj_lastname2'),
+        ).select_from(
+            self.models.Request_Vacation
+        ).join(
+            subject_role, subject_role.id_record == self.models.Request_Vacation.id_subject
+        ).join(
+            subject_user, subject_user.id_record == subject_role.id_user
+        ).filter(
+            self.models.Request_Vacation.id_record == id_request
+        ).first())
+
+        # return
+        return record
+
+    # update record on db
+    async def updating_vacations_record(self, db: object, model: Union[dict, object]) -> object:
+        # record
+        record = db.query(
+            self.models.Request_Vacation
+        ).filter(
+            self.models.Request_Vacation.id_record == model["id"]
+        ).first()
+
+        if record:
+            record.status = model["permission_status_field"]
+
+            # db commit
+            db.commit()
+            # db refresh
+            db.refresh(instance=record)
+
+        # return
+        return record
+
+    # register vacations
+    async def registering_user_vacations(
+            self, db: object, model: Union[dict, object]) -> object:
+        # query record from request
+        request_record = db.query(
+            self.models.Request_Vacation.id_record.label('_id'),
+            self.models.Request_Vacation.days.label('_days'),
+            self.models.Request_Vacation.date_start.label('_start'),
+            self.models.Request_Vacation.date_return.label('_return'),
+            self.models.Request_Vacation.type.label('_type'),
+            self.models.Request_Vacation.status.label('_status'),
+            self.models.Request_Vacation.id_subject.label('_id_subject')
+        ).filter(
+            self.models.Request_Vacation.id_record == model["id"]
+        ).first()
+
+        # add temp db model
+        new_vacations = self.models.Vacation(
+            used_days=request_record._days,
+            id_subject=request_record._id_subject,
+        )
+        # add to model
+        db.add(instance=new_vacations)
+        # db commit
+        db.commit()
+        # db refresh
+        db.refresh(instance=new_vacations)
+
+        # return
+        return new_vacations
+
+    # update used days vacations
+    async def updating_used_days_vacations(self, db: object, record: object) -> None:
+        # query record
+        current_row = db.query(
+            self.models.Vacation
+        ).filter(
+            self.models.Vacation.id_record == record.id_record,
+        ).first()
+
+        if current_row:
+            current_row.available = record.available - record.used_days
+
+            # db commit
+            db.commit()
+

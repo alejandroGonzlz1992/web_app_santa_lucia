@@ -18,6 +18,22 @@ class Create_Extra_Hours(BaseModel):
         return cls(hour_date_field=hour_date_field,hour_schedule_type=hour_schedule_type,
                    hour_quantity_field=hour_quantity_field)
 
+
+# create vacations
+class Create_Vacations(BaseModel):
+    request_vacation: str
+    start_date_field: date
+    end_date_field: date
+    day_field_total: Union[int, str]
+
+    @classmethod
+    def formatting(cls, request_vacation: str = Form(...), start_date_field: date = Form(...),
+                   end_date_field: date = Form(...), day_field_total: Union[int, str] = Form(...)):
+        # return
+        return cls(request_vacation=request_vacation, start_date_field=start_date_field,
+                   end_date_field=end_date_field, day_field_total=day_field_total)
+
+
 # update records
 class Update_Request(BaseModel):
     id: Union[int, str]
