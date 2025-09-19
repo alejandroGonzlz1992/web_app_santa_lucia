@@ -337,8 +337,9 @@ class Inability(BASE):
     id_record = Column(Integer, Identity(start=160, increment=1, cycle=True), primary_key=True)
     date_start = Column(Date, nullable=False)
     date_return = Column(Date, nullable=False)
-    days = Column(Integer, nullable=False, server_default='0')
-    type = Column(String(75), nullable=False)
+    # revision -> drop days and type columns
+    # days = Column(Integer, nullable=False, server_default='0')
+    # type = Column(String(75), nullable=False)
     details = Column(String(275), nullable=False)
     document = Column(LargeBinary, nullable=False)
     doc_number = Column(String(75), nullable=False, unique=True)

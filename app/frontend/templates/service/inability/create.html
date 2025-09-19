@@ -88,11 +88,11 @@
             <div class="card-body text-start">
 
                 <!--Hour Extra Form -->
-                <form id="id_inability_form" novalidate>
+                <form id="id_inability_form" enctype="multipart/form-data" method="post"
+                      action="{{ url_for('posting_app_inability_register_endpoint') }}" novalidate>
 
                     <!--Hidden Fields-->
                     <input type="hidden" value="POST" name="method">
-                    <input type="hidden" value="" name="inability_day">
 
                     <h5 class="card-title my-3 text-start"><strong>Incapacidad</strong></h5>
 

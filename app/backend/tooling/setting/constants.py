@@ -45,6 +45,9 @@ class Constants(Enum):
     SUBJECT_PERMISSION_VACATIONS_REQUEST = "Ferretería Santa Lucía. Solicitud de Permiso. Vacaciones."
     SUBJECT_PERMISSION_VACATIONS_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Permiso. Vacaciones."
 
+    SUBJECT_INABILITY_REQUEST = "Ferretería Santa Lucía. Solicitud de Incapacidad."
+    SUBJECT_INABILITY_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Incapacidad."
+
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
 
@@ -145,7 +148,7 @@ class Constants(Enum):
     URL_PERMISSION_UPDATE_EXTRA_HOURS = f'/actualizar/horas/{URL_ID}'
     URL_PERMISSION_UPDATE_EXTRA_HOURS_POST = '/actualizar/horas'
 
-    URL_PERMISSION_VACATION_MAIN = '/vacaciones'
+    URL_PERMISSION_VACATION_MAIN = '/vacaciones/ce'
     URL_PERMISSION_CREATE_VACATION = '/registrar/vacaciones'
     URL_PERMISSION_UPDATE_VACATION = f'/actualizar/vacaciones/{URL_ID}'
     URL_PERMISSION_UPDATE_VACATION_POST = '/actualizar/vacaciones'

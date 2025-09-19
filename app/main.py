@@ -28,7 +28,7 @@ async def getting_app_home_page_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
-    print(user_login)
+    # print(user_login)
 
     # watcher: functions
 
@@ -38,7 +38,6 @@ async def getting_app_home_page_endpoint(
     # payroll
     # if current date if same as paymentdate1 or paymentdate2 (for quincenal) execute deduction calculations, register
     # at database, calculate net payment, add one quota to aguinaldo and generate payment report to be downloaded.
-
 
     # return
     return Cns.HTML_.value.TemplateResponse(

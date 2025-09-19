@@ -155,7 +155,6 @@ async def bg_task_send_permission_vacations_requests(recipients: Union[list[str]
 
 # send permission update request vacations
 async def bg_task_send_permission_vacations_update_request(recipients: Union[list[str], str], record: object) -> None:
-
     try:
         # build email content
         msg = await emailing.send_vacations_update_request_notification(record=record, rec=recipients)
@@ -168,3 +167,19 @@ async def bg_task_send_permission_vacations_update_request(recipients: Union[lis
 
     except Exception as e:
         logger.exception(f'[BG]: Failed sending Update Permission Vacations notification email to recipients: {e}')
+
+
+# send inability request
+async def bg_task_send_inability_request(recipients: Union[list[str], str], record: object) -> None:
+    try:
+        # build email content
+        msg = await emailing.send_inability_request_notification(record=record, rec=recipients)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Inability Request notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Inability Request notification email to recipients: {e}')
