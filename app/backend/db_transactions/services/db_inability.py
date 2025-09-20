@@ -162,3 +162,20 @@ class Inability_Trans_Manager:
 
         # return
         return rows
+
+    # update inability status
+    async def updating_inability_status(
+            self, db: Union[Session, object], model: Union[BaseModel, dict]) -> None:
+        # record
+        row = db.query(
+            self.models.Inability
+        ).filter(
+            self.models.Inability.id_record == int(model["id"])
+        ).first()
+
+        if row:
+            row.status == model["inability_status_field"]
+
+            # db commit
+            db.commit()
+

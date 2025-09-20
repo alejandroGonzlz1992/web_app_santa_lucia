@@ -317,33 +317,4 @@ export class Shared {
 
     }
 
-    /* counting days between inability dates */
-    static calculatingInabilityDaysDifference(form, start, end, field) {
-        let startDateInput = form.elements.namedItem(start);
-        let returnDateInput = form.elements.namedItem(end);
-        let inabilityDaysInput = form.elements.namedItem(field);
-
-        function updateDays() {
-            let startDate = new Date(startDateInput.value);
-            let returnDate = new Date(returnDateInput.value);
-
-            if (!isNaN(startDate.getTime()) && !isNaN(returnDate.getTime())) {
-                if (returnDate >= startDate) {
-                    let timeDifference = returnDate - startDate;
-                    let dayDifference = timeDifference / (1000 * 60 * 60 * 24); // Convert ms to days
-
-                    dayDifference = dayDifference === 0 ? 1 : dayDifference;
-
-                    inabilityDaysInput.value = dayDifference;  // Update the field
-                } else {
-                    inabilityDaysInput.value = ""; // Clear if return date is before start date
-                }
-            }
-        }
-
-        startDateInput.addEventListener("change", updateDays);
-        returnDateInput.addEventListener("change", updateDays);
-
-    }
-
 }

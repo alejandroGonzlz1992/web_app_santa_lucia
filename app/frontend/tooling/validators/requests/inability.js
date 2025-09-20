@@ -21,17 +21,15 @@ export class InabilityValidator {
     initEventValidators() {
 
         /* on-time validators */
-        this.inabilityStartAndEndDateFieldValidate("start_date", "return_date");
+        this.startDateFieldValidate("start_date");
+
+        this.returnDateFieldValidate("start_date", "return_date");
 
         this.inabilityNumberFieldValidate("inability_number");
 
         this.inabilityFileFieldValidate("inability_file");
 
         this.inabilityDetailsFieldValidate("inability_detail");
-
-        /* collect days */
-        Shared.calculatingInabilityDaysDifference(
-            this.form, "start_date", "return_date", "inability_day");
 
         /* form submission */
         this.form.addEventListener("submit", (e) => {
@@ -95,42 +93,108 @@ export class InabilityValidator {
         return this.valid;
     }
 
-    /* star and end date inability field */
-    inabilityStartAndEndDateFieldValidate(fieldStart, fieldEnd) {
+    /* start date inability field */
+    startDateFieldValidate(fieldDate) {
         /* get element by name attr */
-        let inputFieldStart = this.form.elements.namedItem(fieldStart);
-        let inputFieldReturn = this.form.elements.namedItem(fieldEnd);
+        let inputStartDateField = this.form.elements.namedItem(fieldDate);
+        /* get div error elements by id */
+        let divStartDateBlank = document.getElementById(this.data.start_date.div_id.blank);
+        let divStartDateOnSaturday = document.getElementById(this.data.start_date.div_id.on_saturday);
+        let divStartDateOnSunday = document.getElementById(this.data.start_date.div_id.on_sunday);
 
-        let divBlankStart = document.getElementById(this.data.start_date.div_id.blank);
-        let divBlankReturn = document.getElementById(this.data.return_date.div_id.blank);
+        /* validate if input fields are in blank */
+        Shared.validateInputBlankFields(
+            inputStartDateField, divStartDateBlank, this.data.start_date.text.blank, this);
 
-        let divBefore = document.getElementById(this.data.return_date.div_id.before);
-
-        /* blank field listener */
-        Shared.validateInputBlankFields(inputFieldStart, divBlankStart, this.data.start_date.text.blank, this);
-        Shared.validateInputBlankFields(inputFieldReturn, divBlankReturn, this.data.return_date.text.blank, this);
-
-        /* event listener */
         if(this.valid) {
+            /* event lister for input field */
+            inputStartDateField.addEventListener("input", () => {
 
-            /* input field */
-            inputFieldReturn.addEventListener("input", () => {
-                /* collect values */
-                let dateField = Utils.dateVacations(inputFieldStart, inputFieldReturn);
-
-                if(dateField.end < dateField.start) {
-                    /* clear prev errors */
-                    Shared.clearErrorMessages(inputFieldReturn, [divBefore]);
-                    /* display errors */
-                    Shared.displayErrorMessages(inputFieldReturn, divBefore, this.data.return_date.text.before);
-                    /* update flag */
+                if(Utils.identifyingNotSaturday(inputStartDateField.value)) {
+                    /* clear previous errors */
+                    Shared.clearErrorMessages(inputStartDateField, [divStartDateOnSunday]);
+                    /* display current error */
+                    Shared.displayErrorMessages(
+                        inputStartDateField, divStartDateOnSaturday, this.data.start_date.text.on_saturday);
+                    /* update global flag */
                     this.valid = false;
                 }
+                else if(Utils.identifyingNotSunday(inputStartDateField.value)) {
+                    /* clear previous errors */
+                    Shared.clearErrorMessages(inputStartDateField, [divStartDateOnSaturday]);
+                    /* display current error */
+                    Shared.displayErrorMessages(
+                        inputStartDateField, divStartDateOnSunday, this.data.start_date.text.on_sunday);
+                    /* update global flag */
+                    this.valid = false;
+                }
+                else{
+                    /* clear all errors */
+                    Shared.clearErrorMessages(inputStartDateField, [divStartDateOnSunday, divStartDateOnSunday]);
+                    /* update global flag */
+                    this.valid = true;
+                }
+            });
+        }
+    }
 
-                else {
-                    /* clear prev errors */
-                    Shared.clearErrorMessages(inputFieldReturn, [divBefore]);
-                    /* update flag */
+    /* return date inability field */
+    returnDateFieldValidate(fieldStart, fieldReturn) {
+        /* get element by name attr */
+        let inputStartDateField = this.form.elements.namedItem(fieldStart);
+        let inputReturnDateField = this.form.elements.namedItem(fieldReturn);
+        /* get div error elements by id */
+        let divReturnDateBlank = document.getElementById(this.data.return_date.div_id.blank);
+        let divReturnDateBeforeStartDate = document.getElementById(this.data.return_date.div_id.before);
+        let divReturnDateOnSaturday = document.getElementById(this.data.return_date.div_id.on_saturday);
+        let divReturnDateOnSunday = document.getElementById(this.data.return_date.div_id.on_sunday);
+
+        /* validate if input fields are in blank */
+        Shared.validateInputBlankFields(
+            inputReturnDateField, divReturnDateBlank, this.data.return_date.text.blank, this);
+
+        if(this.valid) {
+            /* event lister for input field */
+            inputReturnDateField.addEventListener("input", () => {
+                /* cast start date and return date values */
+                let dateField = Utils.dateVacations(inputStartDateField, inputReturnDateField);
+
+                if(Utils.identifyingNotSaturday(inputReturnDateField.value)) {
+                    /* clear previous errors */
+                    Shared.clearErrorMessages(inputReturnDateField, [
+                        divReturnDateBeforeStartDate, divReturnDateOnSunday]);
+                    /* display current error */
+                    Shared.displayErrorMessages(
+                        inputReturnDateField, divReturnDateOnSaturday, this.data.return_date.text.on_saturday);
+                    /* update global flag */
+                    this.valid = false;
+                }
+                else if(Utils.identifyingNotSunday(inputReturnDateField.value)) {
+                    /* clear previous errors */
+                    Shared.clearErrorMessages(inputReturnDateField, [
+                        divReturnDateBeforeStartDate, divReturnDateOnSaturday]);
+                    /* display current error */
+                    Shared.displayErrorMessages(
+                        inputReturnDateField, divReturnDateOnSunday, this.data.return_date.text.on_sunday);
+                    /* update global flag */
+                    this.valid = false;
+                }
+                else if(dateField["end"] < dateField["start"]) {
+                    /* clear previous errors */
+                    Shared.clearErrorMessages(inputReturnDateField, [
+                        divReturnDateOnSaturday, divReturnDateOnSunday]);
+                    /* display current error */
+                    Shared.displayErrorMessages(
+                        inputReturnDateField, divReturnDateBeforeStartDate, this.data.return_date.text.before);
+                    /* update global flag */
+                    this.valid = false;
+                }
+                else{
+                    /* clear all errors */
+                    Shared.clearErrorMessages(
+                        inputReturnDateField, [
+                            divReturnDateBeforeStartDate, divReturnDateOnSaturday, divReturnDateOnSunday]);
+                    /* update global flag */
                     this.valid = true;
                 }
             });

@@ -588,19 +588,27 @@ export const Static = {
         "start_date": {
             "div_id": {
                 "blank": "id_start_date_blank_field",
+                "on_saturday": "id_start_date_on_saturday_field",
+                "on_sunday": "id_start_date_on_sunday_field"
             },
             "text": {
                 "blank": "Campo Obligatorio.",
+                "on_saturday": "La fecha de inicio de incapacidad no puede ser un sábado.",
+                "on_sunday": "La fecha de inicio de incapacidad no puede ser un domingo.",
             }
         },
         "return_date": {
             "div_id": {
                 "blank": "id_return_date_blank_field",
                 "before": "id_return_date_before_start_date",
+                "on_saturday": "id_return_date_on_saturday_field",
+                "on_sunday": "id_return_date_on_sunday_field"
             },
             "text": {
                 "blank": "Campo Obligatorio.",
                 "before": "La fecha de retorno no puede estar antes de la fecha de inicio.",
+                "on_saturday": "La fecha de retorno de incapacidad no puede ser un sábado.",
+                "on_sunday": "La fecha de retorno de incapacidad no puede ser un domingo.",
             }
         },
         "inability_number": {

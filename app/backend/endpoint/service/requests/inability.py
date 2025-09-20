@@ -179,3 +179,52 @@ async def getting_app_inability_approvals_endpoint(
             }
         }
     )
+
+
+# POST -> Inability Approval
+@inability_route.post(Cns.URL_INABILITY_UPDATE_POST.value, response_class=HTMLResponse)
+async def posting_app_inability_approvals_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Update_Inability, Depends(dependency=Update_Inability.formatting)],
+        background_tasks: BackgroundTasks,
+) -> HTMLResponse:
+
+    try:
+        # update inability status
+        await serv.updating_inability_status(db=db, model=model.model_dump())
+
+        # collect, current user's approver
+        emails_ = await serv.collecting_subject_and_approver_email(db=db, id_session=user_login.user_id)
+
+        # inability record
+        record = await serv.current_inability_record(db=db, id_session=user_login.user_role_id)
+
+        # send email
+        background_tasks.add_task(
+            bg_tasks.bg_task_send_inability_request, [emails_["sub"], emails_["apr"]], record)
+
+    except SQLAlchemyError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_inability_approvals_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_orm_error')
+
+    except OperationalError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_inability_approvals_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        "base/redirect.html", context={
+            "request": request, "params": {
+                "domain": "incapacidades", "redirect": "ce", "fg": "_update"
+            }
+        },
+        background=background_tasks
+    )
