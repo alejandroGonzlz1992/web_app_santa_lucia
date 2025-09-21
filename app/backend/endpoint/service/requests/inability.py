@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
 from sqlalchemy.exc import IntegrityError, OperationalError, SQLAlchemyError
+from starlette.responses import Response
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
@@ -148,13 +149,33 @@ async def getting_app_inability_details_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # fetch current inability record
+    record = await serv.querying_inability_record_details(db=db, id=id)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/inability/details.html', context={
             'request': request, 'params': {
-                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'record': record
             }
         }
+    )
+
+
+# POST -> Inability File
+@inability_route.get(Cns.URL_INABILITY_PDF.value, response_class=Response)
+async def getting_app_inability_file_download(
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        id: Annotated[Union[int, str], None]
+) -> Response:
+
+    # query file and name
+    pdf_file = await serv.querying_inability_file_record(db=db, id=id)
+
+    # return
+    return Response(
+        content=bytes(pdf_file['file']), media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={pdf_file['name']}"}
     )
 
 
@@ -193,7 +214,7 @@ async def posting_app_inability_approvals_endpoint(
 
     try:
         # update inability status
-        await serv.updating_inability_status(db=db, model=model.model_dump())
+        await serv.updating_inability_status(db=db, schema=model.model_dump())
 
         # collect, current user's approver
         emails_ = await serv.collecting_subject_and_approver_email(db=db, id_session=user_login.user_id)
@@ -207,7 +228,7 @@ async def posting_app_inability_approvals_endpoint(
 
     except SQLAlchemyError:
         db.rollback()  # -> db rollback
-        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError) # -> error logs
         # redirect to endpoint
         return await getting_app_inability_approvals_endpoint(
             request=request, db=db, user_login=user_login, id=model.id, fg='_orm_error')

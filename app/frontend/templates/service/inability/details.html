@@ -62,10 +62,13 @@
 
                     <!-- Dates -->
                     <div class="mb-4">
-                        <p class="mb-2" style="font-size: 0.95rem;"><strong>🗓️ Fecha Inicio:</strong> {{ test }}</p>
-                        <p class="mb-0" style="font-size: 0.95rem;"><strong>🗓️ Fecha Retorno:</strong> {{ test }}</p>
+                        <p class="mb-2" style="font-size: 0.95rem;"><strong>🗓️ Fecha Inicio:</strong>
+                            {{ params.record._start }}</p>
+                        <p class="mb-0" style="font-size: 0.95rem;"><strong>🗓️ Fecha Retorno:</strong>
+                            {{ params.record._return }}</p>
                         <br/>
-                        <p class="mb-0" style="font-size: 0.95rem;"><strong>🟰 Estado Incapacidad:</strong> {{ test }}</p>
+                        <p class="mb-0" style="font-size: 0.95rem;"><strong>🟰 Estado Incapacidad:</strong>
+                            {{ params.record._status }}</p>
                     </div>
 
                     <hr>
@@ -73,18 +76,19 @@
                     <!-- File and Inability Number -->
                     <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.85rem;">Detalles</h6>
                     <div class="text-start" style="font-size: 0.95rem;">
-                        <p class="mb-2"><strong>📜 Número Boleta:</strong> {{ test }}</p>
+                        <p class="mb-2"><strong>📜 Número Boleta:</strong> {{ params.record._doc_number }}</p>
                         <p class="mb-2"><strong>🏢 Emisor Legal:</strong> C.C.S.S.</p>
-                        <p class="mb-3"><strong>💊 Motivo Incapacidad:</strong> {{ test }}</p>
+                        <p class="mb-3"><strong>💊 Detalles:</strong> {{ params.record._details }}</p>
                     </div>
 
                     <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.85rem;">Detalle Laboral</h6>
                     <div class="text-start" style="font-size: 0.95rem;">
-                        <p class="mb-2"><strong>👷‍♂️ Nombre:</strong> {{ test }} {{ test }}
-                            {{ test }}</p>
-                        <p class="mb-2"><strong>🏗️ Departamento:</strong> {{ test }} </p>
-                        <p class="mb-2"><strong>✔️ Rol:</strong> {{ test }}</p>
-                        <p class="mb-0"><strong>✔️ Tipo de Rol:</strong> {{ test }}</p>
+                        <p class="mb-2"><strong>👷‍♂️ Nombre:</strong>
+                            {{ params.record._emp_name }} {{ params.record._emp_lastname }}
+                            {{ params.record._emp_lastname2 }}</p>
+                        <p class="mb-2"><strong>🏗️ Departamento:</strong> {{ params.record._depart_name }}</p>
+                        <p class="mb-2"><strong>✔️ Rol:</strong> {{ params.record._role_name }}</p>
+                        <p class="mb-0"><strong>✔️ Tipo de Rol:</strong> {{ params.record._role_type }}</p>
                     </div>
 
                 </div>
@@ -112,7 +116,7 @@
 
                     <h5 class="card-title mb-4">Descargar Documento Incapacidad</h5>
 
-                    <a class="mb-3" href="#">
+                    <a class="mb-3" href="{{ url_for('getting_app_inability_file_download', id=params.id) }}">
                         <button class="btn btn-secondary mb-3 px-3"><b>Descargar</b></button>
                     </a>
 

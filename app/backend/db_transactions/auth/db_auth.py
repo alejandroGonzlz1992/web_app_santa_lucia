@@ -170,4 +170,3 @@ class Auth_Manager:
 
             # db commit
             db.commit()
-

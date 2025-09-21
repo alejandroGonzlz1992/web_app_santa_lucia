@@ -95,7 +95,7 @@ class Inability_Trans_Manager:
         to_add = self.models.Inability(
             date_start=schema["start_date"],
             date_return=schema["return_date"],
-            details=schema["inability_detail"],
+            details=schema["inability_detail"].capitalize(),
             document=file,
             doc_number=schema["inability_number"],
             id_subject=id_session
@@ -136,17 +136,21 @@ class Inability_Trans_Manager:
 
     # collecting inability
     async def current_inability_record(
-            self, db: Union[Session, object], id_session: Union[int, str],) -> object:
+            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
         # aliases
         sub_user_role = aliased(self.models.User_Role)
         subject = aliased(self.models.User)
+        role_ = aliased(self.models.Role)
+        depat = aliased(self.models.Department)
 
-        rows = db.query(
+        rows = (db.query(
+            # inability
             self.models.Inability.id_record.label('_id'),
             self.models.Inability.date_start.label('_start'),
             self.models.Inability.date_return.label('_return'),
             self.models.Inability.doc_number.label('_doc_number'),
             self.models.Inability.status.label('_status'),
+            # subject
             subject.name.label('_emp_name'),
             subject.lastname.label("_emp_lastname"),
             subject.lastname2.label("_emp_lastname2")
@@ -158,24 +162,83 @@ class Inability_Trans_Manager:
             subject, subject.id_record == sub_user_role.id_user
         ).filter(
             sub_user_role.id_record == id_session
-        ).first()
+        ).first())
 
         # return
         return rows
 
     # update inability status
     async def updating_inability_status(
-            self, db: Union[Session, object], model: Union[BaseModel, dict]) -> None:
+            self, db: Union[Session, object], schema: Union[BaseModel, dict]) -> None:
         # record
         row = db.query(
             self.models.Inability
         ).filter(
-            self.models.Inability.id_record == int(model["id"])
+            self.models.Inability.id_record == int(schema["id"])
         ).first()
 
         if row:
-            row.status == model["inability_status_field"]
+            row.status = schema["inability_status_field"]
 
             # db commit
             db.commit()
+
+    # query inability record details
+    async def querying_inability_record_details(
+            self, db: Union[Session, object], id: Union[int, str]) -> object:
+        # aliases
+        ur_ = aliased(self.models.User_Role)
+        subj_ = aliased(self.models.User)
+        role_ = aliased(self.models.Role)
+        dept_ = aliased(self.models.Department)
+
+        rows = db.query(
+            # inability
+            self.models.Inability.id_record.label('_id'),
+            self.models.Inability.date_start.label('_start'),
+            self.models.Inability.date_return.label('_return'),
+            self.models.Inability.doc_number.label('_doc_number'),
+            self.models.Inability.status.label('_status'),
+            self.models.Inability.details.label('_details'),
+            # subject
+            subj_.name.label('_emp_name'),
+            subj_.lastname.label('_emp_lastname'),
+            subj_.lastname2.label('_emp_lastname2'),
+            # role and depart
+            role_.name.label('_role_name'),
+            role_.type.label('_role_type'),
+            dept_.name.label('_depart_name')
+        ).select_from(
+            self.models.Inability
+        ).join(
+            ur_, ur_.id_record == self.models.Inability.id_subject
+        ).join(
+            subj_, subj_.id_record == ur_.id_user
+        ).join(
+            role_, role_.id_record == ur_.id_role
+        ).join(
+            dept_, dept_.id_record == role_.id_department
+        ).filter(
+            self.models.Inability.id_record == int(id)
+        ).first()
+
+        # return
+        return rows
+
+    # query inability record for file
+    async def querying_inability_file_record(
+            self, db: Union[Session, object], id: Union[int, str]) -> dict:
+        # file
+        record_file = db.query(
+            self.models.Inability.document.label('_document'),
+            self.models.Inability.doc_number.label('_doc_number'),
+        ).filter(
+            self.models.Inability.id_record == int(id)
+        ).first()
+
+        # file name
+        f_name = f'Incapacidad_boleta_{record_file._doc_number}.pdf'
+
+        # return
+        return {"file": record_file._document, "name": f_name}
 

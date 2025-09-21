@@ -356,7 +356,7 @@ class Inability(BASE):
     def __repr__(self):
         return (
             f"<Inability(id_record={self.id_record}, date_start={self.date_start}, date_return={self.date_return}, "
-            f"days={self.days}, type={self.type}, details={self.details}, document={self.document}, "
+            f"details={self.details}, document={self.document}, "
             f"doc_number={self.doc_number}, status={self.status}, id_subject={self.id_subject}, "
             f"log_date={self.log_date})>")
 
