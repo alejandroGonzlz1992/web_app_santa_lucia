@@ -300,6 +300,27 @@ export class Shared {
 
     }
 
+    /* casting fetch value in hidden fields to time format */
+    static castingToTimeFormat(checkIn, checkOut) {
+        let to24HourFormat = (s) => {
+            let [, hh, mm, ap] = s.toLowerCase().match(Static.TIME_12_HOUR_FORMAT);
+            let hour = parseInt(hh, 10) % 12;
+
+            if(ap === "pm"){
+                hour += 12;
+            }
+
+            let pad = (n) => String(n).padStart(2, "0");
+
+            return `${pad(hour)}:${mm}:00`
+        }
+
+        let startTime = to24HourFormat(checkIn);
+        let endTime = to24HourFormat(checkOut);
+
+        return [startTime, endTime];
+    }
+
     /* fetch time values to hidden fields */
     static fetchValuesHiddenInput(fields, checkInValue, checkOutValue) {
 
@@ -310,10 +331,13 @@ export class Shared {
         /* calculate hours between */
         let totalHour = Utils.calculateHours(checkIn24HourModel, checkOutValue);
 
+        /* cast values */
+        let toCastValues = this.castingToTimeFormat(checkInValue, checkOutValueAmPm);
+
         /* set values to hidden fields */
-        fields["check_in"] = checkInValue;
-        fields["check_out"] = checkOutValueAmPm;
-        fields["hours"] = totalHour;
+        fields.check_in.value = toCastValues[0];
+        fields.check_out.value = toCastValues[1];
+        fields.hours.value = Math.ceil(totalHour);
 
     }
 

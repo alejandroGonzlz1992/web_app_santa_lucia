@@ -21,7 +21,31 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 <!--login form-->
@@ -44,7 +68,8 @@
                                     finalizada la jornada con su intervalo de horas completo.</p>
 
                                 <!--Check-in Check-out Form -->
-                                <form id="id_checkin_checkout_form" novalidate>
+                                <form id="id_checkin_checkout_form" method="post"
+                                      action="{{ url_for('posting_app_checkin_register_endpoint') }}" novalidate>
 
                                     <!--Hidden Input Fields-->
                                     <input type="hidden" value="POST" name="method">

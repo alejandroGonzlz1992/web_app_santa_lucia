@@ -492,3 +492,24 @@ class Payroll(BASE):
             f"<Payroll(id_record={self.id_record}, net_amount={self.net_amount}, details={self.details}, "
             f"id_deduction_payroll={self.id_deduction_payroll}, id_payment_date={self.id_payment_date}, "
             f"log_date={self.log_date})>")
+
+
+# revision -> create checkin tracker
+class Checkin_Tracker(BASE):
+    __tablename__ = 'checkin_tracker'
+    __table_args__ = {'schema': 'serv'}
+    id_record = Column(Integer, Identity(start=330, increment=1, cycle=True), primary_key=True)
+    start_hour = Column(Time, nullable=False)
+    end_hour = Column(Time, nullable=False)
+    hours = Column(Integer, nullable=False, server_default='0')
+    status = Column(String(25), nullable=False, server_default='Completado')
+    id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+    # backward relationship
+    subject = relationship('User_Role', foreign_keys=[id_subject])
+
+    # __rep__
+    def __repr__(self):
+        return (
+            f"<Checkin_Tracker(id_record={self.id_record}, start_hour={self.start_hour}, end_hour={self.end_hour}, "
+            f"hours={self.hours}, id_subject={self.id_subject}, log_date={self.log_date})>")

@@ -130,7 +130,7 @@ export class CheckInValidator {
                 let value = inputField.value;
                 let checkInValue = localStorage.getItem("checkin");
 
-                /* validate checkout is not less than or equal to checkin */
+                /* validate checkout is not less than or equal to check in */
                 if(!Shared.comparingCheckInCheckOut(checkInValue, value)) {
                     /* clear previous errors */
                     Shared.clearErrorMessages(inputField, [divBefore]);

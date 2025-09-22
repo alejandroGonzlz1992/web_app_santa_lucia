@@ -21,7 +21,7 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "checkin" %}
+    {% if params.fg == "_checkin" %}
         <div class="px-1 pt-2">
             <div class="alert alert-info d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
@@ -74,7 +74,7 @@
                     <div class="card-body" style="width: 25%;">
                         <form id="id_filter_date_form" novalidate>
                             <div class="mb-2">
-                                <h5 class="card-title mb-2">Consular por fecha de ingreso</h5>
+                                <h5 class="card-title mb-2">Consular por fecha de registro</h5>
                                 <input type="date" class="form-control"
                                        style="font-size: 12px; color: cadetblue;" required
                                        placeholder="" name="request_date" id="id_input_field">
@@ -100,25 +100,27 @@
                             <tr>
                                 <th scope="col">Cod Registro</th>
                                 <th scope="col">Identificación</th>
-                                <th scope="col">Jornada</th>
+                                <th scope="col">Nombre Empleado</th>
                                 <th scope="col">Hora Ingreso</th>
                                 <th scope="col">Hora Salida</th>
                                 <th scope="col">Horas</th>
                                 <th scope="col">Estado</th>
-                                <th scope="col">Fecha Ingreso</th>
+                                <th scope="col">Fecha Registro</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row"><b></b>11020</th>
-                                <td>901080350</td>
-                                <td>Diurna</td>
-                                <td>7:00 am</td>
-                                <td>4:00 pm</td>
-                                <td>9</td>
-                                <td>Terminada</td>
-                                <td>2025-05-18</td>
-                            </tr>
+                            {% for item in params.records %}
+                                <tr>
+                                    <th scope="row"><b></b>{{ item._id }}</th>
+                                    <td>{{ item._emp_ident }}</td>
+                                    <td>{{ item._emp_name }} {{ item._emp_lastname }} {{ item._emp_lastname2 }}</td>
+                                    <td>{{ item._start }}</td>
+                                    <td>{{ item._end }}</td>
+                                    <td>{{ item._hours }}</td>
+                                    <td>{{ item._status }}</td>
+                                    <td>{{ item._log_date.date() }}</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -130,4 +132,12 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import { FilterSearching } from "{{url_for('static', path='tooling/utils/filtering.js')}}";
+        document.addEventListener("DOMContentLoaded", () => {
+            let filtering = new FilterSearching(
+                {"input": "id_input_field", "search":"id_filter_button", "reset": "id_reset_button", "row": 8}
+            );
+        });
+    </script>
 {% endblock %}

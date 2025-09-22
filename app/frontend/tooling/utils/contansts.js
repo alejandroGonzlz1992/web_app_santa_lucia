@@ -31,6 +31,8 @@ export const Static = {
     MILLISECONDS_PER_DAY: 86_400_000,
     REGEX_RADIO_BUTTONS: /^ratings\[(\d+)\]$/,
 
+    TIME_12_HOUR_FORMAT: /^(\d{1,2}):(\d{2})\s?(am|pm)$/i,
+
     ENABLE_USER_RESTORE_PASSWORD: [
         ["#id_temp_password_field", "#id_new_password_field", "#id_confirm_password_field"],
         ["#id_password_temp_bttn", "#id_new_password_bttn", "#id_confirm_password_bttn"]

@@ -130,7 +130,7 @@ class Constants(Enum):
     PROFILE_EXTRA_HOURS = f'{PROFILE_BASE}/horas_extra'
 
     # checkin
-    CHECKIN_BASE = '/marcas'
+    CHECKIN_BASE = '/marcas/ce'
     CHECKIN_REGISTER = '/registrar'
 
     # inability
@@ -297,7 +297,7 @@ class Constants(Enum):
                 '_available': 'No cuenta con las vacaciones disponibles para procesar su solicitud.'
             },
             '_expire': 'Su sesión ha expirado, ingresar credenciales nuevamente.'
-        },
+        }
     }
 
     # calender
