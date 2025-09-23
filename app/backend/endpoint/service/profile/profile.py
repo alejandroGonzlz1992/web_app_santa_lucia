@@ -8,6 +8,7 @@ from typing import Annotated
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
+from app.backend.db_transactions.services.db_profile import Profile_Trans_Manager
 from app.backend.database.config import Session_Controller
 
 
@@ -15,6 +16,8 @@ from app.backend.database.config import Session_Controller
 profile_route = APIRouter(prefix=Cns.PROFILE_BASE.value, tags=[Cns.SERV.value])
 # trans
 trans = Auth_Manager()
+# serv
+serv = Profile_Trans_Manager()
 
 
 # GET -> Profile Base
@@ -52,11 +55,14 @@ async def getting_app_profile_address_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # fetch province, canton, and district records
+    address = await serv.querying_province_canton_and_districts(db=db)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'profile/profile/address.html', context={
             'request': request, 'params': {
-                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, "address": address
             }
         }
     )
