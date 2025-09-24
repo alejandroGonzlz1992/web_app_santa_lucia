@@ -224,7 +224,7 @@ export class ContactValidator {
                     this.valid = false;
                 }
                 else {
-                    // clear erros
+                    // clear errors
                     Shared.clearErrorMessages(inputField, [divChars, divLength]);
                     this.valid = true;
                 }
@@ -235,8 +235,12 @@ export class ContactValidator {
     /* postal code validation */
     contactInfoPostalCodeFieldValidate(fieldName) {
         let inputField = this.form.elements.namedItem(fieldName);
+        let divBlank = document.getElementById(this.data.postal_code_field.div_id.blank);
         let divNumber = document.getElementById(this.data.postal_code_field.div_id.number);
         let divLength = document.getElementById(this.data.postal_code_field.div_id.length);
+
+        // listener
+        Shared.validateInputBlankFields(inputField, divBlank, this.data.postal_code_field.text.blank, this);
 
         // listener
         inputField.addEventListener("input", () => {

@@ -35,11 +35,14 @@ class Logs_Manager:
         if param_book["params"]:
             self.logger.error(f'Params: {str(param_book["params"])}')
 
-    def _dbapi_details(self, exc: Exception) -> None:
+    def _dbapi_details(self, exc: Exception) -> Optional[dict]:
         # best possible extraction of DB-API details
         orig = getattr(exc, "orig", None)
 
-        if not orig: return
+        if not orig: return None
+
+        # info
+        info = {"sql_state": getattr(orig, "pgcode", None), "constraint": None}
 
         # psycopg attrs -> code/error
         psycopg_attrs: dict[str, object] = {"code": getattr(orig, "pgcode", None),
@@ -59,6 +62,12 @@ class Logs_Manager:
 
                 if value:
                     self.logger.error(f'diag -> {field}: {value}')
+
+            # catch constraint name
+            info["constraint"] = getattr(diag, "constraint_name", None)
+
+        # return
+        return info
 
     # public
     # SQLAlchemyError
@@ -94,7 +103,7 @@ class Logs_Manager:
         self._dbapi_details(exc=exc)
 
     # IntegrityError
-    async def logger_sql_alchemy_integrity_error(self, exc: Exception) -> None:
+    async def logger_sql_alchemy_integrity_error(self, exc: Exception) -> Optional[dict]:
         """
         IntegrityError logger (unique/foreign-key/not-null/check constraint violations)
         :param exc: Exception
@@ -107,7 +116,8 @@ class Logs_Manager:
         # statement / params and possible DB-API details
         if isinstance(exc, IntegrityError):
             self._log_params(exc=exc)
-            self._dbapi_details(exc=exc)
+            info = self._dbapi_details(exc=exc)
+            return info
         else:
             # non-integrity error
             self.logger.error('integrity_error_log_handler method called with non-IntegrityError exception type.')

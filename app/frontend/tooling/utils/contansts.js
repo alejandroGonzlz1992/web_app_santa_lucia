@@ -24,6 +24,7 @@ export const Static = {
     MAX_EXTRA_HOURS: 5,
     MIXTO_MAX_HOUR: 7,
     MIN_PERCENTAGE: 1,
+    POSTAL_CODE_LENGTH: 5,
     MAX_PERCENTAGE: 25,
     EVALUATION_QUESTION_LENGTH: 10,
     ALLOW_FILE_EXT: ["png", "jpg", "jpeg", "pdf"],
@@ -979,10 +980,12 @@ export const Static = {
         },
         "postal_code_field": {
             "div_id": {
+                "blank": "id_postal_code_blank_field_error",
                 "number": "id_postal_code_chars_format_field_error",
                 "length": "id_postal_code_length_field_error",
             },
             "text": {
+                "blank": "Campo Obligatorio.",
                 "number": "Ingresar únicamente números.",
                 "length": "El código postal debe tener 5 dígitos."
             }
@@ -1023,7 +1026,7 @@ export const Static = {
         },
     },
 
-    PROFILE_CONTACT_INFO_BLANK_FIELDS: ["province_field", "canton_field", "district_field",
+    PROFILE_CONTACT_INFO_BLANK_FIELDS: ["province_field", "canton_field", "district_field", "postal_code_field",
         "address_detail_field", "email_field", "phone_field"],
 
     // PROFILE PASSWORD

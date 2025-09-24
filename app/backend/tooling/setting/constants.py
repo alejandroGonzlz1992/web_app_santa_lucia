@@ -123,7 +123,7 @@ class Constants(Enum):
     CRUD_SCHEDULE_POST = f'{CRUD_SCHEDULE_BASE}/actualizar'
 
     # profile
-    PROFILE_BASE = '/perfil'
+    PROFILE_BASE = '/perfil/ce'
     PROFILE_ADDRESS = f'{PROFILE_BASE}/domicilio'
     PROFILE_PASSWORD = f'{PROFILE_BASE}/contrasena'
     PROFILE_VACATIONS = f'{PROFILE_BASE}/vacaciones'

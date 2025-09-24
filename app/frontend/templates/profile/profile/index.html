@@ -21,7 +21,7 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "passw" %}
+    {% if params.fg == "_password" %}
         <div class="px-1 pt-2">
             <div class="alert alert-info d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-    {% elif  params.fg == "reset" %}
+    {% elif  params.fg == "_contact_info" %}
         <div class="px-1 pt-2">
             <div class="alert alert-info d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
@@ -54,7 +54,7 @@
     <div class="mb-3">
         <div class="row">
             <!--Left Main Menu-->
-            <div class="col-md-6 col-xl-3">
+            <div class="col-md-8 col-xl-4">
                 <div class="card shadow-sm mb-3">
                     <div class="card-body text-center">
                         <!-- Profile Avatar -->
@@ -64,17 +64,19 @@
                              width="120" height="120" />
 
                         <!-- Personal Details -->
-                        <h5 class="fw-semibold mb-1">Nombre Apellido Apellido2</h5>
-                        <p class="text-muted mb-1" style="font-size: 0.95rem;">Vendedor & Servicio al Cliente</p>
-                        <p class="text-muted mb-2" style="font-size: 0.95rem;">Departamento - Ventas</p>
+                        <h5 class="fw-semibold mb-1">{{ params.record._name }} {{ params.record._lastname }}
+                            {{ params.record._lastname2 }}</h5>
+                        <p class="text-muted mb-1" style="font-size: 0.95rem;">
+                            {{ params.record._rol_name }} | {{ params.record._rol_type }}</p>
+                        <p class="text-muted mb-2" style="font-size: 0.95rem;">{{ params.record._dept_name }}</p>
 
                         <!-- Divider -->
                         <hr class="my-3">
 
                         <!-- Identity Info -->
                         <div class="text-start" style="font-size: 0.95rem;">
-                            <p class="mb-2"><strong>Cédula:</strong> 901080350</p>
-                            <p class="mb-2"><strong>Fecha Contratación:</strong> 18/04/2022</p>
+                            <p class="mb-2"><strong>Cédula:</strong> {{ params.record._ident }}</p>
+                            <p class="mb-2"><strong>Fecha Contratación:</strong> {{ params.record._hire_date }}</p>
                         </div>
 
                         <!-- Divider -->
@@ -83,21 +85,21 @@
                         <!-- Contact Info -->
                         <div class="text-start" style="font-size: 0.95rem;">
                             <h6 class="text-uppercase text-muted mb-2"><b>Contacto</b></h6>
-                            <p class="mb-2">gonzjoalejandro92@gmail.com</p>
-                            <p class="mb-2">Móvil - 88083369</p>
-                            <p class="mb-3">Otros - 22180918</p>
+                            <p class="mb-2">📩 Correo - gonzjoalejandro92@gmail.com</p>
+                            <p class="mb-2">📱 Móvil - 88083369</p>
 
                             <h6 class="text-uppercase text-muted mb-2"><b>Domicilio</b></h6>
-                            <p class="mb-2">San José, Desamparados, Desamparados</p>
-                            <p class="mb-2">Código Postal - 10301</p>
-                            <p class="mb-0">Barrio San José, avenida 4. Casa no 654</p>
+                            <p class="mb-2">🏠 {{ params.address._prov_name }}, {{ params.address._cant_name }},
+                                {{ params.address._dist_name }}</p>
+                            <p class="mb-2">📪 Código Postal - {{ params.address._postal_code }}</p>
+                            <p class="mb-0">ℹ️ {{ params.address._address_detail }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!--Right Main Menu-->
-            <div class="col-md-8 col-xl-9">
+            <div class="col-md-6 col-xl-8">
                 <div class="card mb-3">
                     <div class="card-body text-start">
                         <h4 class="card-title mb-0">Ajustes de información</h4>

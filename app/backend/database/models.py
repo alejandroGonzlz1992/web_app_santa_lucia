@@ -92,22 +92,27 @@ class User(BASE):
 
 
 class Address(BASE):
-    __tablename__ = 'user'
+    __tablename__ = 'address'
     __table_args__ = {'schema': 'refer'}
     id_record = Column(Integer, Identity(start=50, increment=1, cycle=True), primary_key=True)
     details = Column(String(255), nullable=False)
-    date_create = Column(Date, nullable=False)
-    date_update = Column(Date, nullable=False)
+    # revision -> drop create and update columns
+    # date_create = Column(Date, nullable=False)
+    # date_update = Column(Date, nullable=False)
+    # revision -> add postal code field
+    postal_code = Column(String(15), nullable=False)
     id_district = Column(Integer, ForeignKey('refer.district.id_record'), nullable=False)
     id_user = Column(Integer, ForeignKey('entity.user.id_record'), nullable=False)
+    # revision -> add log_date column
+    log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
     user = relationship('User', back_populates='addresses')
     district = relationship('District', back_populates='addresses')
 
     # __rep__
     def __repr__(self):
-        return (f"<Address(id_record={self.id_record}, details={self.details}, date_create={self.date_create}, "
-                f"date_update={self.date_update}, id_district={self.id_district}, id_user={self.id_user})>")
+        return (f"<Address(id_record={self.id_record}, details={self.details}, log_date={self.log_date}, "
+                f"id_district={self.id_district}, id_user={self.id_user})>")
 
 
 class Schedule(BASE):

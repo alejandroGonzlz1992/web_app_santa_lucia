@@ -21,13 +21,37 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "fail" %}
+    {% if params.fg == "_fail" %}
         <div class="px-1 pt-2">
             <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params._profile._errors}}</div>
+                <div>{{params.ops._profile._errors}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -65,7 +89,9 @@
                     <div class="card-body text-start">
 
                         <!--Contact Info Form -->
-                        <form id="id_contact_info_form" novalidate>
+                        <form id="id_contact_info_form" method="post"
+                              action="{{ url_for('posting_app_profile_address_endpoint') }}" novalidate>
+
                             <h5 class="card-title my-3 text-start"><strong>Domicilio</strong></h5>
 
                             <!--Address Information Field-->
@@ -133,8 +159,8 @@
                                 <div class="col">
                                     <div class="py-1 text-start">
                                         <label class="form-label text-center" style="color: #3371db;">
-                                            Código Postal (Opcional)
-                                        </label>
+                                            Código Postal
+                                        </label> *
                                         <div class="input-group">
                                             <div class="input-group">
                                                 <input type="text" class="form-control" id="id_postal_code_field"
@@ -145,6 +171,9 @@
                                     </div>
 
                                     <!--Postal Code Validation Errors Field-->
+                                    <div id="id_postal_code_blank_field_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: none;">
+                                    </div>
                                     <div id="id_postal_code_chars_format_field_error" class="text-danger text-start"
                                          style="font-size: 13px; display: none;">
                                     </div>
@@ -199,7 +228,7 @@
                                         </div>
                                     </div>
 
-                                    {% if params.expt == "email" %}
+                                    {% if params.exc == "_email" %}
                                         <div id="id_email_exception_error" class="text-danger text-start"
                                             style="font-size: 13px; display: block;">
                                             {{ params.ops._profile._email }}
@@ -229,7 +258,7 @@
                                         </div>
                                     </div>
 
-                                    {% if params.expt == "phone" %}
+                                    {% if params.exc == "_phone" %}
                                         <div id="id_phone_exception_error" class="text-danger text-start"
                                             style="font-size: 13px; display: block;">
                                             {{ params.ops._profile._phone }}
