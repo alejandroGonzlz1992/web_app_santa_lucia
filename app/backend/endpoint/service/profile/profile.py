@@ -204,11 +204,17 @@ async def getting_app_profile_vacation_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # vacations
+    record = await serv.querying_vacations(db=db, id_session=user_login.user_role_id)
+
+    # vacations requests
+    vac_record = await serv.querying_vacations_requests(db=db, id_session=user_login.user_role_id)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'profile/profile/vacations.html', context={
             'request': request, 'params': {
-                'default': 'default', 'user_session': user_session
+                'record': record, 'vac_record': vac_record, 'user_session': user_session
             }
         }
     )
@@ -225,11 +231,19 @@ async def getting_app_profile_extra_hours_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # current extra hours records
+    record = await serv.querying_extra_hours(db=db, id_session=user_login.user_role_id)
+
+    # extra hours requests
+    ehs_record = await serv.querying_extra_hours_requests(db=db, id_session=user_login.user_role_id)
+
+    print(ehs_record)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'profile/profile/extra_hours.html', context={
             'request': request, 'params': {
-                'default': 'default', 'user_session': user_session
+                'record': record, 'ehs_record': ehs_record, 'user_session': user_session
             }
         }
     )

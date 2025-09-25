@@ -196,7 +196,7 @@ class Permission_Trans_Manager:
 
     # register extra hours
     async def registering_user_extra_hours(
-            self, db: object, model: Union[dict, object]) -> object:
+            self, db: object, model: Union[dict, object]) -> None:
         # query record from request
         request_record = db.query(
             self.models.Request_Extra_Hour.id_record.label('_id'),
@@ -403,4 +403,3 @@ class Permission_Trans_Manager:
 
             # db commit
             db.commit()
-

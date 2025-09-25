@@ -1,10 +1,9 @@
 # import
-import string, random
-from re import compile
 from fastapi import HTTPException, status
 from typing import Union
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import aliased
 
 # local import
 from app.backend.database import models
@@ -181,3 +180,112 @@ class Profile_Trans_Manager:
 
         # return
         return record
+
+    # query vacations
+    async def querying_vacations(
+            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
+        # record
+        record = db.query(
+            self.models.Vacation.available.label('_available'),
+            self.models.Vacation.used_days.label('_used_days'),
+            self.models.User_Role.hire_date.label('_hire_date')
+        ).join(
+            self.models.User_Role, self.models.Vacation.id_subject == self.models.User_Role.id_record
+        ).filter(
+            self.models.User_Role.id_record == id_session
+        ).first()
+
+        # return
+        return record
+
+    # query vacations requests
+    async def querying_vacations_requests(
+            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
+        # aliases
+        sub_user_role = aliased(self.models.User_Role)
+        subject = aliased(self.models.User)
+        approver = aliased(self.models.User)
+
+        rows = db.query(
+            # vacations
+            self.models.Request_Vacation.id_record.label('_id'),
+            self.models.Request_Vacation.date_start.label('_start'),
+            self.models.Request_Vacation.date_return.label('_end'),
+            self.models.Request_Vacation.days.label('_days'),
+            self.models.Request_Vacation.status.label('_status'),
+            self.models.Request_Vacation.log_date.label('_log_date'),
+            # subject
+            subject.identification.label('_ident'),
+            # approver
+            approver.name.label('_aprv_name'),
+            approver.lastname.label('_aprv_lastname'),
+            approver.lastname2.label('_aprv_lastname2'),
+        ).join(
+            sub_user_role, sub_user_role.id_record == self.models.Request_Vacation.id_subject
+        ).join(
+            subject, subject.id_record == sub_user_role.id_user
+        ).join(
+            approver, approver.id_record == sub_user_role.approver
+        ).filter(
+            sub_user_role.id_record == id_session
+        ).all()
+
+        # return
+        return rows
+
+    # query extra hours
+    async def querying_extra_hours(
+            self, db:Union[Session, object], id_session: Union[int, str]) -> object:
+        # record
+        extra_hours = aliased(self.models.Extra_Hour)
+        extra_hours_request = aliased(self.models.Request_Extra_Hour)
+
+        record = (db.query(
+            extra_hours.hours.label('_hours'),
+            extra_hours_request.hours.label('_pend_hours'),
+            extra_hours_request.status.label('_status'),
+            extra_hours_request.log_date.label('_log_date'),
+        ).select_from(
+            extra_hours
+        ).join(
+            extra_hours_request, extra_hours_request.id_subject == extra_hours.id_subject
+        ).filter(
+            extra_hours.id_subject == id_session
+        ).first())
+
+        # return
+        return record
+
+    # query extra hours requests
+    async def querying_extra_hours_requests(
+            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
+        # aliases
+        sub_user_role = aliased(self.models.User_Role)
+        subject = aliased(self.models.User)
+        approver = aliased(self.models.User)
+
+        rows = db.query(
+            # vacations
+            self.models.Request_Extra_Hour.id_record.label('_id'),
+            self.models.Request_Extra_Hour.date_request.label('_date_request'),
+            self.models.Request_Extra_Hour.hours.label('_hours'),
+            self.models.Request_Extra_Hour.type.label('_type'),
+            self.models.Request_Extra_Hour.status.label('_status'),
+            # subject
+            subject.identification.label('_ident'),
+            # approver
+            approver.name.label('_aprv_name'),
+            approver.lastname.label('_aprv_lastname'),
+            approver.lastname2.label('_aprv_lastname2'),
+        ).join(
+            sub_user_role, sub_user_role.id_record == self.models.Request_Extra_Hour.id_subject
+        ).join(
+            subject, subject.id_record == sub_user_role.id_user
+        ).join(
+            approver, approver.id_record == sub_user_role.approver
+        ).filter(
+            sub_user_role.id_record == id_session
+        ).all()
+
+        # return
+        return rows

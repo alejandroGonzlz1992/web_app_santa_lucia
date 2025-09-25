@@ -187,7 +187,8 @@ async def posting_app_permission_extra_hours_update_endpoint(
 
         # bg tasks
         background_tasks.add_task(
-            bg_tasks.bg_task_send_permission_extra_hour_update_request, [emails_["user_email"], emails_["approver_email"]],
+            bg_tasks.bg_task_send_permission_extra_hour_update_request,
+            [emails_["user_email"], emails_["approver_email"]],
             records)
 
     except SQLAlchemyError as op:

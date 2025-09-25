@@ -21,13 +21,37 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "generate" %}
+    {% if params.fg == "_generate" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-start" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#info-fill"/>
                 </svg>
-                <div>{{ params.ops.report._generate }}</div>
+                <div>{{ params.ops._report._generate }}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -66,7 +90,8 @@
                 <div class="card-body text-start">
 
                     <!--Reports Form -->
-                    <form id="id_reports_form" novalidate>
+                    <form id="id_reports_form" method="post"
+                          action="{{ url_for('posting_app_reports_base_endpoint') }}" novalidate>
 
                         <!--Hidden Input Fields-->
                         <input type="hidden" value="POST" name="method">
@@ -79,12 +104,12 @@
                                     aria-label="Default select example" name="report_name_field"
                                     id="id_report_name_field">
                                     <option value="not_select" selected>Seleccionar nombre del reporte</option>
-                                    <option value="hoursTrackerReport">Registro de asistencia de marcas</option>
-                                    <option value="inabilitiesReport">Registro de incapacidades</option>
-                                    <option value="settlementReport">Liquidaciones de empleados</option>
-                                    <option value="permissionsReport">Registro de permisos</option>
-                                    <option value="aguinaldoReport">Registro de aguinaldos</option>
-                                    <option value="vacationsReport">Registro de vacaciones</option>
+                                    <option value="tracker">Registro de asistencia de marcas</option>
+                                    <option value="inabilities">Registro de incapacidades</option>
+                                    <option value="settlements">Liquidaciones de empleados</option>
+                                    <option value="permissions">Registro de permisos</option>
+                                    <option value="bonus">Registro de aguinaldos</option>
+                                    <option value="vacations">Registro de vacaciones</option>
                                 </select>
                             </div>
 

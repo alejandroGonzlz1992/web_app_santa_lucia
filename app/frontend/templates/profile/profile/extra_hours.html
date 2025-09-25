@@ -58,7 +58,9 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Solicitadas</h6>
-                                            <h4 class="card-text text-success">5 Horas</h4>
+                                            <h4 class="card-text text-success">
+                                                {{ params.record._hours }} Horas
+                                            </h4>
                                         </div>
                                     </div>
                                 </div>
@@ -68,7 +70,15 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Pendientes Aprobación</h6>
-                                            <h4 class="card-text text-warning">3 Horas</h4>
+                                            {% if params.record._status == "En Proceso" %}
+                                                <h4 class="card-text text-warning">
+                                                    {{ params.record._pend_hours }} Horas
+                                                </h4>
+                                            {% else %}
+                                                <h4 class="card-text text-warning">
+                                                    0 Horas
+                                                </h4>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +88,9 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Fecha Aprobación</h6>
-                                            <h4 class="card-text text-primary">04/08/2026</h4>
+                                            <h4 class="card-text text-primary">
+                                                {{ params.record._log_date.date() }}
+                                            </h4>
                                         </div>
                                     </div>
                                 </div>
@@ -125,25 +137,23 @@
                             <tr>
                                 <th scope="col">Cod Registro</th>
                                 <th scope="col">Identificación</th>
-                                <th scope="col">Fecha Inicio</th>
-                                <th scope="col">Hora Inicio</th>
+                                <th scope="col">Fecha Solicitud</th>
                                 <th scope="col">Horas</th>
                                 <th scope="col">Aprobador</th>
                                 <th scope="col">Estado</th>
-                                <th scope="col">Fecha Solicitud</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row"><b></b>11020</th>
-                                <td>901080350</td>
-                                <td>05/18/2025</td>
-                                <td>4:00 pm</td>
-                                <td>1</td>
-                                <td>Joaquin Gonzalez Cortes</td>
-                                <td>Pendiente</td>
-                                <td>04/28/2025</td>
-                            </tr>
+                            {% for item in params.ehs_record %}
+                                <tr>
+                                    <th scope="row"><b></b>{{ item._id }}</th>
+                                    <td>{{ item._ident }}</td>
+                                    <td>{{ item._date_request }}</td>
+                                    <td>{{ item._hours }}</td>
+                                    <td>{{ item._aprv_name }} {{ item._aprv_lastname }} {{ item._aprv_lastname2 }}</td>
+                                    <td>{{ item._status }}</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -155,4 +165,12 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import { FilterSearching } from "{{url_for('static', path='tooling/utils/filtering.js')}}";
+        document.addEventListener("DOMContentLoaded", () => {
+            let filtering = new FilterSearching(
+                {"input": "id_input_field", "search":"id_filter_button", "reset": "id_reset_button", "row": 3}
+            );
+        });
+    </script>
 {% endblock %}

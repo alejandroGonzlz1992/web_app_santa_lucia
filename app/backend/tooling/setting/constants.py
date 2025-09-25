@@ -176,7 +176,7 @@ class Constants(Enum):
     URL_EVALUATION_POST_RESULT = '/resultados'
 
     # reports endpoint
-    TRANS_REPORT = '/reportes'
+    TRANS_REPORT = '/reportes/ce'
 
     # operation messages
     OPS_CRUD = {
