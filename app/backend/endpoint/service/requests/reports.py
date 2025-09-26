@@ -57,8 +57,7 @@ async def posting_app_reports_base_endpoint(
 ) -> HTMLResponse:
 
     try:
-        test = await serv.querying_checking_tracker_report(db=db, schema=model.model_dump())
-        print(test)
+        test = await serv.querying_vacations_report(db=db, schema=model.model_dump())
 
     except SQLAlchemyError:
         db.rollback() # -> db rollback
