@@ -1,4 +1,6 @@
 # import
+import pandas, io
+from fastapi.responses import StreamingResponse
 from typing import Union
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -16,6 +18,9 @@ class Reports_Trans_Manager:
     def __init__(self):
         self.models = models
         self.cns = Cns
+        self.pd = pandas
+        self.io = io
+        self.response = StreamingResponse
 
     # querying checking tracker records report
     async def querying_checking_tracker_report(
@@ -390,3 +395,54 @@ class Reports_Trans_Manager:
 
         # records
         return records
+
+    # generating pandas dataframe
+    async def generate_dataframe(self, report: object) -> object:
+        # rename headers
+
+        # return
+        return self.pd.DataFrame([dict(r._mapping) for r in report])
+
+    # query reports manager
+    async def reports_query_manager(self, db: Union[Session, object], schema: Union[BaseModel, object]) -> list[object]:
+        # report
+        record, to_return = "", ""
+
+        if schema["report_name_field"] == "registro_marcas":
+            record = await self.querying_checking_tracker_report(db=db, schema=schema)
+            to_return = await self.generate_dataframe(report=record)
+
+
+        elif schema["report_name_field"] == "incapacidades":
+            record = await self.querying_inability_report(db=db, schema=schema)
+            to_return = await self.generate_dataframe(report=record)
+
+        elif schema["report_name_field"] == "liquidaciones":
+            record = await self.querying_settlement_report(db=db, schema=schema)
+            to_return = await self.generate_dataframe(report=record)
+
+        elif schema["report_name_field"] == "registro_horas_extra":
+            record = await self.querying_extra_hours_report(db=db, schema=schema)
+            to_return = await self.generate_dataframe(report=record)
+
+        elif schema["report_name_field"] == "aguinaldos":
+            record = await self.querying_bonus_report(db=db, schema=schema)
+            to_return = await self.generate_dataframe(report=record)
+
+        elif schema["report_name_field"] == "registro_vacaciones":
+            record = await self.querying_vacations_report(db=db, schema=schema)
+            to_return = await self.generate_dataframe(report=record)
+
+        # return
+        return to_return
+
+    # downloadable file for browser
+    async def downloadable_file_browser(
+            self, df: Union[pandas.DataFrame, object], name: str) -> StreamingResponse:
+        # to csv
+        to_csv = df.to_csv(index=False).encode("utf-8-sig")
+        return self.response(
+            self.io.BytesIO(to_csv), media_type="text/csv", headers={
+                "Content-Disposition": f'attachment; filename="Reporte_{name}.csv"'
+            }
+        )

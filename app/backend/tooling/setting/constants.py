@@ -323,3 +323,29 @@ class Constants(Enum):
         "independence": date(CR_YEAR, 9, 15),
         "christmas": date(CR_YEAR, 12, 25),
     }
+
+    # reports name fields
+    HEADERS = {
+        'registro_marcas': {
+            '_id': 'Cod', '_start_hour': 'Hora entrada', '_end_hour': 'Hora salida',
+            '_hours': 'Horas', '_status': 'Estado registro', '_log_date': 'Fecha registro',
+            '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
+            '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico', '_subj_dept_name': 'Departamento',
+            '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
+            '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
+            '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',
+            '_apr_dept_name': 'Departamento jefatura', '_apr_role_name': 'Puesto jefatura',
+            '_apr_role_type': 'Tipo de rol'
+        },
+        'incapacidades': {
+            '_id': 'Cod', '_date_start': 'Fecha salida', '_date_return': 'Fecha retorno',
+            '_hours': 'Horas', '_status': 'Estado registro', '_log_date': 'Fecha registro',
+            '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
+            '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico', '_subj_dept_name': 'Departamento',
+            '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
+            '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
+            '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',
+            '_apr_dept_name': 'Departamento jefatura', '_apr_role_name': 'Puesto jefatura',
+            '_apr_role_type': 'Tipo de rol'
+        },
+    }

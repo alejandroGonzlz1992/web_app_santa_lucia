@@ -1,9 +1,10 @@
 # import
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session
-from typing import Annotated
+from typing import Annotated, Union
 from sqlalchemy.exc import SQLAlchemyError, OperationalError
+from watchfiles import awatch
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
@@ -57,7 +58,14 @@ async def posting_app_reports_base_endpoint(
 ) -> HTMLResponse:
 
     try:
-        test = await serv.querying_vacations_report(db=db, schema=model.model_dump())
+        # records
+        data_frame = await serv.reports_query_manager(db=db, schema=model.model_dump())
+
+        # excel file
+        if model.report_deliver == "download":
+            # return
+            return await serv.downloadable_file_browser(
+                df=data_frame, name=model.report_name_field)
 
     except SQLAlchemyError:
         db.rollback() # -> db rollback
