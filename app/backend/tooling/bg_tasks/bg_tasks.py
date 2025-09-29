@@ -183,3 +183,20 @@ async def bg_task_send_inability_request(recipients: Union[list[str], str], reco
 
     except Exception as e:
         logger.exception(f'[BG]: Failed sending Inability Request notification email to recipients: {e}')
+
+
+# send report attachment request
+async def bg_task_send_report_attachment_request(
+        recipients: Union[list[str], str], schema: object, xlsx_data: dict) -> None:
+    try:
+        # build email content
+        msg = await emailing.send_report_request_as_attachment(rec=recipients, schema=schema, attach=xlsx_data)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Report Request notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Report Request notification email to recipients: {e}')

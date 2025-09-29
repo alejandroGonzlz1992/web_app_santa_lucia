@@ -1,6 +1,7 @@
 # import
 import random, string, smtplib, ssl
 from email import encoders
+from pydantic import BaseModel
 from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -281,6 +282,40 @@ class Email_Manager:
 
         # attach content
         msg.attach(content)
+        # message to
+        msg["To"] = ", ".join(rec)
+        # return
+        return msg.as_string()
+
+    # report attachment send
+    async def send_report_request_as_attachment(
+            self, rec: Union[list[str], str], schema: Union[BaseModel, dict], attach: dict) -> str:
+        # header top level
+        msg = self.builder["multipart"]("mixed")
+        msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
+        msg["Subject"] = self.cns.SUBJECT_REPORT_REQUEST.value
+
+        # alternative (body)
+        alt = self.builder["multipart"]("alternative")
+        alt.attach(
+            self.builder["text"](
+                self.template.html_xlsx_report_sending(report_name=schema["report_name_field"]), "html")
+        )
+        # msg
+        msg.attach(alt)
+
+        # attachment
+        if attach:
+            x_bytes = attach.get("report")
+            f_name = attach.get("name")
+
+            part = self.builder["application"](
+                x_bytes, _subtype="vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
+            part.add_header("Content-Disposition", "attachment", filename=f_name)
+            msg.attach(part)
+
         # message to
         msg["To"] = ", ".join(rec)
         # return

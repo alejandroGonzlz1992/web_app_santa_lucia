@@ -48,6 +48,8 @@ class Constants(Enum):
     SUBJECT_INABILITY_REQUEST = "Ferretería Santa Lucía. Solicitud de Incapacidad."
     SUBJECT_INABILITY_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Incapacidad."
 
+    SUBJECT_REPORT_REQUEST = "Ferretería Santa Lucía. Solicitud de Reporte."
+
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
 
@@ -339,9 +341,57 @@ class Constants(Enum):
         },
         'incapacidades': {
             '_id': 'Cod', '_date_start': 'Fecha salida', '_date_return': 'Fecha retorno',
-            '_hours': 'Horas', '_status': 'Estado registro', '_log_date': 'Fecha registro',
+            '_details': 'Detalles', '_doc_number': 'Número boleta', '_status': 'Estado incapacidad',
             '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
             '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico', '_subj_dept_name': 'Departamento',
+            '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
+            '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
+            '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',
+            '_apr_dept_name': 'Departamento jefatura', '_apr_role_name': 'Puesto jefatura',
+            '_apr_role_type': 'Tipo de rol'
+        },
+        'liquidaciones': {
+            '_id': 'Cod', '_total_amount': 'Monto total', '_status': 'Estado Liquidación',
+            '_type': 'Tipo liquidación', '_details': 'Detalles',
+            '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
+            '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico',
+            '_subj_dept_name': 'Departamento',
+            '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
+            '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
+            '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',
+            '_apr_dept_name': 'Departamento jefatura', '_apr_role_name': 'Puesto jefatura',
+            '_apr_role_type': 'Tipo de rol'
+        },
+        'registro_horas_extra': {
+            '_id': 'Cod', '_hours': 'Horas', '_date_request': 'Fecha solicitud',
+            '_type': 'Tipo solicitud', '_status': 'Estado solicitud',
+            '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
+            '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico',
+            '_subj_dept_name': 'Departamento',
+            '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
+            '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
+            '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',
+            '_apr_dept_name': 'Departamento jefatura', '_apr_role_name': 'Puesto jefatura',
+            '_apr_role_type': 'Tipo de rol'
+        },
+        'aguinaldos': {
+            '_id': 'Cod', '_total_amount': 'Monto total', '_month_amount': 'Monto mensual',
+            '_month': 'Mes',
+            '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
+            '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico',
+            '_subj_dept_name': 'Departamento',
+            '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
+            '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
+            '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',
+            '_apr_dept_name': 'Departamento jefatura', '_apr_role_name': 'Puesto jefatura',
+            '_apr_role_type': 'Tipo de rol'
+        },
+        'registro_vacaciones': {
+            '_id': 'Cod', '_days': 'Días', '_date_start': 'Fecha de inicio',
+            '_date_return': 'Fecha retorno', '_type': 'Tipo solicitud', '_status': 'Estado solicitud',
+            '_subj_ident': 'Identificacion', '_subj_name': 'Nombre', '_subj_lastname': 'Apellido',
+            '_subj_lastname2': 'Segundo apellido', '_subj_email': 'Correo electronico',
+            '_subj_dept_name': 'Departamento',
             '_subj_role_name': 'Puesto', '_subj_role_type': 'Tipo de rol', '_apr_ident': 'Identificacion jefatura',
             '_apr_name': 'Nombre jefatura', '_apr_lastname': 'Apellido jefatura',
             '_apr_lastname2': 'Segundo apellido jefatura', 'Correo electronico jefatura': '_apr_email',

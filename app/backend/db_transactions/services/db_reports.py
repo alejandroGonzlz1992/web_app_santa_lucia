@@ -5,6 +5,8 @@ from typing import Union
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import aliased
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # local import
 from app.backend.database import models
@@ -21,6 +23,7 @@ class Reports_Trans_Manager:
         self.pd = pandas
         self.io = io
         self.response = StreamingResponse
+        self.cr_time_now = datetime.now(ZoneInfo('America/Costa_Rica'))
 
     # querying checking tracker records report
     async def querying_checking_tracker_report(
@@ -398,8 +401,6 @@ class Reports_Trans_Manager:
 
     # generating pandas dataframe
     async def generate_dataframe(self, report: object) -> object:
-        # rename headers
-
         # return
         return self.pd.DataFrame([dict(r._mapping) for r in report])
 
@@ -436,13 +437,109 @@ class Reports_Trans_Manager:
         # return
         return to_return
 
+    # loading new headers name
+    async def new_headers_name_load(self, df: Union[pandas.DataFrame, object], name: str) -> pandas.DataFrame:
+        mapping = self.cns.HEADERS.value
+        df_2 = df.rename(columns=mapping.get(name, {}))
+        # return
+        return df_2
+
+    # styling xlsx report headers
+    async def styling_xlsx_report_headers(
+            self, df: Union[pandas.DataFrame, object], name_report: str = "Reporte") -> bytes:
+        # buffer in-memory var
+        in_buffer = self.io.BytesIO()
+
+        # style pd frame with context manager
+        with self.pd.ExcelWriter(in_buffer, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name=name_report)
+            wb = writer.book
+            ws = writer.sheets[name_report]
+
+            # header formatting
+            headers_format = wb.add_format({
+                    "bold": True,
+                    "align": "left",
+                    "valign": "vcenter",
+                    "bg_color": "#EEEEEE",
+                    "bottom": 1
+                })
+            # cell formatting
+            cell_format = wb.add_format({"align": "left", "valign": "top"})
+            # date formatting
+            date_format = wb.add_format({"align": "left", "valign": "vcenter", "num_format": "dd-mm-yyyy"})
+
+            # rewrite headers with style
+            for col_index, name in enumerate(df.columns):
+                ws.write(0, col_index, name, headers_format)
+
+            # auto-fit-ish widths + cell formats
+            for col_index in range(df.shape[1]):
+                col_name = df.columns[col_index]
+                col_series = df.iloc[:, col_index]
+
+                # max content length
+                if not col_series.empty:
+                    max_cell_length = int(col_series.dropna().astype(str).map(len).max() or 0)
+                else:
+                    max_cell_length = 0
+
+                # width
+                width = min(max(len(str(col_name)), max_cell_length) +2, 50)
+
+                # format for dates
+                if self.pd.api.types.is_datetime64_any_dtype(col_series):
+                    ws.set_column(col_index, col_index, width, date_format)
+                else:
+                    ws.set_column(col_index, col_index, width, cell_format)
+
+            ws.freeze_panes(1, 0)
+
+        # return
+        return in_buffer.getvalue()
+
     # downloadable file for browser
     async def downloadable_file_browser(
             self, df: Union[pandas.DataFrame, object], name: str) -> StreamingResponse:
-        # to csv
-        to_csv = df.to_csv(index=False).encode("utf-8-sig")
+        # add rename headers
+        df = await self.new_headers_name_load(df=df, name=name)
+        # xlsx file var
+        xlsx_file = await self.styling_xlsx_report_headers(df=df)
+        # file name
+        file_name = f'reporte_{name}_{self.cr_time_now.strftime("%d_%m_%Y")}.xlsx'
+        # return
         return self.response(
-            self.io.BytesIO(to_csv), media_type="text/csv", headers={
-                "Content-Disposition": f'attachment; filename="Reporte_{name}.csv"'
-            }
+            self.io.BytesIO(xlsx_file),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": f'attachment; filename="{file_name}"'},
         )
+
+    # attachment for email delivery
+    async def attachment_for_email_delivery(
+            self, df: Union[pandas.DataFrame, object], name: str) -> dict:
+        # add rename headers
+        df = await self.new_headers_name_load(df=df, name=name)
+        # xlsx file var
+        xlsx_file = await self.styling_xlsx_report_headers(df=df)
+        # file name
+        file_name = f'reporte_{name}_{self.cr_time_now.strftime("%d_%m_%Y")}.xlsx'
+
+        # return
+        return {"report": xlsx_file, "name": file_name}
+
+    # getting current recipient
+    async def getting_current_recipient(self, db: Union[Session, object], id_session: Union[int, str]) -> str:
+        # current record
+        record = db.query(
+            self.models.User.email.label('_email')
+        ).select_from(
+            self.models.User_Role
+        ).join(
+            self.models.User, self.models.User_Role.id_user == self.models.User.id_record
+        ).filter(
+            self.models.User_Role.id_record == id_session
+        ).first()
+
+        # return
+        return record
