@@ -289,7 +289,7 @@ class Email_Manager:
 
     # report attachment send
     async def send_report_request_as_attachment(
-            self, rec: Union[list[str], str], schema: Union[BaseModel, dict], attach: dict) -> str:
+            self, rec: str, schema: Union[BaseModel, dict], attach: dict) -> str:
         # header top level
         msg = self.builder["multipart"]("mixed")
         msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
@@ -317,6 +317,6 @@ class Email_Manager:
             msg.attach(part)
 
         # message to
-        msg["To"] = ", ".join(rec)
+        msg["To"] = rec
         # return
         return msg.as_string()

@@ -72,12 +72,12 @@ async def posting_app_reports_base_endpoint(
             return await serv.downloadable_file_browser(
                 df=data_frame, name=model.report_name_field)
 
-        elif model.report_deliver == "":
+        elif model.report_deliver == "email":
             # attachment
             file_attach = await serv.attachment_for_email_delivery(df=data_frame, name=model.report_name_field)
             # background task
             background_tasks.add_task(
-                bg_tasks.bg_task_send_report_attachment_request, to_email._email, file_attach)
+                bg_tasks.bg_task_send_report_attachment_request, to_email._email, model.model_dump(), file_attach)
 
     except SQLAlchemyError:
         db.rollback() # -> db rollback
