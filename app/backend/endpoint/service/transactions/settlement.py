@@ -8,6 +8,8 @@ from typing import Annotated, Union
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
+from app.backend.db_transactions.transactions.db_settlement import Settlement_Trans_Manager
+from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.database.config import Session_Controller
 
 
@@ -15,6 +17,10 @@ from app.backend.database.config import Session_Controller
 settlement_route = APIRouter(prefix=Cns.URL_SETTLEMENT.value, tags=[Cns.TRANS.value])
 # trans
 trans = Auth_Manager()
+# serv
+serv = Settlement_Trans_Manager()
+# logs
+exc_logs = Logs_Manager()
 
 
 # GET -> Settlement Base
@@ -29,11 +35,14 @@ async def getting_app_settlement_base_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # query inability records
+    records = await serv.query_settlement_records(db=db, id_session=user_login.user_id)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/settlement/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
             }
         }
     )

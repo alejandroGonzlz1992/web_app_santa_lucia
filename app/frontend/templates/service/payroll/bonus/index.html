@@ -103,38 +103,42 @@
                         <tr>
                             <th scope="col">Cod Registro</th>
                             <th scope="col">Identificación</th>
+                            <th scope="col">Empleado</th>
+                            <th scope="col">Jefatura</th>
+                            <th scope="col">Monto Total</th>
+                            <th scope="col">Monto Mensual</th>
                             <th scope="col">Mes</th>
-                            <th scope="col">Monto Acumulado</th>
-                            <th scope="col">Estado</th>
                             <th scope="col">Fecha de Registro</th>
-                            <th scope="col">Fecha de Actualización</th>
                             <th scope="col" colspan="2"
                                 style="text-align: center; vertical-align: middle;">Administrar
                             </th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row"><b></b>11020</th>
-                            <td>901080350</td>
-                            <td>Agosto</td>
-                            <td>433550</td>
-                            <td>Aprobado</td>
-                            <td>2025-04-25</td>
-                            <td>2025-04-25</td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_bonus_details_endpoint', id=10021)}}">
-                                    <i class="align-center" data-feather="refresh-ccw"></i>
-                                    Consultar Detalles
-                                </a>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_bonus_adjust_endpoint', id=10021)}}">
-                                    <i class="align-center" data-feather="refresh-ccw"></i>
-                                    Ajustar Monto
-                                </a>
-                            </td>
-                        </tr>
+                        {% for item in params.records %}
+                            <tr>
+                                <th scope="row"><b></b>{{ item._id }}</th>
+                                <td>{{ item._ident }}</td>
+                                <td>{{ item._emp_name }} {{ item._emp_name }} {{ item._emp_name }}</td>
+                                <td>{{ item._apr_name }} {{ item._apr_lastname }} {{ item._apr_lastname2 }}</td>
+                                <td>{{ item._total_amount }}</td>
+                                <td>{{ item._month_amount }}</td>
+                                <td>{{ item._month }}</td>
+                                <td>{{ item._log_date.date() }}</td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_bonus_details_endpoint', id=item._id)}}">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Consultar Detalles
+                                    </a>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_bonus_adjust_endpoint', id=item._id)}}">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Ajustar Monto
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -147,4 +151,12 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import { FilterSearching } from "{{url_for('static', path='tooling/utils/filtering.js')}}";
+        document.addEventListener("DOMContentLoaded", () => {
+            let filtering = new FilterSearching(
+                {"input": "id_input_field", "search":"id_filter_button", "reset": "id_reset_button", "row": 2}
+            );
+        });
+    </script>
 {% endblock %}

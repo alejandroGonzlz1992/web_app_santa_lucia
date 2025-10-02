@@ -8,6 +8,8 @@ from typing import Annotated, Union
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
+from app.backend.db_transactions.transactions.db_bonus import Bonus_Trans_Manager
+from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.database.config import Session_Controller
 
 
@@ -15,6 +17,10 @@ from app.backend.database.config import Session_Controller
 bonus_route = APIRouter(prefix=Cns.URL_BONUS.value, tags=[Cns.TRANS.value])
 # trans
 trans = Auth_Manager()
+# serv
+serv = Bonus_Trans_Manager()
+# logs
+exc_logs = Logs_Manager()
 
 
 # GET -> Bonus Base
@@ -29,11 +35,16 @@ async def getting_app_bonus_base_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # query bonus records
+    records = await serv.query_bonus_records(db=db, id_session=user_login.user_id)
+
+    print(records)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/bonus/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
             }
         }
     )
