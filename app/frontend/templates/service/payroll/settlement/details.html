@@ -67,24 +67,29 @@
 
                     <!-- Gross & Net -->
                     <div class="mb-4 fs-6">
-                        <p class="mb-2"><strong>Monto Total Generado:</strong> ₡1,500,000</p>
+                        <p class="mb-2"><strong>Monto Total Generado:</strong>
+                            {{ "{:,.2f}".format(params.record._total_amount) }} CRC
+                        </p>
                     </div>
 
                     <hr>
 
                     <!-- Deductions -->
-                    <h6 class="text-uppercase text-muted mb-3 fs-6">Desgloces</h6>
+                    <h6 class="text-uppercase text-muted mb-3 fs-6">Otros Montos</h6>
                     <ul class="list-unstyled fs-6 mb-4">
-                        <li class="mb-2"><b>Cesantía</b> ₡100,000 </li>
-                        <li class="mb-2"><b>Vacaciones</b> ₡80,000</li>
-                        <li class="mb-2"><b>Aguinaldo</b> ₡80,000</li>
+                        <li class="mb-2"><b>Cesantia</b> {{ params.record._cesantia_amount }} </li>
+                        <li class="mb-2"><b>Vacaciones</b> {{ params.record._vacations_amount }}  </li>
+                        <li class="mb-2"><b>Aguinaldo</b> {{ params.record._bonus_amount }}  </li>
+                        <li class="mb-2"><b>Salario Actual </b> {{ params.record._payroll_amount }}  </li>
                     </ul>
 
-                    <h6 class="text-uppercase text-muted mb-3 fs-6">Otros Montos</h6>
-                    <ul class="list-unstyled fs-6 mb-0">
-                        <li class="mb-2"><b>Mes de liquidación</b> Julio</li>
-                        <li class="mb-2"><b>Salario a la fecha</b> ₡80,000</li>
-                        <li class="mb-2"><b>Motivo de terminación de contrato</b> Responsabilidad patronal</li>
+                    <hr>
+                    <!-- Deductions -->
+                    <h6 class="text-uppercase text-muted mb-3 fs-6">Detalles</h6>
+                    <ul class="list-unstyled fs-6 mb-4">
+                        <li class="mb-2"><b>Tipo Liquidación</b> {{ params.record._type.title() }} </li>
+                        <li class="mb-2"><b>Estado</b> {{ params.record._status.title() }} </li>
+                        <li class="mb-2"><b>Fecha Registro</b> {{ params.record._log_date.date() }} </li>
                     </ul>
 
                 </div>
@@ -96,16 +101,27 @@
             <div class="card shadow-sm rounded-4 border-0">
                 <div class="card-body p-4">
 
-                    <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Detalles del Pago</h5>
+                    <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Detalles Laborales</h5>
 
                     <ul class="list-unstyled fs-6 mb-0">
-                        <li class="mb-2"><strong>Empleado:</strong> Nombre Apellido</li>
-                        <li class="mb-2"><strong>Departamento:</strong> Ventas & Servicio al cliente</li>
-                        <li class="mb-2"><strong>Jefatura:</strong> Nombre Apellido</li>
-                        <li class="mb-2"><strong>Fecha de Pago:</strong> 31/05/2025</li>
-                        <li class="mb-2"><strong>Fecha de Terminación:</strong> 31/05/2025</li>
-                        <li class="mb-2"><strong>Frecuencia:</strong> Mensual</li>
-                        <li><strong>Comentarios:</strong> Pago correspondiente al mes de mayo</li>
+                        <li class="mb-2"><strong>Identificación:</strong>
+                           {{ params.record._ident }} </li>
+                        <li class="mb-2"><strong>Empleado:</strong>
+                           {{ params.record._emp_name }} {{ params.record._emp_lastname }}
+                            {{ params.record._emp_lastname2 }} </li>
+                        <li class="mb-2"><strong>Jefatura:</strong>
+                            {{ params.record._apr_name }} {{ params.record._apr_lastname }}
+                            {{ params.record._apr_lastname2 }}
+                        </li>
+                        {% if not params.record._termination_date %}
+                            <li class="mb-2"><strong>Fecha de Terminación:</strong>
+
+                            </li>
+                        {% else %}
+                            <li class="mb-2"><strong>Fecha de Terminación:</strong>
+                                {{ params.record._termination_date }}
+                            </li>
+                        {% endif %}
                     </ul>
 
                 </div>

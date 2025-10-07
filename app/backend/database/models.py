@@ -318,6 +318,11 @@ class Settlement(BASE):
     __table_args__ = {'schema': 'serv'}
     id_record = Column(Integer, Identity(start=150, increment=1, cycle=True), primary_key=True)
     total_amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
+    # revision -> create cesantia, vacations, aguinaldo, payment
+    cesantia = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
+    vacations = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    bonus = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    payroll = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     status = Column(String(25), nullable=False, server_default='En Proceso') # En Proceso, Aprobado
     type = Column(String(25), nullable=False)
     details = Column(String(250), nullable=False)
