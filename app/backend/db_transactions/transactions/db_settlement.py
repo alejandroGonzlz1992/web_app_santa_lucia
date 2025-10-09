@@ -228,3 +228,6 @@ class Settlement_Trans_Manager:
 
         # return
         return to_copy
+
+    # update settlement record
+    

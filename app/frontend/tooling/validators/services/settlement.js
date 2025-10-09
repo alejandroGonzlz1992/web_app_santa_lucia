@@ -26,6 +26,8 @@ export class AdjustValidator {
 
         this.bonusAmountFieldValidate("bonus_amount");
 
+        this.settlementDetailFieldValidate("settlement_details");
+
         this.salaryUpToTodayAmountFieldValidate("payroll_amount");
 
         /* form submission */
@@ -131,7 +133,7 @@ export class AdjustValidator {
         }
     }
 
-    /* vacactions field validate */
+    /* vacations field validate */
     vacationAmountFieldValidate(fieldName) {
         /* get input element and div Id */
         let inputField = this.form.elements.namedItem(fieldName);
@@ -239,5 +241,41 @@ export class AdjustValidator {
         }
     }
 
+    /* settlement detail validation */
+    settlementDetailFieldValidate(fieldName) {
+        let inputField = this.form.elements.namedItem(fieldName);
+        let divBlank = document.getElementById(this.data.settlement_details.div_id.blank);
+        let divChars = document.getElementById(this.data.settlement_details.div_id.chars);
+        let divLength = document.getElementById(this.data.settlement_details.div_id.length);
+
+        // listener
+        Shared.validateInputBlankFields(inputField, divBlank, this.data.settlement_details.text.blank, this);
+
+        if(this.valid) {
+            inputField.addEventListener("input", () => {
+                let value = inputField.value.trim();
+
+                if(!Static.REGEX.address.test(value)) {
+                    // clear previous error
+                    Shared.clearErrorMessages(inputField, [divLength]);
+                    // display error
+                    Shared.displayErrorMessages(inputField, divChars, this.data.settlement_details.text.chars);
+                    this.valid = false;
+                }
+                else if(value.length < Static.ADDRESS_LENGTH) {
+                    // clear previous error
+                    Shared.clearErrorMessages(inputField, [divChars]);
+                    // display error
+                    Shared.displayErrorMessages(inputField, divLength, this.data.settlement_details.text.length);
+                    this.valid = false;
+                }
+                else {
+                    // clear errors
+                    Shared.clearErrorMessages(inputField, [divChars, divLength]);
+                    this.valid = true;
+                }
+            });
+        }
+    }
 
 }

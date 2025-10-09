@@ -21,7 +21,31 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 <!--main form-->
@@ -54,6 +78,9 @@
                     <!--Payroll Update Info Form -->
                     <form id="id_settlement_adjust_form" novalidate>
                         <h5 class="card-title my-3 text-start"><strong>Montos Desglosados</strong></h5>
+
+                        <!--Hidden fields-->
+                        <input type="hidden" value="{{ params.id }}" name="id">
 
                         <!--Address Information Field-->
                         <div class="row">
@@ -174,26 +201,24 @@
                                        style="color: #3371db;">Detalle Liquidación</label> *
                                 <div class="input-group">
                                     <textarea class="form-control" id="id_settlement_details"
-                                              name="settlement_details" rows="2"
-                                              style="color: cadetblue;"
-                                              placeholder="Ingresar detalle de liquidación">
-                                    </textarea>
+                                              name="settlement_details" rows="2" style="color: cadetblue;"
+                                              placeholder="Ingresar detalle de liquidación"></textarea>
                                 </div>
-                            </div>
 
-                            <div id="id_settle_details_blank_field_error"
-                                 class="text-danger text-start"
-                                 style="font-size: 13px; display: none;">
-                            </div>
-                            <div id="id_settle_details_chars_field_error"
-                                 class="text-danger text-start"
-                                 style="font-size: 13px; display: none;">
-                            </div>
-                            <div id="id_settle_details_length_field_error"
-                                 class="text-danger text-start"
-                                 style="font-size: 13px; display: none;">
-                            </div>
+                                <div id="id_settle_details_blank_field_error"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_settle_details_chars_field_error"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_settle_details_length_field_error"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
 
+                            </div>
                         </div>
 
                         <p style="color: brown;"><strong> * </strong>Campos obligatorios</p>

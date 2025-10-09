@@ -5,13 +5,15 @@ from sqlalchemy.orm import Session
 from typing import Annotated, Union
 from datetime import date
 from pathlib import Path
+from sqlalchemy.exc import SQLAlchemyError, OperationalError
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
+from app.backend.schema.trans.settlement import Update_Settlement_Record
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
-from app.backend.db_transactions.transactions.db_settlement import Settlement_Trans_Manager
 from app.backend.tooling.setting.error_log import Logs_Manager
+from app.backend.db_transactions.transactions.db_settlement import Settlement_Trans_Manager
 from app.backend.database.config import Session_Controller
 
 
@@ -119,6 +121,42 @@ async def getting_app_settlement_adjust_endpoint(
         'service/payroll/settlement/adjust.html', context={
             'request': request, 'params': {
                 'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+            }
+        }
+    )
+
+
+# POST -> Settlement Adjustments
+@settlement_route.post(Cns.URL_SETTLEMENT_ADJUST_POST.value, response_class=HTMLResponse)
+async def posting_app_settlement_adjust_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Update_Settlement_Record, Depends(Update_Settlement_Record.formatting)],
+) -> HTMLResponse:
+
+    try:
+        ""
+
+    except SQLAlchemyError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_settlement_adjust_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_orm_error')
+
+    except OperationalError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_settlement_adjust_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        "base/redirect.html", context={
+            "request": request, "params": {
+                "domain": "liquidaciones", "redirect": "ce", "fg": "_update"
             }
         }
     )

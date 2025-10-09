@@ -170,6 +170,7 @@ class Constants(Enum):
     URL_SETTLEMENT_DETAILS = f'/detalles/{URL_ID}'
     URL_SETTLEMENT_DETAILS_PDF = f'/detalles/{URL_ID}/liquidacion'
     URL_SETTLEMENT_ADJUST = f'/ajustes/{URL_ID}'
+    URL_SETTLEMENT_ADJUST_POST = f'/ajustes'
 
     # evaluation
     URL_EVALUATION = '/evaluaciones/ce'

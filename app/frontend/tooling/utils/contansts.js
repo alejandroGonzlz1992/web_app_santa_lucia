@@ -896,9 +896,22 @@ export const Static = {
                 "chars": "Ingresar números únicamente."
             }
         },
+        "settlement_details": {
+            "div_id": {
+                "blank": "id_settle_details_blank_field_error",
+                "chars": "id_settle_details_chars_field_error",
+                "length": "id_settle_details_length_field_error",
+            },
+            "text": {
+                "blank": "Campo Obligatorio.",
+                "chars": "No se permiten caracteres especiales.",
+                "length": "Detalle de liquidación debe tener mínimo 10 caracteres."
+            }
+        }
     },
 
-    SETTLEMENT_ENABLE_BLANK_FIELDS: ["cesantia_amount", "vacation_amount", "bonus_amount", "payroll_amount"],
+    SETTLEMENT_ENABLE_BLANK_FIELDS: ["cesantia_amount", "vacation_amount", "bonus_amount",
+        "payroll_amount", "settlement_details"],
 
     // BONUS ADJUST
     BONUS_ENABLE_FORM_DICT: {
