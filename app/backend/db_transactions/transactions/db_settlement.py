@@ -1,9 +1,16 @@
 # import
 from pydantic import BaseModel
+from decimal import Decimal
+from datetime import date, datetime
 from fastapi import HTTPException, status
 from typing import Union
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy import or_
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from docxtpl import DocxTemplate
+import subprocess
+import shutil
 
 # local import
 from app.backend.database import models
@@ -19,6 +26,10 @@ class Settlement_Trans_Manager:
         self.status = status
         self.http_exec = HTTPException
         self.cns = Cns
+        self.temp_dir = TemporaryDirectory()
+        self.sub_process = subprocess
+        self.shutil = shutil
+        self.docx = DocxTemplate
 
     # fetch active role types
     async def fetching_active_role_type(
@@ -128,3 +139,92 @@ class Settlement_Trans_Manager:
 
         # return
         return row
+
+    # format to money crc style
+    @staticmethod
+    async def formatting_crc_money_style(value: Union[str, int, float, Decimal]) -> str:
+        # validate default value
+        if value is None: value = 0
+        # str formatted
+        format_str = f'{float(value):,.2f}'
+        # return
+        return format_str.replace(',', 'X').replace('.', ',').replace('X', '.')
+
+    # format date to CRC format
+    @staticmethod
+    async def formatting_date_to_crc_time(value: Union[date, str]) -> str:
+        # if not date return empty
+        if value is None:
+            return ""
+        # if instance of date
+        if isinstance(value, (date, datetime)):
+            return value.strftime("%d-%m-%Y")
+        # try common ISO strings
+        try:
+            return datetime.fromisoformat(str(value)).strftime("%d-%m-%Y")
+        except Exception:
+            return str(value)
+
+    @staticmethod
+    async def manage_libreoffice_suffixes(
+            to_pdf: Union[object, str], temp: Union[object, str], context: Union[object, str], name: str) -> object:
+        # validate
+        if not to_pdf.exists():
+            candidates = list(temp.glob(f'{name}*.pdf'))
+            if not candidates:
+                context.cleanup()
+                raise RuntimeError('PDF conversion succeeded but PDF not found.')
+            # rename
+            candidates[0].rename(to_pdf)
+
+    # converting docx file to pdf file (libreoffice)
+    async def converting_docx_to_pdf_file_libreoffice(
+            self, temp_path: Path, context: Union[dict, object], out_stem: str) -> Path:
+        # temp vars
+        temp_dir = Path(self.temp_dir.name)
+
+        # render .docx file and add context
+        filled_docx = temp_dir / f'{out_stem}.docx'
+        tpl = self.docx(str(temp_path))
+        tpl.render(context)
+        tpl.save(str(filled_docx))
+
+        # perform convertion to PDF
+        self.sub_process.run(
+            ["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(temp_dir), str(filled_docx)],
+            check=True)
+
+        # manage suffixes
+        fill_pdf = temp_dir / f'{out_stem}.pdf'
+        await Settlement_Trans_Manager.manage_libreoffice_suffixes(
+            to_pdf=fill_pdf, temp=temp_dir, context=self.temp_dir, name=out_stem)
+
+        # return
+        return fill_pdf
+
+    # fetching information from query
+    async def fetching_query_rows_into_dict(self, record: list, today_: date, default: float = 0.0) -> dict:
+        # map record names into dict keys
+        to_copy = self.cns.SETTLE_QUERY_CONTEXT.value.copy()
+        # fetch info
+        to_copy["name"] = record._emp_name
+        to_copy["lastname"] = record._emp_lastname
+        to_copy["lastname2"] = record._emp_lastname2
+        to_copy["current_date"] = await Settlement_Trans_Manager.formatting_date_to_crc_time(value=today_)
+        to_copy["identification"] = record._emp_id
+        to_copy["settlement_id"] = record._id
+        to_copy["termination_date"] = await Settlement_Trans_Manager.formatting_date_to_crc_time(
+            value=record._termination_date)
+        to_copy["jf_name"] = record._apr_name
+        to_copy["jf_lastname"] = record._apr_lastname
+        to_copy["jf_lastname2"] = record._apr_lastname2
+        to_copy["total_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._total_amount)
+        to_copy["payroll_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._payroll_amount)
+        to_copy["cesantia_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._cesantia_amount)
+        to_copy["vacations_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._vacations_amount)
+        to_copy["bonus_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._bonus_amount)
+        to_copy["other_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=default)
+        to_copy["settlement_details"] = record._details
+
+        # return
+        return to_copy

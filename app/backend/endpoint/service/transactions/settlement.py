@@ -1,8 +1,10 @@
 # import
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
+from datetime import date
+from pathlib import Path
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
@@ -72,6 +74,31 @@ async def getting_app_settlement_details_endpoint(
             }
         }
     )
+
+
+# GET -> Settlement Details PDF
+@settlement_route.get(Cns.URL_SETTLEMENT_DETAILS_PDF.value, response_class=FileResponse)
+async def posting_app_settlement_details_pdf_endpoint(
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        id: Annotated[Union[int, str], None]
+) -> FileResponse:
+
+    # query records
+    records = await serv.query_specific_settlement_records(db=db, id_record=id)
+    # test the return dict
+    to_dict = await serv.fetching_query_rows_into_dict(record=records, today_=date.today())
+    # file name
+    pdf_file_name = f'liquidacion_{records._ident}_{records._emp_name}_{records._emp_lastname}.pdf'
+    # blueprint file path
+    blueprint_file_path = Path(__file__).resolve().parents[3] / "tooling/docs/settlement_docs.docx"
+
+    # convert to PDF
+    pdf_path = await serv.converting_docx_to_pdf_file_libreoffice(
+        temp_path=blueprint_file_path, context=to_dict, out_stem=pdf_file_name)
+
+    # return
+    return FileResponse(
+        path=str(pdf_path), media_type="application/pdf", filename=pdf_file_name)
 
 
 # GET -> Settlement Adjustments

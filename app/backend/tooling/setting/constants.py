@@ -168,6 +168,7 @@ class Constants(Enum):
     # settlement
     URL_SETTLEMENT = '/liquidaciones/ce'
     URL_SETTLEMENT_DETAILS = f'/detalles/{URL_ID}'
+    URL_SETTLEMENT_DETAILS_PDF = f'/detalles/{URL_ID}/liquidacion'
     URL_SETTLEMENT_ADJUST = f'/ajustes/{URL_ID}'
 
     # evaluation
@@ -399,3 +400,12 @@ class Constants(Enum):
             '_apr_role_type': 'Tipo de rol'
         },
     }
+
+    # settlement query context
+    SETTLE_QUERY_CONTEXT = {
+        'name': None, 'lastname': None, 'lastname2': None, 'current_date': None, 'identification': None,
+        'settlement_id': None, 'termination_date': None, 'jf_name': None, 'jf_lastname': None, 'jf_lastname2': None,
+        'total_amount': None, 'payroll_amount': None, 'cesantia_amount': None, 'vacations_amount': None,
+        'bonus_amount': None, 'other_amount': None, 'settlement_details': None
+    }
+
