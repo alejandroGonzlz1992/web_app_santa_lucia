@@ -4,6 +4,13 @@ from fastapi import HTTPException, status
 from typing import Union
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy import or_
+from datetime import date, datetime
+from decimal import Decimal
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from docxtpl import DocxTemplate
+import subprocess
+import shutil
 
 # local import
 from app.backend.database import models
@@ -19,6 +26,10 @@ class Bonus_Trans_Manager:
         self.status = status
         self.http_exec = HTTPException
         self.cns = Cns
+        self.temp_dir = TemporaryDirectory()
+        self.sub_process = subprocess
+        self.shutil = shutil
+        self.docx = DocxTemplate
 
     # fetch active role types
     async def fetching_active_role_type(
@@ -47,6 +58,7 @@ class Bonus_Trans_Manager:
             self.models.Bonus.id_record.label('_id'),
             self.models.Bonus.total_amount.label('_total_amount'),
             self.models.Bonus.month_amount.label('_month_amount'),
+            self.models.Bonus.year.label('_year'),
             self.models.Bonus.month.label('_month'),
             self.models.Bonus.log_date.label('_log_date'),
             # subject info
@@ -81,3 +93,165 @@ class Bonus_Trans_Manager:
 
         # return
         return rows.order_by(self.models.Bonus.id_record.desc()).all()
+
+    # query specific bonus record
+    async def query_specific_bonus_records(
+            self, db: Union[Session, object], id_record: Union[int, str]) -> object:
+        # entity aliases
+        sub_user_role = aliased(self.models.User_Role)
+        subject = aliased(self.models.User)
+        approver = aliased(self.models.User)
+
+        row = db.query(
+            self.models.Bonus.id_record.label('_id'),
+            self.models.Bonus.total_amount.label('_total_amount'),
+            self.models.Bonus.year.label('_year'),
+            self.models.Bonus.month.label('_month'),
+            # subject info
+            subject.id_record.label('_emp_id'),
+            subject.identification.label('_ident'),
+            subject.name.label('_emp_name'),
+            subject.lastname.label('_emp_lastname'),
+            subject.lastname2.label('_emp_lastname2'),
+            # approver info
+            approver.id_record.label('_apr_id'),
+            approver.name.label('_apr_name'),
+            approver.lastname.label('_apr_lastname'),
+
+            approver.lastname2.label('_apr_lastname2'),
+            # termination date
+            sub_user_role.hire_date.label('_hire_date'),
+            sub_user_role.gross_income.label('_gross_income')
+        ).join(
+            sub_user_role, sub_user_role.id_record == self.models.Bonus.id_subject
+        ).join(
+            subject, subject.id_record == sub_user_role.id_user
+        ).join(
+            approver, approver.id_record == sub_user_role.approver
+        ).filter(
+            self.models.Bonus.id_record == id_record
+        ).first()
+
+        # return
+        return row
+
+    # query rows per month, year, id_record
+    async def query_month_year_quotas(
+            self, db: Union[Session, object], id_record: Union[int, str]) -> object:
+        # records
+        records = db.query(
+            self.models.Bonus.id_record.label('_id'),
+            self.models.Bonus.month.label('_month'),
+            self.models.Bonus.year.label('_year'),
+            self.models.Bonus.month_amount.label('_month_amount'),
+        ).filter(
+            self.models.Bonus.id_record == id_record
+        ).all()
+
+        # return
+        return records
+
+    # format to money crc style
+    @staticmethod
+    async def formatting_crc_money_style(value: Union[str, int, float, Decimal]) -> str:
+        # validate default value
+        if value is None: value = 0
+        # str formatted
+        format_str = f'{float(value):,.2f}'
+        # return
+        return format_str.replace(',', 'X').replace('.', ',').replace('X', '.')
+
+    # format date to CRC format
+    @staticmethod
+    async def formatting_date_to_crc_time(value: Union[date, str]) -> str:
+        # if not date return empty
+        if value is None:
+            return ""
+        # if instance of date
+        if isinstance(value, (date, datetime)):
+            return value.strftime("%d-%m-%Y")
+        # try common ISO strings
+        try:
+            return datetime.fromisoformat(str(value)).strftime("%d-%m-%Y")
+        except Exception:
+            return str(value)
+
+    @staticmethod
+    async def manage_libreoffice_suffixes(
+            to_pdf: Union[object, str], temp: Union[object, str], context: Union[object, str], name: str) -> object:
+        # validate
+        if not to_pdf.exists():
+            candidates = list(temp.glob(f'{name}*.pdf'))
+            if not candidates:
+                context.cleanup()
+                raise RuntimeError('PDF conversion succeeded but PDF not found.')
+            # rename
+            candidates[0].rename(to_pdf)
+
+    # converting docx file to pdf file (libreoffice)
+    async def converting_docx_to_pdf_file_libreoffice(
+            self, temp_path: Path, context: Union[dict, object], out_stem: str) -> Path:
+        # temp vars
+        temp_dir = Path(self.temp_dir.name)
+
+        # render .docx file and add context
+        filled_docx = temp_dir / f'{out_stem}.docx'
+        tpl = self.docx(str(temp_path))
+        tpl.render(context)
+        tpl.save(str(filled_docx))
+
+        # perform convertion to PDF
+        self.sub_process.run(
+            ["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(temp_dir), str(filled_docx)],
+            check=True)
+
+        # manage suffixes
+        fill_pdf = temp_dir / f'{out_stem}.pdf'
+        await Bonus_Trans_Manager.manage_libreoffice_suffixes(
+            to_pdf=fill_pdf, temp=temp_dir, context=self.temp_dir, name=out_stem)
+
+        # return
+        return fill_pdf
+
+    # fetching information from query
+    async def fetching_query_rows_into_dict(self, record: list, today_: date) -> dict:
+        # map record names into dict keys
+        to_copy = self.cns.BONUS_QUERY_CONTEXT.value.copy()
+        # fetch info
+        to_copy["name"] = record._emp_name
+        to_copy["lastname"] = record._emp_lastname
+        to_copy["lastname2"] = record._emp_lastname2
+        to_copy["current_date"] = await Bonus_Trans_Manager.formatting_date_to_crc_time(value=today_)
+        to_copy["identification"] = record._emp_id
+        to_copy["bonus_id"] = record._id
+        to_copy["hire_date"] = await Bonus_Trans_Manager.formatting_date_to_crc_time(value=record._hire_date)
+        to_copy["jf_name"] = record._apr_name
+        to_copy["jf_lastname"] = record._apr_lastname
+        to_copy["jf_lastname2"] = record._apr_lastname2
+        to_copy["gross_amount"] = await Bonus_Trans_Manager.formatting_crc_money_style(value=record._gross_income)
+        to_copy["total_amount"] = await Bonus_Trans_Manager.formatting_crc_money_style(value=record._total_amount)
+        to_copy["year"] = record._year
+        to_copy["month"] = record._month
+
+        # return
+        return to_copy
+
+    # update bonus record
+    async def updating_bonus_record(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
+        # query record
+        record = db.query(
+            self.models.Bonus
+        ).filter(
+            self.models.Bonus.id_record == schema["id"]
+        ).first()
+
+        # update
+        if record:
+            record.month_amount = schema["bonus_amount"]
+            record.year = schema["bonus_year"]
+            record.month = schema["bonus_month"]
+
+            # commit
+            db.commit()
+

@@ -4,13 +4,15 @@ from typing import Literal, Union
 
 # local import
 from app.backend.tooling.emailing.settings.email_setting import Email_Manager
+from app.backend.db_transactions.transactions.db_settlement import Settlement_Trans_Manager
 
 
 # logger
 logger = logging.getLogger(__name__)
 # email
 emailing = Email_Manager()
-
+# serv
+serv = Settlement_Trans_Manager()
 
 # send new password confirmation task
 async def bg_task_new_password_confirmation(rec: str) -> None:

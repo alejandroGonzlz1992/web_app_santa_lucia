@@ -158,7 +158,9 @@ class Constants(Enum):
     # bonus
     URL_BONUS = '/aguinaldos/ce'
     URL_BONUS_DETAILS = f'/detalles/{URL_ID}'
+    URL_BONUS_DETAILS_PDF = f'/detalles/{URL_ID}/aguinaldo'
     URL_BONUS_ADJUST = f'/ajustes/{URL_ID}'
+    URL_BONUS_ADJUST_POST = '/ajustes'
 
     # payroll
     URL_PAYROLL = '/planillas/ce'
@@ -170,7 +172,10 @@ class Constants(Enum):
     URL_SETTLEMENT_DETAILS = f'/detalles/{URL_ID}'
     URL_SETTLEMENT_DETAILS_PDF = f'/detalles/{URL_ID}/liquidacion'
     URL_SETTLEMENT_ADJUST = f'/ajustes/{URL_ID}'
-    URL_SETTLEMENT_ADJUST_POST = f'/ajustes'
+    URL_SETTLEMENT_ADJUST_POST = '/ajustes'
+    # settlement to redirect
+    URL_SETTLEMENT_TO_REDIRECT = "http://127.0.0.1:8000/liquidaciones/ce/detalles"
+
 
     # evaluation
     URL_EVALUATION = '/evaluaciones/ce'
@@ -263,12 +268,13 @@ class Constants(Enum):
             "_update": "El registro de planilla ha sido ajustado exitosamente."
         },
         "_settlement": {
-            "_update": "El registro de liquidación ha sido ajustado exitosamente."
+            "_update": "El registro de liquidación ha sido ajustado exitosamente.",
+            "_download": "Descarga de archivo exitosa."
         },
-        "_year_bonus": {
+        "_bonus": {
             "_update": "El registro de aguinaldo ha sido ajustado exitosamente.",
             "_fail": 'Existen errores en la información ingresada. Por favor validar.',
-            "_bonus_update": "La fecha de actualización no puede estar antes de la fecha de creación en los registros."
+            "_download": "Descarga de archivo exitosa."
         },
         '_profile': {
             '_errors': 'Existen errores en la información ingresada. Por favor validar.',
@@ -408,5 +414,12 @@ class Constants(Enum):
         'settlement_id': None, 'termination_date': None, 'jf_name': None, 'jf_lastname': None, 'jf_lastname2': None,
         'total_amount': None, 'payroll_amount': None, 'cesantia_amount': None, 'vacations_amount': None,
         'bonus_amount': None, 'other_amount': None, 'settlement_details': None
+    }
+
+    # bonus query context
+    BONUS_QUERY_CONTEXT = {
+        'name': None, 'lastname': None, 'lastname2': None, 'current_date': None, 'identification': None,
+        'bonus_id': None, 'hire_date': None, 'jf_name': None, 'jf_lastname': None, 'jf_lastname2': None,
+        'gross_amount': None, 'total_amount': None, 'year': None, 'month': None
     }
 

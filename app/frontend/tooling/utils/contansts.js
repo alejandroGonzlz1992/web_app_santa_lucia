@@ -940,6 +940,18 @@ export const Static = {
                 "status": "Debe seleccionar una de las opciones del menú.",
             }
         },
+        "bonus_year": {
+            "div_id": {
+                "blank": "id_bonus_year_blank_field_error",
+                "chars": "id_bonus_year_chars_field_error",
+                "after": "id_bonus_year_after_current_field_error"
+            },
+            "text": {
+                "blank": "Campo Obligatorio.",
+                "chars": "Ingresar números únicamente.",
+                "after": "El año del monto de la cuota no puede ser mayor al año actual."
+            }
+        },
         "bonus_amount": {
             "div_id": {
                 "blank": "id_bonus_amount_blank_field_error",
@@ -962,7 +974,7 @@ export const Static = {
         },
     },
 
-    BONUS_ENABLE_BLANK_FIELDS: ["bonus_month", "bonus_amount", "bonus_update_date"],
+    BONUS_ENABLE_BLANK_FIELDS: ["bonus_month", "bonus_year", "bonus_amount", "bonus_update_date"],
 
     // PROFILE TRACKER
     PROFILE_TRACKER_FORM_DICT: {

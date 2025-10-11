@@ -21,13 +21,13 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "register" %}
+    {% if params.fg == "_update" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#info-fill"/>
                 </svg>
-                <div>{{params.ops._year_bonus._update}}</div>
+                <div>{{params.ops._bonus._update}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -100,19 +100,18 @@
                 <div class="col align-self-start text-start mt-3">
                     <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
                         <thead class="table-secondary">
-                        <tr>
-                            <th scope="col">Cod Registro</th>
-                            <th scope="col">Identificación</th>
-                            <th scope="col">Empleado</th>
-                            <th scope="col">Jefatura</th>
-                            <th scope="col">Monto Total</th>
-                            <th scope="col">Monto Mensual</th>
-                            <th scope="col">Mes</th>
-                            <th scope="col">Fecha de Registro</th>
-                            <th scope="col" colspan="2"
-                                style="text-align: center; vertical-align: middle;">Administrar
-                            </th>
-                        </tr>
+                            <tr>
+                                <th scope="col">Cod Registro</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Empleado</th>
+                                <th scope="col">Jefatura</th>
+                                <th scope="col">Mes</th>
+                                <th scope="col">Año</th>
+                                <th scope="col">Fecha de Registro</th>
+                                <th scope="col" colspan="2"
+                                    style="text-align: center; vertical-align: middle;">Administrar
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
                         {% for item in params.records %}
@@ -121,14 +120,13 @@
                                 <td>{{ item._ident }}</td>
                                 <td>{{ item._emp_name }} {{ item._emp_name }} {{ item._emp_name }}</td>
                                 <td>{{ item._apr_name }} {{ item._apr_lastname }} {{ item._apr_lastname2 }}</td>
-                                <td>{{ item._total_amount }}</td>
-                                <td>{{ item._month_amount }}</td>
                                 <td>{{ item._month }}</td>
+                                <td>{{ item._year }}</td>
                                 <td>{{ item._log_date.date() }}</td>
                                 <td style="text-align: center; vertical-align: middle;">
                                     <a href="{{url_for('getting_app_bonus_details_endpoint', id=item._id)}}">
                                         <i class="align-center" data-feather="refresh-ccw"></i>
-                                        Consultar Detalles
+                                        Detalles
                                     </a>
                                 </td>
                                 <td style="text-align: center; vertical-align: middle;">

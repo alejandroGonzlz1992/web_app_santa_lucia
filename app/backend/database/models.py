@@ -297,6 +297,8 @@ class Bonus(BASE):
     id_record = Column(Integer, Identity(start=140, increment=1, cycle=True), primary_key=True)
     total_amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
     month_amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
+    # do revision in here --> add year column
+    year = Column(Integer, nullable=False, server_default='1900')
     month = Column(String(25), nullable=False)
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     # do revision in here --> drop column foreign key

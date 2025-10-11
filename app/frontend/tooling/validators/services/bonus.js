@@ -22,6 +22,8 @@ export class AdjustValidator {
         /* on-time validators */
         this.bonusMonthQuotaFieldValidate("bonus_month");
 
+        this.bonusYearQuotaFieldValidate("bonus_year");
+
         this.bonusAmountQuotaFieldValidate("bonus_amount");
 
         this.bonusAmountUpdateDateFieldValidate("bonus_update_date");
@@ -121,6 +123,55 @@ export class AdjustValidator {
         }
     }
 
+    /* year of quota field */
+    bonusYearQuotaFieldValidate(fieldName) {
+        /* get input element and div ids */
+        let inputField = this.form.elements.namedItem(fieldName);
+        let divBlank = document.getElementById(this.data.bonus_year.div_id.blank);
+        let divChars = document.getElementById(this.data.bonus_year.div_id.chars);
+        let divAfter = document.getElementById(this.data.bonus_year.div_id.after);
+
+        /* get current year */
+        let currentYear = new Date().getFullYear();
+
+        /* validate on-time blank fields */
+        Shared.validateInputBlankFields(inputField, divBlank, this.data.bonus_year.text.blank, this);
+
+        /* validate on-time blank fields */
+        if(this.valid){
+            /* add event listener to input field */
+            inputField.addEventListener("input", () => {
+                /* get input field value */
+                let value = inputField.value.trim();
+                /* validate only letters are input */
+                if(!Static.REGEX.only_numbers.test(value)){
+                    /* clear prev error message */
+                    Shared.clearErrorMessages(inputField, [divAfter]);
+                    /* display error message */
+                    Shared.displayErrorMessages(inputField, divChars, this.data.bonus_year.text.chars);
+                    /* update flag */
+                    this.valid = false;
+                }
+                else if(parseInt(value) > currentYear) {
+                    /* clear prev error message */
+                    Shared.clearErrorMessages(inputField, [divChars]);
+                    /* display error message */
+                    Shared.displayErrorMessages(inputField, divAfter, this.data.bonus_year.text.after);
+                    /* update flag */
+                    this.valid = false;
+                }
+                else {
+                    /* clear error message */
+                    Shared.clearErrorMessages(inputField, [divChars, divAfter]);
+                    /* update flag */
+                    this.valid = true;
+                }
+            });
+        }
+
+
+    }
+
     /* month amount quota field */
     bonusAmountQuotaFieldValidate(fieldName) {
         /* get input element and div Id */
@@ -138,7 +189,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */

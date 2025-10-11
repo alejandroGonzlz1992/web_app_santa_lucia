@@ -64,8 +64,13 @@
                 <div class="card-body text-start">
 
                     <!--Bonus Update Info Form -->
-                    <form id="id_bonus_adjustment_form" novalidate>
+                    <form id="id_bonus_adjustment_form" method="post"
+                          action="{{ url_for('posting_app_bonus_adjust_endpoint') }}" novalidate>
+
                         <h5 class="card-title my-3 text-start"><strong>Ajustes Aguinaldo</strong></h5>
+
+                        <!--hidden fields-->
+                        <input type="hidden" name="id" value="{{ params.id }}">
 
                         <!--Address Information Field-->
                         <div class="row">
@@ -77,7 +82,7 @@
                                         <select class="form-select mb-2" id="id_bonus_month"
                                                 name="bonus_month"
                                                 style="color: cadetblue;">
-                                            <option value="not_select" selected>Seleccionar el mes del día feriado</option>
+                                            <option value="not_select" selected>Seleccionar el mes</option>
                                             {% for month in params.calendar.months %}
                                                 <option value="{{ month }}">{{ month }}</option>
                                             {% endfor %}
@@ -89,9 +94,43 @@
                                 <div id="id_bonus_month_status_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                 </div>
-
                             </div>
 
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center"
+                                            style="color: #3371db;">Año Cuota</label> *
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="id_bonus_year"
+                                                name="bonus_year" style="font-size: 12px; color: cadetblue;"
+                                                placeholder="-- -- --" required>
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_bonus_year_date_text_info" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey">
+                                                • Ingresar números únicamente.
+                                            </p>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!--Province Validation Errors Field-->
+                                <div id="id_bonus_year_blank_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_bonus_year_chars_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_bonus_year_after_current_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
                             <div class="col">
                                 <div class="py-1 text-start">
                                     <label class="form-label text-center"
@@ -157,7 +196,6 @@
 
                                 </div>
                             </div>
-
                         </div>
 
                         <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>

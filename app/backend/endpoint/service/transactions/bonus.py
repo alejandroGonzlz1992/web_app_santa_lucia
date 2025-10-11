@@ -1,14 +1,18 @@
 # import
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
+from sqlalchemy.exc import SQLAlchemyError, OperationalError
+from pathlib import Path
+from datetime import date
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.db_transactions.transactions.db_bonus import Bonus_Trans_Manager
+from app.backend.schema.trans.bonus import Update_Bonus_Record
 from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.database.config import Session_Controller
 
@@ -38,8 +42,6 @@ async def getting_app_bonus_base_endpoint(
     # query bonus records
     records = await serv.query_bonus_records(db=db, id_session=user_login.user_id)
 
-    print(records)
-
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/bonus/index.html', context={
@@ -63,14 +65,45 @@ async def getting_app_bonus_details_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # query specific bonus record
+    record = await serv.query_specific_bonus_records(db=db, id_record=id)
+
+    # query month and year bonus quotas
+    quotas = await serv.query_month_year_quotas(db=db, id_record=id)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/bonus/details.html', context={
             'request': request, 'params': {
-                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'record': record,
+                'quotas': quotas
             }
         }
     )
+
+
+# GET -> Bonus Details PDF
+@bonus_route.get(Cns.URL_BONUS_DETAILS_PDF.value, response_class=FileResponse)
+async def posting_app_bonus_details_pdf_endpoint(
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        id: Annotated[Union[int, str], None]
+) -> FileResponse:
+
+    # query records
+    records = await serv.query_specific_bonus_records(db=db, id_record=id)
+    # test the return dict
+    to_dict = await serv.fetching_query_rows_into_dict(record=records, today_=date.today())
+    # blueprint file path
+    blueprint_file_path = Path(__file__).resolve().parents[3] / "tooling/docs/bonus_docs.docx"
+    # file name
+    pdf_file_name = f'aguinaldo_{records._ident}_{records._emp_name}_{records._emp_lastname}.pdf'
+
+    # convert to PDF
+    pdf_path = await serv.converting_docx_to_pdf_file_libreoffice(
+        temp_path=blueprint_file_path, context=to_dict, out_stem=pdf_file_name)
+
+    return FileResponse(
+        path=str(pdf_path), media_type="application/pdf", filename=pdf_file_name)
 
 
 # GET -> Bonus Adjustments
@@ -92,6 +125,42 @@ async def getting_app_bonus_adjust_endpoint(
             'request': request, 'params': {
                 'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'calendar': Cns.CALENDAR.value,
                 'user_session': user_session
+            }
+        }
+    )
+
+
+@bonus_route.post(Cns.URL_BONUS_ADJUST_POST.value, response_class=HTMLResponse)
+async def posting_app_bonus_adjust_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Update_Bonus_Record, Depends(Update_Bonus_Record.formatting)],
+) -> HTMLResponse:
+
+    try:
+        # update record
+        await serv.updating_bonus_record(db=db, schema=model.model_dump())
+
+    except SQLAlchemyError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_bonus_adjust_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_orm_error')
+
+    except OperationalError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_bonus_adjust_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        "base/redirect.html", context={
+            "request": request, "params": {
+                "domain": "aguinaldos", "redirect": "ce", "fg": "_update"
             }
         }
     )

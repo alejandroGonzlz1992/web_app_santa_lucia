@@ -11,7 +11,7 @@
 <ul class="sidebar-nav">
     <li class="sidebar-header"> <b>AGUINALDOS</b> </li>
     <li class="sidebar-item active">
-        <a class="sidebar-link" href="{{url_for('getting_app_bonus_base_endpoint')}}">
+        <a class="sidebar-link" href="{{ url_for('getting_app_bonus_base_endpoint')}}">
             <i class="align-middle" data-feather="dollar-sign"></i>
             <span class="align-middle">Regresar</span>
         </a>
@@ -21,7 +21,19 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-
+    {% if params.fg == "_download" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-primary d-flex align-items-start" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill"/>
+                </svg>
+                <div>{{ params.ops._bonus._download }}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 <!--main form-->
@@ -45,7 +57,8 @@
                             por ley y/o conceptos varios. El reporte puede ser descargado en formato PDF.
                         </div>
                         <!--Download PDF Button-->
-                        <a class="mb-3 px-3 text-end" href="#">
+                        <a class="mb-3 px-3 text-end"
+                           href="{{ url_for('posting_app_bonus_details_pdf_endpoint', id=params.id) }}">
                             <button class="btn btn-secondary" type="button">Descargar PDF</button>
                         </a>
                     </div>
@@ -67,28 +80,35 @@
 
                     <!-- Gross & Net -->
                     <div class="mb-4 fs-6">
-                        <p class="mb-2"><strong>Monto Total a la fecha:</strong> ₡1,500,000</p>
+                        <p class="mb-2">Monto Total a la fecha:
+                            <strong>{{ "{:,.2f}".format(params.record._total_amount) }} CRC</strong>
+                        </p>
                     </div>
 
                     <hr>
 
                     <!-- Deductions -->
-                    <h6 class="text-uppercase text-muted mb-3 fs-6">Meses Acumulados</h6>
-                    <ul class="list-unstyled fs-6 mb-4">
-                        <li class="mb-2"><b>Enero - </b> ₡100,000</li>
-                        <li class="mb-2"><b>Febrero - </b> ₡80,000</li>
-                        <li class="mb-2"><b>Marzo - </b> ₡80,000</li>
-                        <li class="mb-2"><b>Abril - </b> ₡80,000</li>
-                        <li class="mb-2"><b>Mayo - </b> ₡80,000</li>
-                        <li class="mb-2"><b>Junio - </b> ₡80,000</li>
-                    </ul>
-
-                    <h6 class="text-uppercase text-muted mb-3 fs-6">Detalles</h6>
-                    <ul class="list-unstyled fs-6 mb-0">
-                        <li class="mb-2">Ingreso Salarial Anual Estimado: ₡50,000</li>
-                        <li>Estado de Planilla: Activo</li>
-                    </ul>
-
+                    <h6 class="text-uppercase text-muted mb-3 fs-6">Desgloce Cuota</h6>
+                    <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th scope="col">Cod</th>
+                                <th scope="col">Monto Mensual</th>
+                                <th scope="col">Mes de Cuota</th>
+                                <th scope="col">Año de Cuota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in params.quotas %}
+                                <tr>
+                                    <th scope="row"><b></b>{{ item._id }}</th>
+                                    <td>{{ "{:,.2f}".format(item._month_amount) }}</td>
+                                    <td>{{ item._month }}</td>
+                                    <td>{{ item._year }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -98,15 +118,21 @@
             <div class="card shadow-sm rounded-4 border-0">
                 <div class="card-body p-4">
 
-                    <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Detalles del Planilla</h5>
+                    <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Detalles Laborales</h5>
 
                     <ul class="list-unstyled fs-6 mb-0">
-                        <li class="mb-2"><strong>Empleado:</strong> Nombre Apellido</li>
-                        <li class="mb-2"><strong>Departamento:</strong> Ventas & Servicio al cliente</li>
-                        <li class="mb-2"><strong>Jefatura:</strong> Nombre Apellido</li>
-                        <li class="mb-2"><strong>Fecha de Pago:</strong> 31/05/2025</li>
-                        <li class="mb-2"><strong>Frecuencia:</strong> Mensual</li>
-                        <li><strong>Comentarios:</strong> Cuotas de contribución de aguinaldo anual.</li>
+                        <li class="mb-2"><strong>Identificación:</strong>
+                           {{ params.record._ident }} </li>
+                        <li class="mb-2"><strong>Empleado:</strong>
+                           {{ params.record._emp_name }} {{ params.record._emp_lastname }}
+                            {{ params.record._emp_lastname2 }} </li>
+                        <li class="mb-2"><strong>Jefatura:</strong>
+                            {{ params.record._apr_name }} {{ params.record._apr_lastname }}
+                            {{ params.record._apr_lastname2 }}
+                        </li>
+                        <li class="mb-2"><strong>Fecha de Contratación:</strong>
+                            {{ params.record._hire_date }}
+                        </li>
                     </ul>
 
                 </div>
