@@ -76,7 +76,8 @@
                 <div class="card-body text-start">
 
                     <!--Payroll Update Info Form -->
-                    <form id="id_settlement_adjust_form" novalidate>
+                    <form id="id_settlement_adjust_form" method="post"
+                          action="{{ url_for('posting_app_settlement_adjust_endpoint') }}" novalidate>
                         <h5 class="card-title my-3 text-start"><strong>Montos Desglosados</strong></h5>
 
                         <!--Hidden fields-->
@@ -193,6 +194,62 @@
                                 </div>
                             </div>
 
+                        </div>
+
+                        <div class="row">
+                            <!-- settlement type -->
+                            <div class="col">
+                                <div class="py-3 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Tipo Liquidación</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_settlement_type"
+                                                    name="settlement_type"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar tipo de liquidación </option>
+                                                <option value="Responsabilidad Laboral">Responsabilidad Laboral</option>
+                                                <option value="Sin responsabilidad Laboral">
+                                                    Sin Responsabilidad Laboral</option>
+                                                <option value="Mutuo Acuerdo">Mutuo Acuerdo</option>
+                                                <option value="Renuncia">Renuncia</option>
+                                                <option value="Temporal">Temporal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_settlement_type_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- settlement status -->
+                            <div class="col">
+                                <div class="py-3 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">
+                                       * Estado Liquidación</label>
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <select class="form-select mb-2" id="id_settlement_status"
+                                                    name="settlement_status"
+                                                    style="color: cadetblue;">
+                                                <option value="not_select" selected>
+                                                    Seleccionar el estado de liquidación </option>
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="Finalizado">Finalizado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_settlement_status_field_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">

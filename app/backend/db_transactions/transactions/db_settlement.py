@@ -230,4 +230,23 @@ class Settlement_Trans_Manager:
         return to_copy
 
     # update settlement record
-    
+    async def updating_settlement_record(self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
+        # query record
+        record = db.query(
+            self.models.Settlement
+        ).filter(
+            self.models.Settlement.id_record == schema["id"]
+        ).first()
+
+        # update
+        if record:
+            record.cesantia = schema["cesantia_amount"]
+            record.vacations = schema["vacation_amount"]
+            record.bonus = schema["bonus_amount"]
+            record.payroll = schema["payroll_amount"]
+            record.type = schema["settlement_type"]
+            record.status = schema["settlement_status"]
+            record.details = schema["settlement_details"].title()
+
+            # commit
+            db.commit()

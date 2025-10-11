@@ -81,10 +81,14 @@
                     <!-- Deductions -->
                     <h6 class="text-uppercase text-muted mb-3 fs-6">Otros Montos</h6>
                     <ul class="list-unstyled fs-6 mb-4">
-                        <li class="mb-2"><b>Cesantia</b> {{ params.record._cesantia_amount }} </li>
-                        <li class="mb-2"><b>Vacaciones</b> {{ params.record._vacations_amount }}  </li>
-                        <li class="mb-2"><b>Aguinaldo</b> {{ params.record._bonus_amount }}  </li>
-                        <li class="mb-2"><b>Salario Actual </b> {{ params.record._payroll_amount }}  </li>
+                        <li class="mb-2"><b>Cesantia</b>
+                            {{ "{:,.2f}".format(params.record._cesantia_amount) }} CRC </li>
+                        <li class="mb-2"><b>Vacaciones</b>
+                            {{ "{:,.2f}".format(params.record._vacations_amount) }} CRC </li>
+                        <li class="mb-2"><b>Aguinaldo</b>
+                            {{ "{:,.2f}".format(params.record._bonus_amount) }} CRC </li>
+                        <li class="mb-2"><b>Salario Actual </b>
+                            {{ "{:,.2f}".format(params.record._payroll_amount) }} CRC </li>
                     </ul>
 
                     <hr>

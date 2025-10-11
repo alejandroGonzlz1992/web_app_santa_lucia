@@ -47,6 +47,7 @@ export const Static = {
     /* regex Dictionary */
     REGEX: {
         "only_numbers": /^\d+$/,
+        "amount_format": /^\d+(\.\d+)?$/,
         "only_letters": /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
         "email_format": /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "address": /^(?!\d+$)[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s.,]+$/,
@@ -896,6 +897,22 @@ export const Static = {
                 "chars": "Ingresar números únicamente."
             }
         },
+        "settlement_type": {
+            "div_id": {
+                "status": "id_settlement_status_field_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú.",
+            }
+        },
+        "settlement_status": {
+            "div_id": {
+                "status": "id_settlement_status_field_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú.",
+            }
+        },
         "settlement_details": {
             "div_id": {
                 "blank": "id_settle_details_blank_field_error",
@@ -911,7 +928,7 @@ export const Static = {
     },
 
     SETTLEMENT_ENABLE_BLANK_FIELDS: ["cesantia_amount", "vacation_amount", "bonus_amount",
-        "payroll_amount", "settlement_details"],
+        "payroll_amount", "settlement_type", "settlement_status", "settlement_details"],
 
     // BONUS ADJUST
     BONUS_ENABLE_FORM_DICT: {

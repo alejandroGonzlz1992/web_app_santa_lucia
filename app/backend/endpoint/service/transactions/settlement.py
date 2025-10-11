@@ -136,7 +136,8 @@ async def posting_app_settlement_adjust_endpoint(
 ) -> HTMLResponse:
 
     try:
-        ""
+        # update record
+        await serv.updating_settlement_record(db=db, schema=model.model_dump())
 
     except SQLAlchemyError:
         db.rollback()  # -> db rollback

@@ -26,6 +26,10 @@ export class AdjustValidator {
 
         this.bonusAmountFieldValidate("bonus_amount");
 
+        this.settlementTypeFieldValidate("settlement_type");
+
+        this.settlementStatusFieldValidate("settlement_status");
+
         this.settlementDetailFieldValidate("settlement_details");
 
         this.salaryUpToTodayAmountFieldValidate("payroll_amount");
@@ -110,7 +114,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
 
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
@@ -150,7 +154,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -186,7 +190,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -222,7 +226,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -234,6 +238,72 @@ export class AdjustValidator {
                 else {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
+                    /* update flag */
+                    this.valid = true;
+                }
+            });
+        }
+    }
+
+    /* settlement type validation */
+    settlementTypeFieldValidate(fieldName) {
+        /* get input element and div ids */
+        let inputField = this.form.elements.namedItem(fieldName);
+        let divStatus = document.getElementById(this.data.settlement_type.div_id.status);
+
+        /* validate on-time blank fields */
+        Shared.validateInputBlankFields(inputField, divStatus, this.data.settlement_type.text.status, this);
+
+        if(this.valid){
+            /* add event listener to input field */
+            inputField.addEventListener("input", () => {
+                /* get input field value */
+                let value = inputField.value.trim();
+                /* validate only letters are input */
+                if(value === "not_select"){
+                    /* clear prev error message */
+                    Shared.clearErrorMessages(inputField, [divStatus]);
+                    /* display error message */
+                    Shared.displayErrorMessages(inputField, divStatus, this.data.settlement_type.text.status);
+                    /* update flag */
+                    this.valid = false;
+                }
+                else {
+                    /* clear error message */
+                    Shared.clearErrorMessages(inputField, [divStatus]);
+                    /* update flag */
+                    this.valid = true;
+                }
+            });
+        }
+    }
+
+    /* settlement status validation */
+    settlementStatusFieldValidate(fieldName) {
+        /* get input element and div ids */
+        let inputField = this.form.elements.namedItem(fieldName);
+        let divStatus = document.getElementById(this.data.settlement_status.div_id.status);
+
+        /* validate on-time blank fields */
+        Shared.validateInputBlankFields(inputField, divStatus, this.data.settlement_status.text.status, this);
+
+        if(this.valid){
+            /* add event listener to input field */
+            inputField.addEventListener("input", () => {
+                /* get input field value */
+                let value = inputField.value.trim();
+                /* validate only letters are input */
+                if(value === "not_select"){
+                    /* clear prev error message */
+                    Shared.clearErrorMessages(inputField, [divStatus]);
+                    /* display error message */
+                    Shared.displayErrorMessages(inputField, divStatus, this.data.settlement_status.text.status);
+                    /* update flag */
+                    this.valid = false;
+                }
+                else {
+                    /* clear error message */
+                    Shared.clearErrorMessages(inputField, [divStatus]);
                     /* update flag */
                     this.valid = true;
                 }
