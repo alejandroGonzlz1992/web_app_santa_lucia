@@ -8,6 +8,7 @@ from typing import Annotated, Union
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
+from app.backend.db_transactions.transactions.db_payroll import Payroll_Trans_Manager
 from app.backend.database.config import Session_Controller
 
 
@@ -15,6 +16,8 @@ from app.backend.database.config import Session_Controller
 payroll_route = APIRouter(prefix=Cns.URL_PAYROLL.value, tags=[Cns.TRANS.value])
 # trans
 trans = Auth_Manager()
+# serv
+serv = Payroll_Trans_Manager()
 
 
 # GET -> Payroll Base
@@ -29,11 +32,14 @@ async def getting_app_payroll_base_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # fetching payroll records
+    records = await serv.query_payroll_records(db=db, id_login=user_login.user_id)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/payroll/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
             }
         }
     )
@@ -52,11 +58,14 @@ async def getting_app_payroll_details_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # query specific payroll record
+    record = await serv.query_specific_payroll_record(db=db, id_record=id)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/payroll/details.html', context={
             'request': request, 'params': {
-                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'record': record
             }
         }
     )

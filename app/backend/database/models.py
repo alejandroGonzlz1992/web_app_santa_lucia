@@ -189,7 +189,7 @@ class User_Role(BASE):
     # backward relationship
     user = relationship('User', back_populates='user_roles')
     role = relationship('Role', back_populates='user_roles')
-    deduction_payroll = relationship('Deduction_Payroll', back_populates='user', cascade='all, delete-orphan')
+    payroll_user = relationship('Payroll_User', back_populates='user', cascade='all, delete-orphan')
 
     # __rep__
     def __repr__(self):
@@ -436,9 +436,6 @@ class Deduction(BASE):
     name = Column(String(75), nullable=False)
     percentage = Column(Float, nullable=False, server_default='0.0')
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
-    # backward relationship
-    deduction_payroll = relationship('Deduction_Payroll', back_populates='deduction',
-                                     cascade='all, delete-orphan')
 
     # __rep__
     def __repr__(self):
@@ -446,26 +443,25 @@ class Deduction(BASE):
             f"<Deduction(id_record={self.id_record}, name={self.name}, percentage={self.percentage}, "
             f"log_date={self.log_date})>")
 
-
-class Deduction_Payroll(BASE):
-    __tablename__ = 'deduction_payroll'
-    __table_args__ = {'schema': 'serv'}
-    id_record = Column(Integer, Identity(start=210, increment=1, cycle=True), primary_key=True)
-    amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
-    id_user = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
-    id_deduction = Column(Integer, ForeignKey('serv.deduction.id_record'), nullable=False)
-    log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
-    # backward relationship
-    user = relationship('User_Role', back_populates='deduction_payroll')
-    deduction = relationship('Deduction', back_populates='deduction_payroll')
-    payroll = relationship('Payroll', back_populates='deduction_payroll', cascade='all, delete-orphan')
-
-    # __rep__
-    def __repr__(self):
-        return (
-            f"<Deduction_Payroll(id_record={self.id_record}, amount={self.amount}, id_user={self.id_user}, "
-            f"id_deduction={self.id_deduction}, log_date={self.log_date})>")
-
+# revision -> drop Deduction_Payroll
+# class Deduction_Payroll(BASE):
+#     __tablename__ = 'deduction_payroll'
+#     __table_args__ = {'schema': 'serv'}
+#     id_record = Column(Integer, Identity(start=210, increment=1, cycle=True), primary_key=True)
+#     amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
+#     id_user = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+#     id_deduction = Column(Integer, ForeignKey('serv.deduction.id_record'), nullable=False)
+#     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+#     # backward relationship
+#     user = relationship('User_Role', back_populates='deduction_payroll')
+#     deduction = relationship('Deduction', back_populates='deduction_payroll')
+#     payroll = relationship('Payroll', back_populates='deduction_payroll', cascade='all, delete-orphan')
+#
+#     # __rep__
+#     def __repr__(self):
+#         return (
+#             f"<Deduction_Payroll(id_record={self.id_record}, amount={self.amount}, id_user={self.id_user}, "
+#             f"id_deduction={self.id_deduction}, log_date={self.log_date})>")
 
 class Payment_Date(BASE):
     __tablename__ = 'payment_date'
@@ -476,7 +472,7 @@ class Payment_Date(BASE):
     frecuency = Column(String(25), nullable=False, server_default='Quincenal') # Mensual
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
-    payroll = relationship('Payroll', back_populates='payment_date', cascade='all, delete-orphan')
+    payroll = relationship('Payroll_User', back_populates='payment_date', cascade='all, delete-orphan')
 
     # __rep__
     def __repr__(self):
@@ -484,26 +480,48 @@ class Payment_Date(BASE):
             f"<Payment_Date(id_record={self.id_record}, date_payment={self.date_payment}, "
             f"date_payment2={self.date_payment2}, frecuency={self.frecuency}, log_date={self.log_date})>")
 
+# revision -> drop Deduction_Payroll
+# class Payroll(BASE):
+#     __tablename__ = 'payroll'
+#     __table_args__ = {'schema': 'serv'}
+#     id_record = Column(Integer, Identity(start=230, increment=1, cycle=True), primary_key=True)
+#     net_amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
+#     details = Column(String(250), nullable=False)
+#     id_deduction_payroll = Column(Integer, ForeignKey('serv.deduction_payroll.id_record'), nullable=False)
+#     id_payment_date = Column(Integer, ForeignKey('serv.payment_date.id_record'), nullable=False)
+#     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+#     # backward relationship
+#     deduction_payroll = relationship('Deduction_Payroll', back_populates='payroll')
+#     payment_date = relationship('Payment_Date', back_populates='payroll')
+#
+#     # __rep__
+#     def __repr__(self):
+#         return (
+#             f"<Payroll(id_record={self.id_record}, net_amount={self.net_amount}, details={self.details}, "
+#             f"id_deduction_payroll={self.id_deduction_payroll}, id_payment_date={self.id_payment_date}, "
+#             f"log_date={self.log_date})>")
 
-class Payroll(BASE):
-    __tablename__ = 'payroll'
+
+# revision -> new Payroll_User
+class Payroll_User(BASE):
+    __tablename__ = 'payroll_user'
     __table_args__ = {'schema': 'serv'}
     id_record = Column(Integer, Identity(start=230, increment=1, cycle=True), primary_key=True)
-    net_amount = Column(DECIMAL(10,2), nullable=False, server_default='0.00')
-    details = Column(String(250), nullable=False)
-    id_deduction_payroll = Column(Integer, ForeignKey('serv.deduction_payroll.id_record'), nullable=False)
+    net_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    ccss_ivm = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    ccss_eme = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    ccss_rop = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    renta_tax = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    child_support = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    debts = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    association = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    others = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    id_user = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     id_payment_date = Column(Integer, ForeignKey('serv.payment_date.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship
-    deduction_payroll = relationship('Deduction_Payroll', back_populates='payroll')
     payment_date = relationship('Payment_Date', back_populates='payroll')
-
-    # __rep__
-    def __repr__(self):
-        return (
-            f"<Payroll(id_record={self.id_record}, net_amount={self.net_amount}, details={self.details}, "
-            f"id_deduction_payroll={self.id_deduction_payroll}, id_payment_date={self.id_payment_date}, "
-            f"log_date={self.log_date})>")
+    user = relationship('User_Role', back_populates='payroll_user')
 
 
 # revision -> create checkin tracker

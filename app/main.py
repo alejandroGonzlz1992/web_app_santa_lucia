@@ -28,8 +28,6 @@ async def getting_app_home_page_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
-    print(user_login)
-
     # watcher: functions
     # add one vacation day per month work, use hire date vs current date. If current day/month = hire date day/month
     # vacation += 1 day

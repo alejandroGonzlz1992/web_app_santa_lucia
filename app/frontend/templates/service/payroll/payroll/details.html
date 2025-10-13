@@ -67,8 +67,10 @@
 
                     <!-- Gross & Net -->
                     <div class="mb-4 fs-6">
-                        <p class="mb-2"><strong>Monto Bruto:</strong> ₡1,500,000</p>
-                        <p class="mb-0"><strong>Monto Neto:</strong> ₡1,120,000</p>
+                        <p class="mb-2"><strong>Monto Bruto:</strong>
+                            {{ "{:,.2f}".format(params.record._gross_income) }} CRC </p>
+                        <p class="mb-0"><strong>Monto Neto:</strong>
+                            {{ "{:,.2f}".format(params.record._net_amount) }} CRC </p>
                     </div>
 
                     <hr>
@@ -76,15 +78,18 @@
                     <!-- Deductions -->
                     <h6 class="text-uppercase text-muted mb-3 fs-6">Deducciones</h6>
                     <ul class="list-unstyled fs-6 mb-4">
-                        <li class="mb-2">🩺 CCSS IVE: ₡100,000</li>
-                        <li class="mb-2">🧓 CCSS EME: ₡80,000</li>
-                        <li>🏦 ROP: ₡50,000</li>
+                        <li class="mb-2">🩺 CCSS IVM: {{ "{:,.2f}".format(params.record._ccss_ivm) }} CRC </li>
+                        <li class="mb-2">🧓 CCSS EME: {{ "{:,.2f}".format(params.record._ccss_eme) }} CRC </li>
+                        <li class="mb-2">🏦 ROP: CCSS EME: {{ "{:,.2f}".format(params.record._rop) }} CRC </li>
+                        <li class="mb-2">🏦 IMPUESTO RENTA: {{ "{:,.2f}".format(params.record._renta_tax) }} CRC </li>
                     </ul>
 
                     <h6 class="text-uppercase text-muted mb-3 fs-6">Otras Deducciones</h6>
                     <ul class="list-unstyled fs-6 mb-0">
-                        <li class="mb-2">💳 Préstamo Empresa: ₡50,000</li>
-                        <li>🚌 Transporte: ₡10,000</li>
+                        <li class="mb-2">💳 Préstamos: {{ "{:,.2f}".format(params.record._debts) }} CRC</li>
+                        <li class="mb-2">💳 Pensión Alimentaria: {{ "{:,.2f}".format(params.record._child_support) }} CRC</li>
+                        <li class="mb-2">💳 Asociasión Solidarista: {{ "{:,.2f}".format(params.record._association) }} CRC</li>
+                        <li class="mb-2">💳 Otros: {{ "{:,.2f}".format(params.record._others) }} CRC</li>
                     </ul>
 
                 </div>
@@ -99,12 +104,15 @@
                     <h5 class="card-title fw-bold mb-4 text-slight-blue fs-5">Detalles del Pago</h5>
 
                     <ul class="list-unstyled fs-6 mb-0">
-                        <li class="mb-2"><strong>Empleado:</strong> Nombre Apellido</li>
-                        <li class="mb-2"><strong>Departamento:</strong> Ventas & Servicio al cliente</li>
-                        <li class="mb-2"><strong>Jefatura:</strong> Nombre Apellido</li>
-                        <li class="mb-2"><strong>Fecha de Pago:</strong> 31/05/2025</li>
-                        <li class="mb-2"><strong>Frecuencia:</strong> Mensual</li>
-                        <li><strong>Comentarios:</strong> Pago correspondiente al mes de mayo</li>
+                        <li class="mb-2"><strong>Empleado:</strong>
+                            {{ params.record._emp_name }} {{ params.record._emp_lastname }}
+                            {{ params.record._emp_lastname2 }} </li>
+                        <li class="mb-2"><strong>Jefatura:</strong>
+                            {{ params.record._apr_name }} {{ params.record._apr_lastname }}
+                            {{ params.record._apr_lastname2 }} </li>
+                        <li class="mb-2"><strong>Fecha de Pago:</strong> {{ params.record._date_payment }} </li>
+                        <li class="mb-2"><strong>Segunda Fecha de Pago:</strong> {{ params.record._date_payment2 }} </li>
+                        <li class="mb-2"><strong>Frecuencia:</strong> {{ params.record._frecuency }}</li>
                     </ul>
 
                 </div>

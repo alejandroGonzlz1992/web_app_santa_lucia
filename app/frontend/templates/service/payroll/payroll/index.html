@@ -21,7 +21,7 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-    {% if params.fg == "register" %}
+    {% if params.fg == "_update" %}
         <div class="px-1 pt-2">
             <div class="alert alert-primary d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
@@ -67,15 +67,23 @@
                     <div class="card-body" style="width: 25%;">
                         <form id="id_filter_date_form" novalidate>
                             <div class="mb-2">
-                                <h5 class="card-title mb-2">Consular por fecha de pago</h5>
-                                <input type="date" class="form-control"
-                                       style="font-size: 12px; color: cadetblue;" required
-                                       placeholder="" name="payment_date" id="id_input_field">
-                                <button class="btn btn-primary mt-2" type="button" id="id_filter_button">
+                                <h5 class="card-title mb-2">Ingresar Identificación de Usuario</h5>
+                                <input type="text" class="form-control" style="font-size: 12px; color: cadetblue;"
+                                       required placeholder="0-0000-0000" name="entity_identification"
+                                       id="id_input_field">
+                                <!--Span label-->
+                                <div id="identification_text" class="form-text text-start">
+                                    <span class="text-muted">
+                                        <p class="my-2" style="color: brown; font-size: 12px;">
+                                            • Ingresar números únicamente.
+                                        </p>
+                                    </span>
+                                </div>
+                                <button class="btn btn-info mt-2" type="button" id="id_filter_button">
                                     Consultar
                                 </button>
                                 <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
-                                    Limpiar Campo
+                                    Limpiar
                                 </button>
                             </div>
                         </form>
@@ -95,38 +103,40 @@
                         <tr>
                             <th scope="col">Cod Registro</th>
                             <th scope="col">Identificación</th>
-                            <th scope="col">Periodo Mes</th>
-                            <th scope="col">Día</th>
+                            <th scope="col">Empleado</th>
+                            <th scope="col">Jefatura</th>
                             <th scope="col">Frecuencia</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Fecha de Pago</th>
+                            <th scope="col">Fecha Pago</th>
+                            <th scope="col">Segunda Fecha Pago</th>
                             <th scope="col" colspan="2"
                                 style="text-align: center; vertical-align: middle;">Administrar
                             </th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row"><b></b>11020</th>
-                            <td>901080350</td>
-                            <td>Agosto</td>
-                            <td>14</td>
-                            <td>Quincenal</td>
-                            <td>Aprobado</td>
-                            <td>2025-04-25</td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_payroll_details_endpoint', id=11020)}}">
-                                    <i class="align-center" data-feather="refresh-ccw"></i>
-                                    Consultar Detalles
-                                </a>
-                            </td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <a href="{{url_for('getting_app_payroll_adjust_endpoint', id=11020)}}">
-                                    <i class="align-center" data-feather="refresh-ccw"></i>
-                                    Ajustar Deducciones
-                                </a>
-                            </td>
-                        </tr>
+                        {% for item in params.records %}
+                            <tr>
+                                <th scope="row"><b></b>{{ item._id }}</th>
+                                <td>{{ item._subj_ident }}</td>
+                                <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
+                                <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
+                                <td>{{ item._frecuency }}</td>
+                                <td>{{ item._payment_date }}</td>
+                                <td>{{ item._payment_date2 }}</td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_payroll_details_endpoint', id=item._id)}}">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Consultar Detalles
+                                    </a>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_payroll_adjust_endpoint', id=item._id)}}">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Ajustar Deducciones
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -139,4 +149,12 @@
 <!--local .js scripts -->
 {% block scripts %}
     {{ super() }}
+    <script type="module">
+        import { FilterSearching } from "{{url_for('static', path='tooling/utils/filtering.js')}}";
+        document.addEventListener("DOMContentLoaded", () => {
+            let filtering = new FilterSearching(
+                {"input": "id_input_field", "search":"id_filter_button", "reset": "id_reset_button", "row": 2}
+            );
+        });
+    </script>
 {% endblock %}
