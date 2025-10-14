@@ -120,6 +120,7 @@ class Payroll_Trans_Manager:
                 Payroll_User.debts.label('_debts'),
                 Payroll_User.association.label('_association'),
                 Payroll_User.others.label('_others'),
+                Payroll_User.details.label('_details'),
                 # subject info
                 subject.id_record.label('_emp_id'),
                 subject.identification.label('_ident'),
@@ -147,3 +148,97 @@ class Payroll_Trans_Manager:
         )
 
         return row
+
+    # format to money CRC style
+    @staticmethod
+    async def formatting_crc_money_style(value: Union[str, int, float, Decimal]) -> str:
+        # validate default value
+        if value is None: value = 0
+        # str formatted
+        format_str = f'{float(value):,.2f}'
+        # return
+        return format_str.replace(',', 'X').replace('.', ',').replace('X', '.')
+
+    # format date to CRC format
+    @staticmethod
+    async def formatting_date_to_crc_time(value: Union[date, str]) -> str:
+        # if not date return empty
+        if value is None:
+            return ""
+        # if instance of date
+        if isinstance(value, (date, datetime)):
+            return value.strftime("%d-%m-%Y")
+        # try common ISO strings
+        try:
+            return datetime.fromisoformat(str(value)).strftime("%d-%m-%Y")
+        except Exception:
+            return str(value)
+
+    @staticmethod
+    async def manage_libreoffice_suffixes(
+            to_pdf: Union[object, str], temp: Union[object, str], context: Union[object, str], name: str) -> object:
+        # validate
+        if not to_pdf.exists():
+            candidates = list(temp.glob(f'{name}*.pdf'))
+            if not candidates:
+                context.cleanup()
+                raise RuntimeError('PDF conversion succeeded but PDF not found.')
+            # rename
+            candidates[0].rename(to_pdf)
+
+    # converting docx file to pdf file (libreoffice)
+    async def converting_docx_to_pdf_file_libreoffice(
+            self, temp_path: Path, context: Union[dict, object], out_stem: str) -> Path:
+        # temp vars
+        temp_dir = Path(self.temp_dir.name)
+
+        # render .docx file and add context
+        filled_docx = temp_dir / f'{out_stem}.docx'
+        tpl = self.docx(str(temp_path))
+        tpl.render(context)
+        tpl.save(str(filled_docx))
+
+        # perform convertion to PDF
+        self.sub_process.run(
+            ["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(temp_dir), str(filled_docx)],
+            check=True)
+
+        # manage suffixes
+        fill_pdf = temp_dir / f'{out_stem}.pdf'
+        await Payroll_Trans_Manager.manage_libreoffice_suffixes(
+            to_pdf=fill_pdf, temp=temp_dir, context=self.temp_dir, name=out_stem)
+
+        # return
+        return fill_pdf
+
+    # fetching information from query
+    async def fetching_query_rows_into_dict(self, record: list, today_: date, default: float = 0.0) -> dict:
+        # map record names into dict keys
+        to_copy = self.cns.PAYROLL_QUERY_CONTEXT.value.copy()
+        # fetch info
+        to_copy["name"] = record._emp_name
+        to_copy["lastname"] = record._emp_lastname
+        to_copy["lastname2"] = record._emp_lastname2
+        to_copy["current_date"] = await Payroll_Trans_Manager.formatting_date_to_crc_time(value=today_)
+        to_copy["identification"] = record._emp_id
+        to_copy["payroll_id"] = record._id
+        to_copy["payment_date"] = await Payroll_Trans_Manager.formatting_date_to_crc_time(value=record._date_payment)
+        to_copy["payment_date2"] = await Payroll_Trans_Manager.formatting_date_to_crc_time(value=record._date_payment2)
+        to_copy["frecuency"] = record._frecuency
+        to_copy["jf_name"] = record._apr_name
+        to_copy["jf_lastname"] = record._apr_lastname
+        to_copy["jf_lastname2"] = record._apr_lastname2
+        to_copy["gross_amount"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._gross_income)
+        to_copy["net_amount"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._net_amount)
+        to_copy["rent_tax"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._renta_tax)
+        to_copy["ccss_ivm"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._ccss_ivm)
+        to_copy["ccss_eme"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._ccss_eme)
+        to_copy["rop"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._rop)
+        to_copy["association"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._association)
+        to_copy["debt"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._debts)
+        to_copy["support"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._child_support)
+        to_copy["others"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._others)
+        to_copy["payment_details"] = record._details
+
+        # return
+        return to_copy

@@ -1,8 +1,10 @@
 # import
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
+from pathlib import Path
+from datetime import date
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
@@ -46,7 +48,7 @@ async def getting_app_payroll_base_endpoint(
 
 
 # GET -> Payroll Details
-@payroll_route.get(Cns.URL_BONUS_DETAILS.value, response_class=HTMLResponse)
+@payroll_route.get(Cns.URL_PAYROLL_DETAILS.value, response_class=HTMLResponse)
 async def getting_app_payroll_details_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],
@@ -71,8 +73,32 @@ async def getting_app_payroll_details_endpoint(
     )
 
 
+# GET -> Payroll Details PDF
+@payroll_route.get(Cns.URL_PAYROLL_DETAILS_PDF.value, response_class=FileResponse)
+async def posting_app_payroll_details_pdf_endpoint(
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        id: Annotated[Union[int, str], None]
+) -> FileResponse:
+
+    # query records
+    records = await serv.query_specific_payroll_record(db=db, id_record=id)
+    # test the return dict
+    to_dict = await serv.fetching_query_rows_into_dict(record=records, today_=date.today())
+    # blueprint file path
+    blueprint_file_path = Path(__file__).resolve().parents[3] / "tooling/docs/payroll_docs.docx"
+    # file name
+    pdf_file_name = f'planilla_{records._ident}_{records._emp_name}_{records._emp_lastname}.pdf'
+
+    # convert to PDF
+    pdf_path = await serv.converting_docx_to_pdf_file_libreoffice(
+        temp_path=blueprint_file_path, context=to_dict, out_stem=pdf_file_name)
+
+    return FileResponse(
+        path=str(pdf_path), media_type="application/pdf", filename=pdf_file_name)
+
+
 # GET -> Payroll Adjustments
-@payroll_route.get(Cns.URL_BONUS_ADJUST.value, response_class=HTMLResponse)
+@payroll_route.get(Cns.URL_PAYROLL_ADJUST.value, response_class=HTMLResponse)
 async def getting_app_payroll_adjust_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],

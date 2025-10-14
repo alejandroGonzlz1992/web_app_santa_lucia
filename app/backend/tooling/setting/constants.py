@@ -164,8 +164,9 @@ class Constants(Enum):
 
     # payroll
     URL_PAYROLL = '/planillas/ce'
-    URL_PAYROLL_DETAILS = f'/detalles/{URL_ID}'
-    URL_PAYROLL_ADJUST = f'/ajustes/{URL_ID}'
+    URL_PAYROLL_DETAILS = f'/detalles_planilla/{URL_ID}'
+    URL_PAYROLL_DETAILS_PDF = f'/detalles/{URL_ID}/planilla'
+    URL_PAYROLL_ADJUST = f'/ajustes_planilla/{URL_ID}'
 
     # settlement
     URL_SETTLEMENT = '/liquidaciones/ce'
@@ -423,3 +424,11 @@ class Constants(Enum):
         'gross_amount': None, 'total_amount': None, 'year': None, 'month': None
     }
 
+    # payroll query context
+    PAYROLL_QUERY_CONTEXT = {
+        'name': None, 'lastname': None, 'lastname2': None, 'current_date': None, 'identification': None,
+        'payroll_id': None, 'payment_date': None, 'payment_date2': None, 'frecuency': None, 'jf_name': None,
+        'jf_lastname': None, 'jf_lastname2': None, 'gross_amount': None, 'net_amount': None, 'rent_tax': None,
+        'ccss_ivm': None, 'ccss_eme': None, 'rop': None, 'association': None, 'debt': None, 'support': None,
+        'others': None, 'payment_details': None
+    }

@@ -516,6 +516,8 @@ class Payroll_User(BASE):
     debts = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     association = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     others = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    # do revision here -> add details column
+    details = Column(String(250), nullable=False, server_default="Periodo regular de planilla")
     id_user = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     id_payment_date = Column(Integer, ForeignKey('serv.payment_date.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

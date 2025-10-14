@@ -45,7 +45,8 @@
                             por ley y/o conceptos varios. El reporte puede ser descargado en formato PDF.
                         </div>
                         <!--Download PDF Button-->
-                        <a class="mb-3 px-3 text-end" href="#">
+                        <a class="mb-3 px-3 text-end"
+                           href="{{ url_for('posting_app_payroll_details_pdf_endpoint', id=params.id) }}">
                             <button class="btn btn-secondary" type="button">Descargar PDF</button>
                         </a>
                     </div>

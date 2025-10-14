@@ -140,7 +140,7 @@ class Settlement_Trans_Manager:
         # return
         return row
 
-    # format to money crc style
+    # format to money CRC style
     @staticmethod
     async def formatting_crc_money_style(value: Union[str, int, float, Decimal]) -> str:
         # validate default value
