@@ -5,12 +5,15 @@ from sqlalchemy.orm import Session
 from typing import Annotated, Union
 from pathlib import Path
 from datetime import date
+from sqlalchemy.exc import SQLAlchemyError, OperationalError
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.db_transactions.transactions.db_payroll import Payroll_Trans_Manager
+from app.backend.tooling.setting.error_log import Logs_Manager
+from app.backend.schema.trans.payroll import Update_Payroll_Record
 from app.backend.database.config import Session_Controller
 
 
@@ -20,6 +23,8 @@ payroll_route = APIRouter(prefix=Cns.URL_PAYROLL.value, tags=[Cns.TRANS.value])
 trans = Auth_Manager()
 # serv
 serv = Payroll_Trans_Manager()
+# error logs
+exc_logs = Logs_Manager()
 
 
 # GET -> Payroll Base
@@ -115,6 +120,43 @@ async def getting_app_payroll_adjust_endpoint(
         'service/payroll/payroll/adjust.html', context={
             'request': request, 'params': {
                 'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+            }
+        }
+    )
+
+
+# POST -> Payroll Adjustments
+@payroll_route.post(Cns.URL_PAYROLL_ADJUST_POST.value, response_class=HTMLResponse)
+async def posting_app_payroll_adjust_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Update_Payroll_Record, Depends(Update_Payroll_Record.formatting)],
+) -> HTMLResponse:
+
+    try:
+        # update record
+        await serv.updating_payroll_record(db=db, schema=model.model_dump())
+
+    except SQLAlchemyError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_payroll_adjust_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_orm_error')
+
+    except OperationalError:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        # redirect to endpoint
+        return await getting_app_payroll_adjust_endpoint(
+            request=request, db=db, user_login=user_login, id=model.id, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        "base/redirect.html", context={
+            "request": request, "params": {
+                "domain": "planillas", "redirect": "ce", "fg": "_update"
             }
         }
     )

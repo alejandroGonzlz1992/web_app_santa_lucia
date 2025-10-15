@@ -70,13 +70,13 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Pendientes Aprobación</h6>
-                                            {% if params.record._status == "En Proceso" %}
-                                                <h4 class="card-text text-warning">
-                                                    {{ params.record._pend_hours }} Horas
-                                                </h4>
-                                            {% else %}
+                                            {% if params.record is None %}
                                                 <h4 class="card-text text-warning">
                                                     0 Horas
+                                                </h4>
+                                            {% elif params.record._status == "En Proceso" %}
+                                                <h4 class="card-text text-warning">
+                                                    {{ params.record._pend_hours }} Horas
                                                 </h4>
                                             {% endif %}
                                         </div>

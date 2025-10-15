@@ -254,4 +254,3 @@ class Bonus_Trans_Manager:
 
             # commit
             db.commit()
-

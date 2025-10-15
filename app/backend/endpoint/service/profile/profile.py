@@ -204,6 +204,9 @@ async def getting_app_profile_vacation_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
+    # hire date
+    hire_date = await serv.querying_user_hire_date(db=db, id_session=user_login.user_role_id)
+
     # vacations
     record = await serv.querying_vacations(db=db, id_session=user_login.user_role_id)
 
@@ -214,7 +217,7 @@ async def getting_app_profile_vacation_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'profile/profile/vacations.html', context={
             'request': request, 'params': {
-                'record': record, 'vac_record': vac_record, 'user_session': user_session
+                'record': record, 'vac_record': vac_record, 'user_session': user_session, 'hire_date': hire_date
             }
         }
     )

@@ -167,6 +167,7 @@ class Constants(Enum):
     URL_PAYROLL_DETAILS = f'/detalles_planilla/{URL_ID}'
     URL_PAYROLL_DETAILS_PDF = f'/detalles/{URL_ID}/planilla'
     URL_PAYROLL_ADJUST = f'/ajustes_planilla/{URL_ID}'
+    URL_PAYROLL_ADJUST_POST = '/ajustes_planilla'
 
     # settlement
     URL_SETTLEMENT = '/liquidaciones/ce'

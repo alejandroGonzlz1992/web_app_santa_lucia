@@ -242,3 +242,29 @@ class Payroll_Trans_Manager:
 
         # return
         return to_copy
+
+    # update payroll record
+    async def updating_payroll_record(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
+
+        # query record
+        record = db.query(
+            self.models.Payroll_User
+        ).filter(
+            self.models.Payroll_User.id_record == schema["id"]
+        ).first()
+
+        # update
+        if record:
+            record.ccss_ivm = schema["ccss_ivm"]
+            record.ccss_eme = schema["ccss_eme"]
+            record.ccss_rop = schema["rop_popular"]
+            record.renta_tax = schema["rent_tax"]
+            record.child_support = schema["child_support"]
+            record.debts = schema["loan_request"]
+            record.association = schema["association"]
+            record.others = schema["other_deductions"]
+            record.details = schema["payroll_details"].title()
+
+            # commit
+            db.commit()

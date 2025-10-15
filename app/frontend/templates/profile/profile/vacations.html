@@ -58,7 +58,13 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Disponibles</h6>
-                                            <h4 class="card-text text-success">{{ params.record._available}} días </h4>
+                                            {% if not params.record %}
+                                                <h4 class="card-text text-success">
+                                                    0 días </h4>
+                                            {% else %}
+                                                <h4 class="card-text text-success">
+                                                    {{ params.record._available}} días </h4>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -68,7 +74,13 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">En Proceso</h6>
-                                            <h4 class="card-text text-warning">{{ params.record._used_days}} días</h4>
+                                            {% if not params.record %}
+                                                <h4 class="card-text text-warning">
+                                                    0 días </h4>
+                                            {% else %}
+                                                <h4 class="card-text text-warning">
+                                                    {{ params.record._used_days }} días </h4>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +90,13 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Fecha Aniversario</h6>
-                                            <h4 class="card-text text-primary">{{ params.record._hire_date}}</h4>
+                                            {% if not params.record %}
+                                                <h4 class="card-text text-primary">
+                                                    {{ params.hire_date._hire_date }} </h4>
+                                            {% else %}
+                                                <h4 class="card-text text-primary">
+                                                    {{ params.record._hire_date }} </h4>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

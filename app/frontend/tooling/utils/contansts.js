@@ -831,10 +831,10 @@ export const Static = {
                 "chars": "Ingresar números únicamente."
             }
         },
-        "require_loans": {
+        "association": {
             "div_id": {
-                "blank": "id_require_loans_blank_field_error",
-                "chars": "id_require_loans_chars_field_error",
+                "blank": "id_association_blank_field_error",
+                "chars": "id_association_chars_field_error",
             },
             "text": {
                 "blank": "Campo Obligatorio.",
@@ -851,9 +851,22 @@ export const Static = {
                 "chars": "Ingresar números únicamente."
             }
         },
+        "payroll_details": {
+            "div_id": {
+                "blank": "id_payroll_details_blank_field_error",
+                "chars": "id_payroll_details_chars_field_error",
+                "length": "id_payroll_details_length_field_error",
+            },
+            "text": {
+                "blank": "Campo Obligatorio.",
+                "chars": "No se permiten caracteres especiales.",
+                "length": "Detalle de planilla debe tener mínimo 10 caracteres."
+            }
+        }
     },
 
-    PAYROLL_ADJUST_BLANK_FIELDS: ["ccss_ivm", "ccss_eme", "rop_popular", "rent_tax", "loan_request", "child_support", "require_loans", "other_deductions" ],
+    PAYROLL_ADJUST_BLANK_FIELDS: ["ccss_ivm", "ccss_eme", "rop_popular", "rent_tax", "loan_request",
+        "child_support", "association", "other_deductions", "payroll_details"],
 
     // SETTLEMENT ADJUST
     SETTLEMENT_ENABLE_FORM_DICT: {

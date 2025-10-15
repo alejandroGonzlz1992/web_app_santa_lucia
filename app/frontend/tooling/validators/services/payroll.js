@@ -32,9 +32,11 @@ export class AdjustValidator {
 
         this.childSupportFieldValidate("child_support");
 
-        this.requireLoanRequestFieldValidate("require_loans");
+        this.requireAssociationFieldValidate("association");
 
         this.otherDeductionRequestFieldValidate("other_deductions");
+
+        this.payrollDetailsFieldValidate("payroll_details");
 
         /* form submission */
         this.form.addEventListener("submit", (e) => {
@@ -115,7 +117,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -151,7 +153,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -187,7 +189,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -223,7 +225,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -259,7 +261,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -295,7 +297,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -315,14 +317,14 @@ export class AdjustValidator {
     }
 
     /* require loan request validate field */
-    requireLoanRequestFieldValidate(fieldName) {
+    requireAssociationFieldValidate(fieldName) {
         /* get input element and div Id */
         let inputField = this.form.elements.namedItem(fieldName);
-        let divBlank = document.getElementById(this.data.require_loans.div_id.blank);
-        let divChars = document.getElementById(this.data.require_loans.div_id.chars);
+        let divBlank = document.getElementById(this.data.association.div_id.blank);
+        let divChars = document.getElementById(this.data.association.div_id.chars);
 
         /* validate blank field */
-        Shared.validateInputBlankFields(inputField, divBlank, this.data.require_loans.text.blank, this);
+        Shared.validateInputBlankFields(inputField, divBlank, this.data.association.text.blank, this);
 
         /* event listener */
         if(this.valid) {
@@ -331,11 +333,11 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
-                    Shared.displayErrorMessages(inputField, divChars, this.data.require_loans.text.chars);
+                    Shared.displayErrorMessages(inputField, divChars, this.data.association.text.chars);
                     /* update flag */
                     this.valid = false;
                 }
@@ -367,7 +369,7 @@ export class AdjustValidator {
                 /* collect element value */
                 let value = inputField.value.trim();
 
-                if(!Static.REGEX.only_numbers.test(value)) {
+                if(!Static.REGEX.amount_format.test(value)) {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* display error msg */
@@ -380,6 +382,44 @@ export class AdjustValidator {
                     /* clear prev error msgs */
                     Shared.clearErrorMessages(inputField, [divChars]);
                     /* update flag */
+                    this.valid = true;
+                }
+            });
+        }
+    }
+
+    /* payroll details validate field */
+    payrollDetailsFieldValidate(fieldName) {
+        /* get input element and div Id */
+        let inputField = this.form.elements.namedItem(fieldName);
+        let divBlank = document.getElementById(this.data.payroll_details.div_id.blank);
+        let divChars = document.getElementById(this.data.payroll_details.div_id.chars);
+        let divLength = document.getElementById(this.data.payroll_details.div_id.length);
+
+        // listener
+        Shared.validateInputBlankFields(inputField, divBlank, this.data.payroll_details.text.blank, this);
+
+        if(this.valid) {
+            inputField.addEventListener("input", () => {
+                let value = inputField.value.trim();
+
+                if(!Static.REGEX.address.test(value)) {
+                    // clear previous error
+                    Shared.clearErrorMessages(inputField, [divLength]);
+                    // display error
+                    Shared.displayErrorMessages(inputField, divChars, this.data.payroll_details.text.chars);
+                    this.valid = false;
+                }
+                else if(value.length < Static.ADDRESS_LENGTH) {
+                    // clear previous error
+                    Shared.clearErrorMessages(inputField, [divChars]);
+                    // display error
+                    Shared.displayErrorMessages(inputField, divLength, this.data.payroll_details.text.length);
+                    this.valid = false;
+                }
+                else {
+                    // clear errors
+                    Shared.clearErrorMessages(inputField, [divChars, divLength]);
                     this.valid = true;
                 }
             });

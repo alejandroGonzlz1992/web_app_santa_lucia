@@ -289,3 +289,16 @@ class Profile_Trans_Manager:
 
         # return
         return rows
+
+    # query user_hire date
+    async def querying_user_hire_date(
+            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
+        # record
+        record = db.query(
+            self.models.User_Role.hire_date.label('_hire_date'),
+        ).filter(
+            self.models.User_Role.id_record == id_session
+        ).first()
+
+        # return
+        return record

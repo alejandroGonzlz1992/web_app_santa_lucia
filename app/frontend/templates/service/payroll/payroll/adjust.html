@@ -21,7 +21,31 @@
 
 <!--ops bar-->
 {% block ops_bar %}
-
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 <!--main form-->
@@ -52,10 +76,15 @@
                 <div class="card-body text-start">
 
                     <!--Payroll Update Info Form -->
-                    <form id="id_payroll_deduction_form" novalidate>
+                    <form id="id_payroll_deduction_form" method="post"
+                          action="{{ url_for('posting_app_payroll_adjust_endpoint') }}" novalidate>
+
                         <h5 class="card-title my-3 text-start"><strong>Deducciones Legales</strong></h5>
 
-                        <!--Address Information Field-->
+                        <!--Hidden fields-->
+                        <input type="hidden" value="{{ params.id }}" name="id">
+
+                        <!--Legal deductions Field-->
                         <div class="row">
                             <div class="col">
                                 <div class="py-1 text-start">
@@ -149,7 +178,7 @@
 
                         <h5 class="card-title my-3 text-start"><strong>Otras Deducciones</strong></h5>
 
-                        <!--Address Information Field-->
+                        <!--Other deductions Field-->
                         <div class="row">
                             <div class="col">
                                 <div class="py-1 text-start">
@@ -208,19 +237,19 @@
                             <div class="col">
                                 <div class="py-1 text-start">
                                     <label class="form-label text-center"
-                                            style="color: #3371db;">Embargos</label> (Opcional)
+                                            style="color: #3371db;">Asociación</label> (Opcional)
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="id_require_loans"
-                                                name="require_loans" style="font-size: 12px; color: cadetblue;"
+                                        <input type="text" class="form-control" id="id_association"
+                                                name="association" style="font-size: 12px; color: cadetblue;"
                                                 placeholder="0.0 CRC" required>
                                     </div>
                                 </div>
 
                                 <!--Province Validation Errors Field-->
-                                <div id="id_require_loans_blank_field_error" class="text-danger text-start"
+                                <div id="id_association_blank_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                 </div>
-                                <div id="id_require_loans_chars_field_error" class="text-danger text-start"
+                                <div id="id_association_chars_field_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                 </div>
 
@@ -261,6 +290,33 @@
 
                         </div>
 
+                        <!--Payroll Details Field-->
+                        <div class="row">
+                            <div class="py-3 text-start">
+                                <label class="form-label text-center"
+                                       style="color: #3371db;">Detalle Planilla</label> *
+                                <div class="input-group">
+                                    <textarea class="form-control" id="id_payroll_details"
+                                              name="payroll_details" rows="2" style="color: cadetblue;"
+                                              placeholder="Ingresar detalle de planilla registrada"></textarea>
+                                </div>
+
+                                <div id="id_payroll_details_blank_field_error"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_payroll_details_chars_field_error"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+                                <div id="id_payroll_details_length_field_error"
+                                     class="text-danger text-start"
+                                     style="font-size: 13px; display: none;">
+                                </div>
+
+                            </div>
+                        </div>
+
                         <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
 
                         <!--Submit Form-->
@@ -278,6 +334,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </form>
 
                 </div>
