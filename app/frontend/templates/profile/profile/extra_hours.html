@@ -58,9 +58,15 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Solicitadas</h6>
-                                            <h4 class="card-text text-success">
-                                                {{ params.record._hours }} Horas
-                                            </h4>
+                                            {% if not params.record %}
+                                                <h4 class="card-text text-success">
+                                                    0 Horas
+                                                </h4>
+                                            {% else %}
+                                                <h4 class="card-text text-success">
+                                                    {{ params.record._hours }} Horas
+                                                </h4>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -70,7 +76,7 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Pendientes Aprobación</h6>
-                                            {% if params.record is None %}
+                                            {% if not params.record %}
                                                 <h4 class="card-text text-warning">
                                                     0 Horas
                                                 </h4>
@@ -88,9 +94,13 @@
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body text-center">
                                             <h6 class="card-subtitle mb-2 text-muted">Fecha Aprobación</h6>
-                                            <h4 class="card-text text-primary">
-                                                {{ params.record._log_date.date() }}
-                                            </h4>
+                                            {% if not params.record %}
+
+                                            {% else %}
+                                                <h4 class="card-text text-primary">
+                                                    {{ params.record._log_date.date() }}
+                                                </h4>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
