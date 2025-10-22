@@ -94,6 +94,23 @@ class Crud_Entities_Manager:
 
         return roles
 
+    # getting admin role if not management
+    async def getting_users_jefaturas_crud(self, db: object) -> object:
+        users_roles = (
+            db.query(
+                self.models.User.id_record.label("_id"),
+                self.models.User.name.label("_name"),
+                self.models.User.lastname.label("_lastname"),
+                self.models.User.lastname2.label("_lastname2"),
+                self.models.Role.type.label("_role_type")
+            )
+            .join(self.models.User_Role, self.models.User.id_record == self.models.User_Role.id_user)
+            .join(self.models.Role, self.models.Role.id_record == self.models.User_Role.id_role)
+            .all()
+        )
+
+        return users_roles
+
     # roles crud
     async def getting_roles_crud_rows(self, db: object) -> object:
         # rows
@@ -199,7 +216,7 @@ class Crud_Entities_Manager:
             hire_date=model['user_create_date'],
             id_user=user_id,
             id_role=model['user_role'],
-            approver=model['user_approver']
+            approver=model['user_approval']
         )
         # add to db
         db.add(instance=entity)
@@ -238,7 +255,7 @@ class Crud_Entities_Manager:
             entity_role.gross_income = model['user_gross_income']
             entity_role.hire_date = model['user_create_date']
             entity_role.id_role = model['user_role']
-            entity_role.approver = model['user_approver']
+            entity_role.approver = model['user_approval']
 
         # db commit
         db.commit()
@@ -302,16 +319,19 @@ class Crud_Entities_Manager:
         return {"flag": deliver_mail, "temp": temp_password}
 
     # fetching vacations date after user create
-    async def fetching_vacation_days(self, db: object, user_id: Union[int, str], approver: Union[int, str]) -> None:
+    async def fetching_vacation_days(self, db: object, user_id: Union[int, str]) -> None:
         # query user role
-        id_user_role_current = db.query(self.models.User_Role.id_record.label('_id')).filter(
-            self.models.User_Role.id_user == user_id).first()
+        id_user_role_current = db.query(
+            self.models.User_Role.id_record.label('_id'),
+            self.models.User_Role.id_record.label('_id')
+        ).filter(
+            self.models.User_Role.id_user == user_id
+        ).first()
 
         # temp model
         vacations = self.models.Vacation(
             available=self.cns.VACATIONS_QUEUE.value,
-            id_subject=id_user_role_current._id,
-            id_approver=approver
+            id_subject=id_user_role_current._id
         )
         # add to model
         db.add(instance=vacations)

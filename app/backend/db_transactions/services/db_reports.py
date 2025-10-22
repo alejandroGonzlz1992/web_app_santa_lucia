@@ -413,7 +413,6 @@ class Reports_Trans_Manager:
             record = await self.querying_checking_tracker_report(db=db, schema=schema)
             to_return = await self.generate_dataframe(report=record)
 
-
         elif schema["report_name_field"] == "incapacidades":
             record = await self.querying_inability_report(db=db, schema=schema)
             to_return = await self.generate_dataframe(report=record)

@@ -652,10 +652,10 @@ export class UsersValidator {
     userApprovalFieldValidate(fieldName){
         /* get input element and div ids */
         let inputField = this.form.elements.namedItem(fieldName);
-        let divStatus = document.getElementById(this.data.user_approver.div_id.status);
+        let divStatus = document.getElementById(this.data.user_approval.div_id.status);
 
         /* validate on-time blank fields */
-        Shared.validateInputBlankFields(inputField, divStatus, this.data.user_approver.text.status, this);
+        Shared.validateInputBlankFields(inputField, divStatus, this.data.user_approval.text.status, this);
 
         if(this.valid){
             /* add event listener to input field */
@@ -667,7 +667,7 @@ export class UsersValidator {
                     /* clear prev error message */
                     Shared.clearErrorMessages(inputField, [divStatus]);
                     /* display error message */
-                    Shared.displayErrorMessages(inputField, divStatus, this.data.user_approver.text.status);
+                    Shared.displayErrorMessages(inputField, divStatus, this.data.user_approval.text.status);
                     /* update flag */
                     this.valid = false;
                 }

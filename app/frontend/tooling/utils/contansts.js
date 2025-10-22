@@ -260,7 +260,7 @@ export const Static = {
                 "before": "La fecha de registro no puede estar antes de la fecha actual.",
             }
         },
-        "user_approver": {
+        "user_approval": {
             "div_id": {
                 "status": "id_user_approval_status_field_error",
             },
@@ -273,7 +273,7 @@ export const Static = {
     USER_BLANK_FIELDS: [
         "user_identification", "user_name", "user_lastname", "user_lastname2", "user_birthday", "user_gender",
         "user_marital_status", "user_children", "user_email", "user_phone", "user_role", "user_gross_income",
-        "user_create_date", "user_approver"
+        "user_create_date", "user_approval"
     ],
 
     // USER STATUS

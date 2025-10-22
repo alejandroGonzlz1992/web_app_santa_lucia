@@ -303,7 +303,9 @@ class Permission_Trans_Manager:
             self.models.Vacation.id_subject == id_session
         ).first()
 
-        if row._available < 1:
+        if row is None:
+            pass
+        elif row._available < 1:
             raise self.http_exec(status_code=self.status.HTTP_400_BAD_REQUEST,
                                  detail='Vacation available is less than 1')
 

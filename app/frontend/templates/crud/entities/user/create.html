@@ -472,11 +472,18 @@
                                     <div class="input-group">
                                         <div class="input-group">
                                             <select class="form-select mb-2" id="id_user_approver"
-                                                    name="user_approver"
+                                                    name="user_approval"
                                                     style="color: cadetblue;">
                                                 <option value="not_select" selected>
                                                     Seleccionar la jefatura a cargo</option>
-                                                <option value="TEST">TEST</option>
+                                                    {% for item in params.management %}
+                                                        {% if item._role_type == "Gerencia" or item._role_type == "Jefatura" or item._role_type == "Administrador"%}
+                                                            <option value="{{ item._id }}">
+                                                                {{ item._name }} {{ item._lastname }}
+                                                                {{ item._lastname2 }} | {{ item._role_type }}
+                                                            </option>
+                                                        {% endif %}
+                                                    {% endfor %}
                                             </select>
                                         </div>
                                     </div>

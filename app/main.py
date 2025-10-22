@@ -11,6 +11,7 @@ from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.database.config import Session_Controller
 
+
 # instance app
 app = fastapi_app_config()
 # trans

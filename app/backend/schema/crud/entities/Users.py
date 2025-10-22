@@ -21,7 +21,7 @@ class Create_User(BaseModel):
     user_role: Union[int, str]
     user_gross_income: Union[Decimal, float]
     user_create_date: date
-    user_approver: Union[int, str]
+    user_approval: Union[int, str]
 
     @classmethod
     def formatting(cls, user_identification: str = Form(...), user_name: str = Form(...), user_lastname: str = Form(...),
@@ -29,13 +29,13 @@ class Create_User(BaseModel):
                    user_marital_status: str = Form(...), user_children: Union[int, str] = Form(...),
                    user_email: str = Form(...), user_role: Union[int, str] = Form(...),
                    user_phone: str = Form(...), user_gross_income: Union[Decimal, float] = Form(...),
-                   user_create_date: date = Form(...), user_approver: Union[int, str] = Form(...)):
+                   user_create_date: date = Form(...), user_approval: Union[int, str] = Form(...)):
         # return
         return cls(user_identification=user_identification, user_name=user_name, user_lastname=user_lastname,
                    user_lastname2=user_lastname2, user_gender=user_gender, user_birthday=user_birthday,
                    user_marital_status=user_marital_status, user_children=user_children, user_email=user_email,
                    user_phone=user_phone, user_role=user_role, user_gross_income=user_gross_income,
-                   user_create_date=user_create_date, user_approver=user_approver)
+                   user_create_date=user_create_date, user_approval=user_approval)
 
 
 # update user
@@ -54,7 +54,7 @@ class Update_User(BaseModel):
     user_role: Union[int, str]
     user_gross_income: Union[Decimal, float]
     user_create_date: date
-    user_approver: Union[int, str]
+    user_approval: Union[int, str]
     method: str
 
     @classmethod
@@ -64,13 +64,13 @@ class Update_User(BaseModel):
                    user_children: Union[int, str] = Form(...), user_email: str = Form(...),
                    user_phone: str = Form(...), user_role: Union[int, str] = Form(...),
                    user_gross_income: Union[Decimal, float] = Form(...), user_create_date: date = Form(...),
-                   method: str = Form(...), user_approver: Union[int, str] = Form(...)):
+                   method: str = Form(...), user_approval: Union[int, str] = Form(...)):
         # return
         return cls(id=id, user_identification=user_identification, user_name=user_name, user_lastname=user_lastname,
                    user_lastname2=user_lastname2, user_gender=user_gender, user_birthday=user_birthday,
                    user_marital_status=user_marital_status, user_children=user_children, user_email=user_email,
                    user_phone=user_phone, user_role=user_role, user_gross_income=user_gross_income,
-                   user_create_date=user_create_date, method=method, user_approver=user_approver)
+                   user_create_date=user_create_date, method=method, user_approval=user_approval)
 
 
 # update user status

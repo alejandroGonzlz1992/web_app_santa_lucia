@@ -65,11 +65,15 @@ async def getting_app_user_register_endpoint(
     # roles
     roles = await entities.getting_roles_crud_for_users(db=db)
 
+    # management
+    management = await entities.getting_users_jefaturas_crud(db=db)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'crud/entities/user/create.html', context={
             'request': request, 'params': {
-                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'roles': roles, 'user_session': user_session
+                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'roles': roles, 'user_session': user_session,
+                'management': management
             }
         }
     )
@@ -96,7 +100,7 @@ async def posting_app_user_register_endpoint(
         await entities.registering_crud_user_role_entity(db=db, user_id=user_id, model=model.model_dump())
 
         # enable one-day of vacation per registration date
-        await entities.fetching_vacation_days(db=db, user_id=user_id, approver=user_login.user_role_id)
+        await entities.fetching_vacation_days(db=db, user_id=user_id)
 
         # add background tasks -> deliver email instructions
         background_tasks.add_task(
@@ -148,11 +152,15 @@ async def getting_app_user_update_endpoint(
     # roles
     roles = await entities.getting_roles_crud_for_users(db=db)
 
+    # management
+    management = await entities.getting_users_jefaturas_crud(db=db)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'crud/entities/user/update.html', context={
             'request': request, 'params': {
-                'id': id, 'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'roles': roles, 'user_session': user_session
+                'id': id, 'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'roles': roles, 'user_session': user_session,
+                "management": management
             }
         }
     )

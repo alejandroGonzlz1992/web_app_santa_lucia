@@ -150,7 +150,7 @@ class Constants(Enum):
     URL_PERMISSION_UPDATE_EXTRA_HOURS = f'/actualizar/horas/{URL_ID}'
     URL_PERMISSION_UPDATE_EXTRA_HOURS_POST = '/actualizar/horas'
 
-    URL_PERMISSION_VACATION_MAIN = '/vacaciones/ce'
+    URL_PERMISSION_VACATION_MAIN = '/vacaciones'
     URL_PERMISSION_CREATE_VACATION = '/registrar/vacaciones'
     URL_PERMISSION_UPDATE_VACATION = f'/actualizar/vacaciones/{URL_ID}'
     URL_PERMISSION_UPDATE_VACATION_POST = '/actualizar/vacaciones'
