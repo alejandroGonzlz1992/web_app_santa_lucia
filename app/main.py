@@ -29,7 +29,7 @@ async def getting_app_home_page_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
-    print(user_login)
+    print(f'\n {user_session} \n \n {user_login} \n')
 
     # watcher: functions
     # add one vacation day per month work, use hire date vs current date. If current day/month = hire date day/month
@@ -43,7 +43,7 @@ async def getting_app_home_page_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'base/index.html', context={
             'request': request, 'params': {
-                'time_zone': Cns.CR_TIME_ZONE.value, 'user_session': user_session
+                'time_zone': Cns.CR_TIME_ZONE.value, 'user_session': user_session, 'role': user_login.role_type
             }
         }
     )

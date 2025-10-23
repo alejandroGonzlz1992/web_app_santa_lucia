@@ -156,7 +156,8 @@ async def getting_app_inability_details_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/inability/details.html', context={
             'request': request, 'params': {
-                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'record': record
+                'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'record': record,
+                'role': user_login.role_type
             }
         }
     )

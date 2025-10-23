@@ -97,19 +97,20 @@
                                 <span class="align-middle">Planillas</span>
                             </a>
                         </li>
-                        <li class="sidebar-item active">
-                            <a class="sidebar-link" href="{{url_for('getting_app_bonus_base_endpoint')}}">
-                                <i class="align-middle" data-feather="dollar-sign"></i>
-                                <span class="align-middle">Aguinaldos</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item active">
-                            <a class="sidebar-link" href="{{url_for('getting_app_settlement_base_endpoint')}}">
-                                <i class="align-middle" data-feather="check-circle"></i>
-                                <span class="align-middle">Liquidaciones</span>
-                            </a>
-                        </li>
-
+                        {% if not params.role == "Empleado" %}
+                            <li class="sidebar-item active">
+                                <a class="sidebar-link" href="{{url_for('getting_app_bonus_base_endpoint')}}">
+                                    <i class="align-middle" data-feather="dollar-sign"></i>
+                                    <span class="align-middle">Aguinaldos</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item active">
+                                <a class="sidebar-link" href="{{url_for('getting_app_settlement_base_endpoint')}}">
+                                    <i class="align-middle" data-feather="check-circle"></i>
+                                    <span class="align-middle">Liquidaciones</span>
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="sidebar-header"> SOLICITUDES </li>
                         <li class="sidebar-item active">
                             <a class="sidebar-link" href="{{url_for('getting_app_permission_base_endpoint')}}">
@@ -131,19 +132,23 @@
                             </a>
                         </li>
                         <hr/>
-                        <li class="sidebar-header"> MANTENIMIENTOS </li>
-                        <li class="sidebar-item active">
-                            <a class="sidebar-link" href="{{url_for('getting_app_crud_base_endpoint')}}">
-                                <i class="align-middle" data-feather="settings"></i>
-                                <span class="align-middle">Mantenimientos</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item active">
-                            <a class="sidebar-link" href="{{url_for('getting_app_reports_base_endpoint')}}">
-                                <i class="align-middle" data-feather="database"></i>
-                                <span class="align-middle">Reportes</span>
-                            </a>
-                        </li>
+                        <li class="sidebar-header"> REGISTROS </li>
+                        {% if params.role == "Administrador" %}
+                            <li class="sidebar-item active">
+                                <a class="sidebar-link" href="{{url_for('getting_app_crud_base_endpoint')}}">
+                                    <i class="align-middle" data-feather="settings"></i>
+                                    <span class="align-middle">Mantenimientos</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if params.role == "Administrador" or params.role == "Gerencia" %}
+                            <li class="sidebar-item active">
+                                <a class="sidebar-link" href="{{url_for('getting_app_reports_base_endpoint')}}">
+                                    <i class="align-middle" data-feather="database"></i>
+                                    <span class="align-middle">Reportes</span>
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 {% endblock %}
 

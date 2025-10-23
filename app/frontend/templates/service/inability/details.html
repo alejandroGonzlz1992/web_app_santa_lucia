@@ -99,16 +99,14 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-
-                    <h5 class="card-title mb-4">Administrar</h5>
-
-                    <input type="hidden" value="{{ params.id }}" name="id">
-
-                    <!--Update Inability Checkin Button-->
-                    <a class="mb-3" href="{{ url_for('getting_app_inability_approvals_endpoint', id=params.id) }}">
-                        <button class="btn btn-info"><b>Actualizar Incapacidad</b></button>
-                    </a>
-
+                    {% if not params.role == "Empleado" %}
+                        <h5 class="card-title mb-4">Administrar</h5>
+                        <input type="hidden" value="{{ params.id }}" name="id">
+                        <!--Update Inability Checkin Button-->
+                        <a class="mb-3" href="{{ url_for('getting_app_inability_approvals_endpoint', id=params.id) }}">
+                            <button class="btn btn-info"><b>Actualizar Incapacidad</b></button>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="card shadow-sm">

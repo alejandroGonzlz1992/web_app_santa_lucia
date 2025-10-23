@@ -39,7 +39,7 @@ async def getting_app_evaluation_base_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/evaluation/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'role': user_login.role_type
             }
         }
     )
