@@ -9,6 +9,7 @@ from sqlalchemy import or_
 
 # local import
 from app.backend.database import models
+from app.backend.database.models import User_Role
 from app.backend.tooling.setting.constants import Constants as Cns
 
 
@@ -60,50 +61,89 @@ class Permission_Trans_Manager:
 
     # query permission object
     async def querying_extra_hours_details(self, db: object, id_login: Union[int, str]) -> object:
-        # alias
-        sub_user_role = aliased(self.models.User_Role)
+        # subject and approver User-Role relationship
+        subj_user_role = aliased(self.models.User_Role)
+        appr_user_role = aliased(self.models.User_Role)
+        # subject
         subject = aliased(self.models.User)
+        subject_role = aliased(self.models.Role)
+        # approver
         approver = aliased(self.models.User)
+        approver_role = aliased(self.models.Role)
 
-        record = db.query(
+        # base query
+        records = (db.query(
+            # request info
             self.models.Request_Extra_Hour.id_record.label('_id'),
             self.models.Request_Extra_Hour.date_request.label('_date_request'),
             self.models.Request_Extra_Hour.hours.label('_hours'),
+            self.models.Request_Extra_Hour.status.label('_status'),
             # subject info
             subject.name.label('_subj_name'),
             subject.lastname.label('_subj_lastname'),
             subject.lastname2.label('_subj_lastname2'),
+            subject_role.type.label('_subject_role'),
             # approver info
             approver.name.label('_appr_name'),
             approver.lastname.label('_appr_lastname'),
             approver.lastname2.label('_appr_lastname2'),
-            # request status
-            self.models.Request_Extra_Hour.status.label('_status')
+            approver_role.type.label('_approver_role'),
         ).select_from(
             self.models.Request_Extra_Hour
-        ).join(
-            sub_user_role, sub_user_role.id_record == self.models.Request_Extra_Hour.id_subject
-        ).join(
-            subject, subject.id_record == sub_user_role.id_user
-        ).join(
-            approver, approver.id_record == sub_user_role.approver
         )
+        .join(
+            # subject user-role relationship
+            subj_user_role, subj_user_role.id_record == self.models.Request_Extra_Hour.id_subject
+        ).join(
+            subject, subject.id_record == subj_user_role.id_user
+        ).join(
+            subject_role, subject_role.id_record == subj_user_role.id_role
+        ).join(
+            # approver user entity
+            approver, approver.id_record == subj_user_role.approver
+        ).outerjoin(
+            # approver own role
+            appr_user_role, appr_user_role.id_user == approver.id_record
+        ).outerjoin(
+            approver_role, approver_role.id_record == appr_user_role.id_role
+        ))
 
-        role_types = await self.fetching_active_role_type(db=db, id_session=id_login)
+        # get the user currently logged in
+        current_logged_in = db.query(
+            self.models.Role.type
+        ).join(
+            self.models.User_Role, self.models.User_Role.id_role == self.models.Role.id_record
+        ).filter(
+            self.models.User_Role.id_user == id_login
+        ).scalar()
 
-        if "Administrador" in role_types:
-            # see all
+        # role-base filtering
+        if current_logged_in == "Empleado":
+            records = records.filter(subj_user_role.id_user == id_login)
+
+        elif current_logged_in == "Jefatura":
+            records = records.filter(or_(
+                    subj_user_role.id_user == id_login,
+                    approver_role.type == "Jefatura"
+                )
+            )
+
+        elif current_logged_in == "Gerencia":
+            records = records.filter(
+                or_(
+                    subj_user_role.id_user == id_login,
+                    subject_role.type == "Jefatura"
+                )
+            )
+
+        elif current_logged_in == "Administrador":
             pass
 
-        elif "Jefatura" in role_types:
-            record = record.filter(or_(
-                sub_user_role.approver == id_login, sub_user_role.id_user == id_login))
-
-        else:
-            record = record.filter(sub_user_role.id_user == id_login)
-
         # return
-        return record.order_by(self.models.Request_Extra_Hour.id_record.desc()).all()
+        return {
+            "records": records.order_by(self.models.Request_Extra_Hour.id_record.desc()).all(),
+            "logged_in": current_logged_in
+        }
 
     # register record on db
     async def registering_extra_hour_record(self, db: object, model: Union[dict, object], id_session: int) -> object:
@@ -229,51 +269,87 @@ class Permission_Trans_Manager:
 
     # query vacations object
     async def querying_vacations_details(self, db: object, id_login: Union[int, str]) -> object:
-        # alias
-        sub_user_role = aliased(self.models.User_Role)
+        # subject and approver User-Role relationship
+        subj_user_role = aliased(self.models.User_Role)
+        appr_user_role = aliased(self.models.User_Role)
+        # subject
         subject = aliased(self.models.User)
+        subject_role = aliased(self.models.Role)
+        # approver
         approver = aliased(self.models.User)
+        approver_role = aliased(self.models.Role)
 
-        record = db.query(
+        records = db.query(
             self.models.Request_Vacation.id_record.label('_id'),
             self.models.Request_Vacation.date_start.label('_start'),
             self.models.Request_Vacation.date_return.label('_return'),
             self.models.Request_Vacation.days.label('_days'),
+            self.models.Request_Vacation.status.label('_status'),
             # subject info
             subject.name.label('_subj_name'),
             subject.lastname.label('_subj_lastname'),
             subject.lastname2.label('_subj_lastname2'),
-            # approver info
+            subject_role.type.label('_subject_role'),
+                # approver info
             approver.name.label('_appr_name'),
             approver.lastname.label('_appr_lastname'),
             approver.lastname2.label('_appr_lastname2'),
-            # request status
-            self.models.Request_Vacation.status.label('_status')
+            approver_role.type.label('_approver_role'),
         ).select_from(
             self.models.Request_Vacation
         ).join(
-            sub_user_role, sub_user_role.id_record == self.models.Request_Vacation.id_subject
+            # subject user-role relationship
+            subj_user_role, subj_user_role.id_record == self.models.Request_Vacation.id_subject
         ).join(
-            subject, subject.id_record == sub_user_role.id_user
+            subject, subject.id_record == subj_user_role.id_user
         ).join(
-            approver, approver.id_record == sub_user_role.approver
+            subject_role, subject_role.id_record == subj_user_role.id_role
+        ).join(
+            # approver user entity
+            approver, approver.id_record == subj_user_role.approver
+        ).outerjoin(
+            # approver own role
+            appr_user_role, appr_user_role.id_user == approver.id_record
+        ).outerjoin(
+            approver_role, approver_role.id_record == appr_user_role.id_role
         )
 
-        role_types = await self.fetching_active_role_type(db=db, id_session=id_login)
+        # get the user currently logged in
+        current_logged_in = db.query(
+            self.models.Role.type
+        ).join(
+            self.models.User_Role, self.models.User_Role.id_role == self.models.Role.id_record
+        ).filter(
+            self.models.User_Role.id_user == id_login
+        ).scalar()
 
-        if "Administrador" in role_types:
-            # see all
+        # role-base filtering
+        if current_logged_in == "Empleado":
+            records = records.filter(subj_user_role.id_user == id_login)
+
+        elif current_logged_in == "Jefatura":
+            records = records.filter(or_(
+                    subj_user_role.id_user == id_login,
+                    approver_role.type == "Jefatura"
+                )
+            )
+
+        elif current_logged_in == "Gerencia":
+            records = records.filter(
+                or_(
+                    subj_user_role.id_user == id_login,
+                    subject_role.type == "Jefatura"
+                )
+            )
+
+        elif current_logged_in == "Administrador":
             pass
 
-        elif "Jefatura" in role_types:
-            record = record.filter(or_(
-                sub_user_role.approver == id_login, sub_user_role.id_user == id_login))
-
-        else:
-            record = record.filter(sub_user_role.id_user == id_login)
-
         # return
-        return record.order_by(self.models.Request_Vacation.id_record.desc()).all()
+        return {
+            "records": records.order_by(self.models.Request_Vacation.id_record.desc()).all(),
+            "logged_in": current_logged_in
+        }
 
     # register record on db
     async def registering_vacations_record(self, db: object, model: Union[dict, object], id_session: int) -> object:

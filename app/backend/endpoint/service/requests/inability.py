@@ -150,14 +150,17 @@ async def getting_app_inability_details_endpoint(
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
     # fetch current inability record
-    record = await serv.querying_inability_record_details(db=db, id=id)
+    results = await serv.querying_inability_record_details(db=db, id_login=user_login.user_id, id=id)
+    # ->
+    record = results["record"]
+    logged_in = results["logged_in"]
 
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/inability/details.html', context={
             'request': request, 'params': {
                 'id': id, 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'record': record,
-                'role': user_login.role_type
+                'logged_in': logged_in
             }
         }
     )

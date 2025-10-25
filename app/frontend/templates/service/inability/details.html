@@ -84,11 +84,11 @@
                     <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.85rem;">Detalle Laboral</h6>
                     <div class="text-start" style="font-size: 0.95rem;">
                         <p class="mb-2"><strong>👷‍♂️ Nombre:</strong>
-                            {{ params.record._emp_name }} {{ params.record._emp_lastname }}
-                            {{ params.record._emp_lastname2 }}</p>
-                        <p class="mb-2"><strong>🏗️ Departamento:</strong> {{ params.record._depart_name }}</p>
-                        <p class="mb-2"><strong>✔️ Rol:</strong> {{ params.record._role_name }}</p>
-                        <p class="mb-0"><strong>✔️ Tipo de Rol:</strong> {{ params.record._role_type }}</p>
+                            {{ params.record._subj_name }} {{ params.record._subj_lastname }}
+                            {{ params.record._subj_lastname2 }}</p>
+                        <p class="mb-2"><strong>🏗️ Departamento:</strong> {{ params.record._department_name }}</p>
+                        <p class="mb-2"><strong>✔️ Rol:</strong> {{ params.record._subject_role_name }}</p>
+                        <p class="mb-0"><strong>✔️ Tipo de Rol:</strong> {{ params.record._subject_role }}</p>
                     </div>
 
                 </div>
@@ -99,13 +99,26 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    {% if not params.role == "Empleado" %}
-                        <h5 class="card-title mb-4">Administrar</h5>
-                        <input type="hidden" value="{{ params.id }}" name="id">
+                    <h5 class="card-title mb-4">Administrar</h5>
+                    <input type="hidden" value="{{ params.id }}" name="id">
+
+                    {% if params.logged_in == "Administrador" %}
                         <!--Update Inability Checkin Button-->
                         <a class="mb-3" href="{{ url_for('getting_app_inability_approvals_endpoint', id=params.id) }}">
                             <button class="btn btn-info"><b>Actualizar Incapacidad</b></button>
                         </a>
+                    {% elif params.logged_in == "Gerencia" and params.record._subject_role  == "Jefatura" %}
+                        <!--Update Inability Checkin Button-->
+                        <a class="mb-3" href="{{ url_for('getting_app_inability_approvals_endpoint', id=params.id) }}">
+                            <button class="btn btn-info"><b>Actualizar Incapacidad</b></button>
+                        </a>
+                    {% elif params.logged_in == "Jefatura" and params.record._subject_role  == "Empleado" %}
+                        <!--Update Inability Checkin Button-->
+                        <a class="mb-3" href="{{ url_for('getting_app_inability_approvals_endpoint', id=params.id) }}">
+                            <button class="btn btn-info"><b>Actualizar Incapacidad</b></button>
+                        </a>
+                    {% else %}
+                        <button class="mb-3 btn btn-secondary" disabled><b>Actualizar Incapacidad</b></button>
                     {% endif %}
                 </div>
             </div>

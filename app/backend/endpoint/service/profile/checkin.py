@@ -38,7 +38,7 @@ async def getting_app_checkin_base_endpoint(
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
     # fetch checkin tracker records
-    records = await serv.querying_current_checkin_records(db=db, id_session=user_login.user_role_id)
+    records = await serv.querying_current_checkin_records(db=db, id_session=user_login.user_id)
 
     # return
     return Cns.HTML_.value.TemplateResponse(

@@ -40,6 +40,7 @@ class Checkin_Trans_Manager:
         # entity aliases
         sub_user_role = aliased(self.models.User_Role)
         subject = aliased(self.models.User)
+        sub_role = aliased(self.models.Role)
 
         rows = db.query(
             # checkin
@@ -59,20 +60,22 @@ class Checkin_Trans_Manager:
             sub_user_role, sub_user_role.id_record == self.models.Checkin_Tracker.id_subject
         ).join(
             subject, subject.id_record == sub_user_role.id_user
+        ).join(
+            sub_role, sub_role.id_record == sub_user_role.id_role
         )
 
-        # fetching active role types
-        roles = await self.fetching_active_role_type(db=db, id_session=subject.id_record)
+        # get role type
+        user_role_type = (
+            db.query(sub_role.type)
+            .join(sub_user_role, sub_user_role.id_role == sub_role.id_record)
+            .filter(sub_user_role.id_user == id_session)
+            .scalar()
+        )
 
-        if 'Administrador' in roles:
-            # see all
-            pass
-
-        elif 'Jefatura' in roles:
-            rows = rows.filter(or_(sub_user_role.approver == id_session, sub_user_role.id_user == id_session))
-
-        else:
+        # return
+        if user_role_type != "Administrador":
             rows = rows.filter(sub_user_role.id_user == id_session)
+            return rows
 
         # return
         return rows.order_by(self.models.Checkin_Tracker.id_record.desc()).all()

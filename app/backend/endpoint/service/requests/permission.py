@@ -57,13 +57,17 @@ async def getting_app_permission_extra_hours_base_endpoint(
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
     # extra hour requests record
-    records = await serv.querying_extra_hours_details(db=db, id_login=user_login.user_id)
+    results = await serv.querying_extra_hours_details(db=db, id_login=user_login.user_id)
+    # -> from results
+    records = results["records"]
+    logged_in = results["logged_in"]
 
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/permission/extra_hours/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records,
+                'logged_in': logged_in
             }
         }
     )
@@ -226,14 +230,18 @@ async def getting_app_permission_vacations_base_endpoint(
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
-    # extra hour requests record
-    records = await serv.querying_vacations_details(db=db, id_login=user_login.user_id)
+    # vacations requests record
+    results = await serv.querying_vacations_details(db=db, id_login=user_login.user_id)
+    # -> from results
+    records = results["records"]
+    logged_in = results["logged_in"]
 
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/permission/vacations/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records,
+                'logged_in': logged_in
             }
         }
     )

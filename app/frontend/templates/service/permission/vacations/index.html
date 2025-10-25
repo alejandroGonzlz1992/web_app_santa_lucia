@@ -137,12 +137,25 @@
                             <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
                             <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
                             <td>{{ item._status }}</td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <a href=" {{url_for('getting_app_permission_vacations_update_endpoint', id=item._id) }} ">
-                                    <i class="align-center" data-feather="refresh-ccw"></i>
-                                    Actualizar Solicitud
-                                </a>
-                            </td>
+                            <!--Conditional column -->
+                            {% set logged = params.logged_in  %}
+
+                            {% if
+                                (logged == "Administrador") or
+                                (logged == "Gerencia" and item._subject_role == "Jefatura") or
+                                (logged == "Jefatura" and item._subject_role == "Empleado")
+                            %}
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href=" {{url_for('getting_app_permission_vacations_update_endpoint', id=item._id) }} ">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Actualizar Solicitud
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <span class="text-muted">Inabilitado</span>
+                                </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

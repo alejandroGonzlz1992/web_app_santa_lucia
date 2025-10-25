@@ -1005,7 +1005,7 @@ export const Static = {
         },
     },
 
-    PROFILE_TRACKER_BLANK_FIELDS: ["check_out_date_field"],
+    PROFILE_TRACKER_BLANK_FIELDS: [""],
 
     // PROFILE CONTACT INFO
     PROFILE_CONTACT_INFO_FORM_DICT: {
