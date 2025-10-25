@@ -48,52 +48,91 @@ class Settlement_Trans_Manager:
 
     # query settlement records
     async def query_settlement_records(
-            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
-        # entity aliases
-        sub_user_role = aliased(self.models.User_Role)
+            self, db: Union[Session, object], id_login: Union[int, str]) -> object:
+        # subject and approver User-Role relationship
+        subj_user_role = aliased(self.models.User_Role)
+        appr_user_role = aliased(self.models.User_Role)
+        # subject
         subject = aliased(self.models.User)
+        subject_role = aliased(self.models.Role)
+        # approver
         approver = aliased(self.models.User)
+        approver_role = aliased(self.models.Role)
 
-        rows = db.query(
+        records = db.query(
             self.models.Settlement.id_record.label('_id'),
             self.models.Settlement.log_date.label('_log_date'),
             self.models.Settlement.type.label('_type'),
             self.models.Settlement.total_amount.label('_total_amount'),
             self.models.Settlement.status.label('_status'),
             # subject info
-            subject.id_record.label('_emp_id'),
-            subject.identification.label('_ident'),
-            subject.name.label('_emp_name'),
-            subject.lastname.label('_emp_lastname'),
-            subject.lastname2.label('_emp_lastname2'),
+            subject.identification.label('_subj_ident'),
+            subject.name.label('_subj_name'),
+            subject.lastname.label('_subj_lastname'),
+            subject.lastname2.label('_subj_lastname2'),
+            subject_role.type.label('_subject_role'),
             # approver info
-            approver.id_record.label('_apr_id'),
-            approver.name.label('_apr_name'),
-            approver.lastname.label('_apr_lastname'),
-            approver.lastname2.label('_apr_lastname2'),
+            approver.name.label('_appr_name'),
+            approver.lastname.label('_appr_lastname'),
+            approver.lastname2.label('_appr_lastname2'),
+            approver_role.type.label('_approver_role'),
+        ).select_from(
+            self.models.Settlement
         ).join(
-            sub_user_role, sub_user_role.id_record == self.models.Settlement.id_subject
+            # subject user-role relationship
+            subj_user_role, subj_user_role.id_record == self.models.Settlement.id_subject
         ).join(
-            subject, subject.id_record == sub_user_role.id_user
+            subject, subject.id_record == subj_user_role.id_user
         ).join(
-            approver, approver.id_record == sub_user_role.approver
+            subject_role, subject_role.id_record == subj_user_role.id_role
+        ).join(
+            # approver user entity
+            approver, approver.id_record == subj_user_role.approver
+        ).outerjoin(
+            # approver own role
+            appr_user_role, appr_user_role.id_user == approver.id_record
+        ).outerjoin(
+            approver_role, approver_role.id_record == appr_user_role.id_role
         ).filter(
-            sub_user_role.status.is_(False),
+            subj_user_role.status.is_(False)
         )
 
-        # fetching active role types
-        roles = await self.fetching_active_role_type(db=db, id_session=id_session)
+        # get the user currently logged in
+        current_logged_in = db.query(
+            self.models.Role.type
+        ).join(
+            self.models.User_Role, self.models.User_Role.id_role == self.models.Role.id_record
+        ).filter(
+            self.models.User_Role.id_user == id_login
+        ).scalar()
 
-        if 'Administrador' in roles:
-            # see all
+        # role-base filtering
+        if current_logged_in == "Empleado":
+            records = records.filter(subj_user_role.id_user == id_login)
+
+        elif current_logged_in == "Jefatura":
+            records = records.filter(or_(
+                subj_user_role.id_user == id_login,
+                approver_role.type == "Jefatura"
+            )
+            )
+
+        elif current_logged_in == "Gerencia":
+            records = records.filter(
+                or_(
+                    subj_user_role.id_user == id_login,
+                    subject_role.type == "Jefatura"
+                )
+            )
+
+        elif current_logged_in == "Administrador":
             pass
-        elif 'Jefatura' in roles:
-            rows = rows.filter(or_(sub_user_role.approver == id_session, sub_user_role.id_user == id_session))
-        else:
-            rows = rows.filter(sub_user_role.id_user == id_session)
 
         # return
-        return rows.order_by(self.models.Settlement.id_record.desc()).all()
+        return {
+            "records": records.order_by(self.models.Settlement.id_record.desc()).all(),
+            "logged_in": current_logged_in
+        }
 
     # query specific settlement record
     async def query_specific_settlement_records(

@@ -40,13 +40,17 @@ async def getting_app_settlement_base_endpoint(
     user_session = await trans.fetching_current_user(db=db, user=user_login)
 
     # query inability records
-    records = await serv.query_settlement_records(db=db, id_session=user_login.user_id)
+    results = await serv.query_settlement_records(db=db, id_login=user_login.user_id)
+    # ->
+    records = results["records"]
+    logged_in = results["logged_in"]
 
     # return
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/settlement/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records,
+                'logged_in': logged_in
             }
         }
     )

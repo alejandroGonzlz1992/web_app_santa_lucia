@@ -117,9 +117,9 @@
                             {% for item in params.records %}
                                 <tr>
                                     <th scope="row"><b></b>{{ item._id }}</th>
-                                    <td>{{ item._ident }}</td>
-                                    <td>{{ item._emp_name }} {{ item._emp_lastname }} {{ item._emp_lastname2 }}</td>
-                                    <td>{{ item._apr_name }} {{ item._apr_lastname }} {{ item._apr_lastname2 }}</td>
+                                    <td>{{ item._subj_ident }}</td>
+                                    <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
+                                    <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
                                     <td>{{ item._type }}</td>
                                     <td>{{ item._status }}</td>
                                     <td>{{ item._log_date.date() }}</td>
