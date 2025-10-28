@@ -281,7 +281,8 @@ async def posting_app_permission_vacations_register_endpoint(
 
     try:
         # validate available days
-        await serv.current_vacation_available_record(db=db, id_session=user_login.user_role_id)
+        await serv.current_vacation_available_record(
+            db=db, id_session=user_login.user_role_id, schema=model.model_dump())
 
         # insert record on db
         current = await serv.registering_vacations_record(db=db, model=model.model_dump(), id_session=user_login.user_role_id)
@@ -368,10 +369,8 @@ async def posting_app_permission_vacations_update_endpoint(
         records = await serv.current_vacation_request_record(db=db, id_request=model.id)
 
         if current.status == "Aprobado":
-            # add extra hours user
-            row = await serv.registering_user_vacations(db=db, model=model.model_dump())
             # update used days
-            await serv.updating_used_days_vacations(db=db, record=row)
+            await serv.updating_used_days_vacations(db=db, record=records)
 
         # bg tasks
         background_tasks.add_task(

@@ -61,10 +61,8 @@ async def getting_app_user_register_endpoint(
 
     # fetching current User logged-in
     user_session = await trans.fetching_current_user(db=db, user=user_login)
-
     # roles
     roles = await entities.getting_roles_crud_for_users(db=db)
-
     # management
     management = await entities.getting_users_jefaturas_crud(db=db)
 

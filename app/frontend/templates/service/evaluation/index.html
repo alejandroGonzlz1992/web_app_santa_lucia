@@ -103,7 +103,7 @@
                 <div class="card-body" style="width: 25%;">
                     <div class="flex-grow-1">
                         <ul class="list-unstyled mb-0">
-                            {% if params.role == "Jefatura" %}
+                            {% if params.role == "Jefatura" or params.role == "Gerencia"%}
                                 <li class="mb-3">
                                     <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
                                     <a href="{{ url_for('getting_app_evaluation_employee_endpoint') }}">
@@ -115,8 +115,17 @@
                                     <a href="{{ url_for('getting_app_evaluation_supervisor_endpoint') }}">
                                         Evaluación del supervisor</a>
                                 </li>
-                            {% endif %}
-                            {% if params.role == "Administrador" %}
+                            {% elif params.role == "Administrador" %}
+                                <li class="mb-3">
+                                    <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                                    <a href="{{ url_for('getting_app_evaluation_employee_endpoint') }}">
+                                        Evaluación del empleado</a>
+                                </li>
+                                <li class="mb-3">
+                                    <span data-feather="folder" class="feather-lg me-1" style="color: cadetblue;"></span>
+                                    <a href="{{ url_for('getting_app_evaluation_supervisor_endpoint') }}">
+                                        Evaluación del supervisor</a>
+                                </li>
                                 <li class="mb-3">
                                     <span data-feather="folder" class="feather-lg me-1" style="color: darkblue;"></span>
                                     <a href="{{url_for('getting_app_evaluation_enable_endpoint')}}">

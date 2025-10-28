@@ -61,7 +61,7 @@ class Constants(Enum):
     SUPERVISOR_EVALUATION = "Evaluación Liderazgo"
 
     # vacations queue
-    VACATIONS_QUEUE = 5
+    VACATIONS_QUEUE = 0
 
     # redirecting
     URL_REDIRECT_TO_PASSWORD_RESTORE = "http://127.0.0.1:8000/sesion/restablecer"
@@ -325,15 +325,15 @@ class Constants(Enum):
 
     # holiday calendar
     HOLIDAY_CALENDAR = {
-        "new_year": date(CR_YEAR, 1, 1),
-        "juan_santamaria": date(CR_YEAR, 4, 11),
-        "holy_thurs": date(CR_YEAR, 4, 17),
-        "holy_friday": date(CR_YEAR, 4, 18),
-        "labor_day": date(CR_YEAR, 5, 1),
-        "nicoya": date(CR_YEAR, 7, 25),
-        "mother_day": date(CR_YEAR, 8, 15),
-        "independence": date(CR_YEAR, 9, 15),
-        "christmas": date(CR_YEAR, 12, 25),
+        "new_year": date(1900, 1, 1),
+        "juan_santamaria": date(1900, 4, 11),
+        "holy_thurs": date(1900, 4, 17),
+        "holy_friday": date(1900, 4, 18),
+        "labor_day": date(1900, 5, 1),
+        "nicoya": date(1900, 7, 25),
+        "mother_day": date(1900, 8, 15),
+        "independence": date(1900, 9, 15),
+        "christmas": date(1900, 12, 25),
     }
 
     # reports name fields

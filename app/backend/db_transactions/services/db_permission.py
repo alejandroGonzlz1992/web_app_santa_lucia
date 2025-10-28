@@ -1,11 +1,13 @@
 # import
 import string, random
 from re import compile
+from pydantic import BaseModel
 from fastapi import HTTPException, status
 from logging import getLogger
 from typing import Union
 from sqlalchemy.orm import aliased
 from sqlalchemy import or_
+from datetime import date, timedelta
 
 # local import
 from app.backend.database import models
@@ -351,10 +353,36 @@ class Permission_Trans_Manager:
             "logged_in": current_logged_in
         }
 
+    # traversing holidays
+    async def traversing_holidays(self, schema: Union[BaseModel, dict]) -> int:
+        current_date = schema["start_date_field"]
+        end_date = schema["end_date_field"]
+        days = int(schema["day_field_total"])
+
+        while current_date <= end_date:
+            for holiday in self.cns.HOLIDAY_CALENDAR.value.values():
+                # compare month and day
+                if current_date.month == holiday.month and current_date.day == holiday.day:
+                    days -= 1
+                    break
+            # update date count
+            current_date += timedelta(days=1)
+
+        # ensure days do not reach 0
+        if days < 0:
+            days = 0
+
+        # return
+        return days
+
     # register record on db
     async def registering_vacations_record(self, db: object, model: Union[dict, object], id_session: int) -> object:
+
+        # validating if holidays
+        days_ = await self.traversing_holidays(schema=model)
+
         vacations = self.models.Request_Vacation(
-            days=model["day_field_total"],
+            days=days_,
             date_start=model["start_date_field"],
             date_return=model["end_date_field"],
             type=model["request_vacation"],
@@ -371,7 +399,8 @@ class Permission_Trans_Manager:
         return vacations
 
     # query current vacation record
-    async def current_vacation_available_record(self, db: object, id_session: Union[int, str]) -> object:
+    async def current_vacation_available_record(
+            self, db: object, id_session: Union[int, str], schema: Union[BaseModel, dict]) -> object:
         # row
         row = db.query(
             self.models.Vacation.available.label('_available')
@@ -381,7 +410,8 @@ class Permission_Trans_Manager:
 
         if row is None:
             pass
-        elif row._available < 1:
+
+        if row._available < int(schema["day_field_total"]):
             raise self.http_exec(status_code=self.status.HTTP_400_BAD_REQUEST,
                                  detail='Vacation available is less than 1')
 
@@ -473,11 +503,15 @@ class Permission_Trans_Manager:
         current_row = db.query(
             self.models.Vacation
         ).filter(
-            self.models.Vacation.id_record == record.id_record,
+            self.models.Vacation.id_subject == record._id_user_role,
         ).first()
 
+        # update records
+        current_days = int(current_row.available - record._days)
+
         if current_row:
-            current_row.available = record.available - record.used_days
+            current_row.available = current_days
+            current_row.used_days = record._days
 
             # db commit
             db.commit()
