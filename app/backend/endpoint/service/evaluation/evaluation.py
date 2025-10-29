@@ -64,7 +64,7 @@ async def getting_app_evaluation_employee_endpoint(
     questions = await serv.query_evaluation_questions(db=db)
 
     # users
-    users = await serv.query_evaluation_user_specific_record(db=db)
+    users = await serv.query_evaluation_user_specific_record(db=db, id_session=user_login.user_id)
 
     # evaluation status
     if eval_type._status is False:
@@ -100,7 +100,7 @@ async def getting_app_evaluation_supervisor_endpoint(
     questions = await serv.query_evaluation_questions(db=db)
 
     # users
-    users = await serv.query_evaluation_user_specific_record(db=db)
+    users = await serv.query_evaluation_approver_user_specific(db=db, id_session=user_login.user_role_id)
 
     # evaluation status
     if eval_type._status is False:

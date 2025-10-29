@@ -111,10 +111,10 @@
                                         style="color: cadetblue;">
                                     <option value="not_select" selected>Seleccionar empleado a evaluar</option>
                                     {% for item in params.users %}
-                                        {% if item._role == "Empleado" %}
-                                        <option value="{{ item._id_user_role }}">
-                                            {{ item._name }} {{ item._lastname }} {{ item._lastname2 }}
-                                        </option>
+                                        {% if not item._id == 57 %}
+                                            <option value="{{ item._id_user_role }}">
+                                                {{ item._name }} {{ item._lastname }} {{ item._lastname2 }}
+                                            </option>
                                         {% endif %}
                                     {% endfor %}
                                 </select>

@@ -4,6 +4,7 @@ from fastapi import HTTPException, status, Request
 from logging import getLogger
 from typing import Union, Dict
 from sqlalchemy import func, true, and_
+from sqlalchemy import or_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import lateral
 from sqlalchemy.dialects.postgresql import aggregate_order_by
@@ -146,7 +147,8 @@ class Service_Trans_Manager:
         return approver
 
     # query user-specific records
-    async def query_evaluation_user_specific_record(self, db: object) -> object:
+    async def query_evaluation_user_specific_record(self, db: object, id_session: Union[int, str]) -> object:
+        # current logged-in
         users = db.query(
             self.models.User.id_record.label('_id'),
             self.models.User.name.label('_name'),
@@ -158,13 +160,39 @@ class Service_Trans_Manager:
         ).select_from(
             self.models.User_Role
         ).join(
-            self.models.User_Role.user
+            self.models.User, self.models.User.id_record == self.models.User_Role.id_user
         ).join(
-            self.models.User_Role.role
+            self.models.Role, self.models.Role.id_record == self.models.User_Role.id_role
+        ).filter(
+            self.models.User_Role.approver == id_session
         ).all()
 
         # return
         return users
+
+    # query user-approver specific records
+    async def query_evaluation_approver_user_specific(self, db: object, id_session: Union[int, str]) -> object:
+        emp_role = aliased(self.models.User_Role)
+        boss_user = aliased(self.models.User)
+
+        record = (
+            db.query(
+                emp_role.id_record.label('_emp_role_id'),
+                boss_user.id_record.label('_id'),
+                boss_user.name.label('_name'),
+                boss_user.lastname.label('_lastname'),
+                boss_user.lastname2.label('_lastname2'),
+            )
+            .select_from(emp_role)
+            .join(boss_user, boss_user.id_record == emp_role.approver)  # approver is a USER ID
+            .filter(or_(
+                emp_role.id_record == id_session,
+                emp_role.id_user == id_session
+            ))
+            .first()
+        )
+
+        return record
 
     # enable evaluation status
     async def enable_evaluation_status(self, db: object, model: Union[dict, object]) -> None:

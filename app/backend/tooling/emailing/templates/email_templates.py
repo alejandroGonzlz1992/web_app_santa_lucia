@@ -286,7 +286,7 @@ def html_evaluation_activate_with_url_sending(type_of: str, login_url: str) -> s
 
 
 # html evaluation results
-def html_evaluation_results_sending(type_of: str, subject: object) -> str:
+def html_evaluation_results_sending(type_of: str, subject: list) -> str:
     return f"""
             <table border="0" cellspacing="0" cellpadding="0" style="max-width:600px">
                 <tbody>
@@ -326,10 +326,10 @@ def html_evaluation_results_sending(type_of: str, subject: object) -> str:
                                     </tr>
                                     <tr>
                                         <td>
-                                            <p>Estimado(a) {subject._subj_name} {subject._subj_lastname} {subject._subj_lastname2}.</p>
+                                            <p>Estimado(a) {subject[0]} {subject[1]} {subject[2]}.</p>
                                             <p>Se encuentra a continuación los resultados de su evaluación {type_of.upper()}.</p>
                                             <p>
-                                               Promedio de evaluación. <h3>{subject._avg}</h3>
+                                               Promedio de evaluación. <h3>{subject[3]}</h3>
                                             </p>
                                             <p>
                                                 Las respuestas contenidas en la evaluación son de carácter confidencial 

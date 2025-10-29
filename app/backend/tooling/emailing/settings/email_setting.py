@@ -159,12 +159,14 @@ class Email_Manager:
         msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
 
         if audience == "_employee":
-            msg["Subject"] = self.cns.SUBJECT_EVALUATION_RESULT_SUPERVISOR.value
+            msg["Subject"] = self.cns.SUBJECT_EVALUATION_RESULT_EMPLOYEE.value
+
+            subject_email = [subject._subj_name, subject._subj_lastname, subject._subj_lastname2, subject._avg]
 
             # html template
             content = self.builder["text"](
                 self.template.html_evaluation_results_sending(
-                    type_of="supervisor", subject=subject), "html")
+                    type_of="empleado", subject=subject_email), "html")
 
             # attach content
             msg.attach(content)
@@ -172,12 +174,14 @@ class Email_Manager:
             msg["To"] = ", ".join(rec)
 
         elif audience == "_supervisor":
-            msg["Subject"] = self.cns.SUBJECT_EVALUATION_RESULT_EMPLOYEE.value
+            msg["Subject"] = self.cns.SUBJECT_EVALUATION_RESULT_SUPERVISOR.value
+
+            subject_email = [subject._sup_name, subject._sup_lastname, subject._sup_lastname2, subject._avg]
 
             # html template
             content = self.builder["text"](
                 self.template.html_evaluation_results_sending(
-                    type_of="empleado", subject=subject), "html")
+                    type_of="supervisor", subject=subject_email), "html")
 
             # attach content
             msg.attach(content)

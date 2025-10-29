@@ -109,13 +109,12 @@
                                             name="evaluation_user_name_field"
                                             style="color: cadetblue;">
                                         <option value="not_select" selected>Seleccionar supervisor a evaluar</option>
-                                        {% for item in params.users %}
-                                            {% if item._role == "Jefatura" %}
-                                            <option value="{{ item._id_user_role }}">
-                                                {{ item._name }} {{ item._lastname }} {{ item._lastname2 }}
-                                            </option>
+                                            {% if not params.users._id == 57 %}
+                                                <option value="{{ params.users._emp_role_id }}">
+                                                    {{ params.users._name }} {{ params.users._lastname }}
+                                                    {{ params.users._lastname2 }}
+                                                </option>
                                             {% endif %}
-                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
