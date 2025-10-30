@@ -240,13 +240,14 @@ async def getting_app_profile_extra_hours_endpoint(
     # extra hours requests
     ehs_record = await serv.querying_extra_hours_requests(db=db, id_session=user_login.user_role_id)
 
-    print(ehs_record)
+    # counters
+    counters = await serv.counting_extra_hours(rows=ehs_record)
 
     # return
     return Cns.HTML_.value.TemplateResponse(
         'profile/profile/extra_hours.html', context={
             'request': request, 'params': {
-                'record': record, 'ehs_record': ehs_record, 'user_session': user_session
+                'record': record, 'ehs_record': ehs_record, 'user_session': user_session, "counters": counters
             }
         }
     )

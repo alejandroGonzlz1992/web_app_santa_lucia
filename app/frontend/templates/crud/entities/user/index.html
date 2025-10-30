@@ -147,10 +147,9 @@
                             <th scope="col">Nombre</th>
                             <th scope="col">Correo Electrónico</th>
                             <th scope="col">Rol de Usuario</th>
-                            <th scope="col">Fecha Contratación</th>
-                            <th scope="col">Estado de Usuario</th>
-                            <th scope="col" colspan="3"
-                                style="text-align: center; vertical-align: middle;">Administrar</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col" style="text-align: center; vertical-align: middle;">Administrar</th>
+                            <th scope="col" style="text-align: center; vertical-align: middle;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -161,7 +160,6 @@
                                 <td>{{ item._name }} {{ item._lastname }} {{ item._lastname2 }}</td>
                                 <td>{{ item._email }}</td>
                                 <td>{{ item._role }}</td>
-                                <td>{{ item._hire }}</td>
                                 {% if item._status %}
                                     <td>Activo</td>
                                 {% else %}

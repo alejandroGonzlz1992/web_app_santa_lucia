@@ -290,6 +290,28 @@ class Profile_Trans_Manager:
         # return
         return rows
 
+    # counting extra hoursRechazado
+    async def counting_extra_hours(
+            self, rows: Union[list, list[object]]) -> dict:
+        # counters
+        approved: int = 0
+        in_progress: int = 0
+        reject: int = 0
+
+        # traverse rows records
+        for record in rows:
+            if record._status == "Aprobado":
+                approved += 1
+
+            elif record._status == "En Proceso":
+                in_progress += 1
+
+            elif record._status == "Rechazado":
+                reject += 1
+
+        # return dict
+        return {"approve": approved, "in_progress": in_progress, "reject": reject}
+
     # query user_hire date
     async def querying_user_hire_date(
             self, db: Union[Session, object], id_session: Union[int, str]) -> object:
