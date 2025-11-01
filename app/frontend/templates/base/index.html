@@ -41,7 +41,7 @@
     <script>
         $(document).ready(function () {
             $('.table').DataTable({
-              pageLength: 10,
+              pageLength: 15,
               language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
               }
@@ -117,7 +117,7 @@
                                 <span class="align-middle">Planillas</span>
                             </a>
                         </li>
-                        {% if not params.role == "Empleado" %}
+                        {% if params.role in ["Administrador", "Gerencia"] %}
                             <li class="sidebar-item active">
                                 <a class="sidebar-link" href="{{url_for('getting_app_bonus_base_endpoint')}}">
                                     <i class="align-middle" data-feather="dollar-sign"></i>

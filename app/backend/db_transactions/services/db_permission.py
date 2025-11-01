@@ -7,7 +7,7 @@ from logging import getLogger
 from typing import Union
 from sqlalchemy.orm import aliased
 from sqlalchemy import or_
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 # local import
 from app.backend.database import models
@@ -261,6 +261,7 @@ class Permission_Trans_Manager:
             date_request = request_record._date_request,
             is_holiday = is_holiday_in,
             id_subject = request_record._id_subject,
+            log_date = datetime.now(),
         )
         # add to model
         db.add(instance=new_hours)

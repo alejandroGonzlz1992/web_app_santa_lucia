@@ -243,6 +243,8 @@ async def getting_app_profile_extra_hours_endpoint(
     # counters
     counters = await serv.counting_extra_hours(rows=ehs_record)
 
+    print(counters)
+
     # return
     return Cns.HTML_.value.TemplateResponse(
         'profile/profile/extra_hours.html', context={

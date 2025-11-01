@@ -1,11 +1,11 @@
 # import
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from fastapi.responses import HTMLResponse, FileResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from typing import Annotated, Union
 from pathlib import Path
 from datetime import date
-from sqlalchemy.exc import SQLAlchemyError, OperationalError
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
@@ -13,7 +13,7 @@ from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.db_transactions.transactions.db_payroll import Payroll_Trans_Manager
 from app.backend.tooling.setting.error_log import Logs_Manager
-from app.backend.schema.trans.payroll import Update_Payroll_Record
+from app.backend.schema.trans.payroll import Update_Payroll_Record, Generate_Payroll_Record
 from app.backend.database.config import Session_Controller
 
 
@@ -46,7 +46,69 @@ async def getting_app_payroll_base_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/payroll/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records,
+                'role': user_login.role_type
+            }
+        }
+    )
+
+
+# GET -> Payroll Generate
+@payroll_route.get(Cns.URL_PAYROLL_GENERATE.value, response_class=HTMLResponse)
+async def getting_app_payroll_generate_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        fg: Annotated[str, None] = None
+) -> HTMLResponse:
+
+    # fetching current User logged-in
+    user_session = await trans.fetching_current_user(db=db, user=user_login)
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'service/payroll/payroll/generate.html', context={
+            'request': request, 'params': {
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'periods': Cns.PAYROLL_PERIODS.value
+            }
+        }
+    )
+
+
+# POST -> Payroll Generate
+@payroll_route.post(Cns.URL_PAYROLL_GENERATE.value, response_class=HTMLResponse)
+async def posting_app_payroll_generate_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Generate_Payroll_Record, Depends(dependency=Generate_Payroll_Record.formatting)],
+        background_tasks: BackgroundTasks,
+) -> HTMLResponse:
+
+    try:
+        # collecting all users
+        users = await serv.querying_users_payroll_records(db=db)
+
+        # payroll calculation
+        await serv.generating_payroll_calculations(db=db, users=users, schema=model.model_dump())
+
+    except SQLAlchemyError as op:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        return await getting_app_payroll_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_orm_error')
+
+    except OperationalError as op:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        return await getting_app_payroll_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'base/redirect.html', context={
+            'request': request, 'params': {
+                'domain': 'planillas', 'redirect': 'ce', 'fg': '_update'
             }
         }
     )

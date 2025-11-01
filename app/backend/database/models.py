@@ -516,6 +516,13 @@ class Payroll_User(BASE):
     debts = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     association = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     others = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    # do revision here -> add payroll_amount, extra_hour_amount, vacations_amount, holiday_amount, total_gross_amount
+    payroll_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    extra_hour_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    vacations_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    holiday_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+    total_gross_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
+
     # do revision here -> add details column
     details = Column(String(250), nullable=False, server_default="Periodo regular de planilla")
     id_user = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)

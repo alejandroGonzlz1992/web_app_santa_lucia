@@ -1,8 +1,35 @@
 # import
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from fastapi import Form
 from decimal import Decimal
 from typing import Union
+from datetime import date
+from re import findall
+
+
+# generate payroll
+class Generate_Payroll_Record(BaseModel):
+    payroll_period: Union[list[date], list[str]]
+
+    @field_validator('payroll_period')
+    def parsing_dates(cls, value):
+        # if values are datetime already
+        if isinstance(value, list) and all(isinstance(v, date) for v in value):
+            return value
+
+        # cast from str to date
+        if isinstance(value, list) and len(value) == 1 and isinstance(value[0], str):
+            text = value[0]
+            matches = findall(r"datetime\.date\((\d+),\s*(\d+),\s*(\d+)\)", text)
+            if matches:
+                return [date(int(y), int(m), int(d)) for y, m, d in matches]
+
+        return None
+
+    @classmethod
+    def formatting(cls, payroll_period: Union[list[date], list[str]] = Form(...)):
+        # return
+        return cls(payroll_period=payroll_period)
 
 
 # update payroll record

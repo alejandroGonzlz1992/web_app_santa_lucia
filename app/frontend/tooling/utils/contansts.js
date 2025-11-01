@@ -27,7 +27,7 @@ export const Static = {
     POSTAL_CODE_LENGTH: 5,
     MAX_PERCENTAGE: 25,
     EVALUATION_QUESTION_LENGTH: 10,
-    ALLOW_FILE_EXT: ["png", "jpg", "jpeg", "pdf"],
+    ALLOW_FILE_EXT: ["pdf"],
     ADDRESS_LENGTH: 10,
     MILLISECONDS_PER_DAY: 86_400_000,
     REGEX_RADIO_BUTTONS: /^ratings\[(\d+)\]$/,
@@ -634,7 +634,7 @@ export const Static = {
             },
             "text": {
                 "blank": "Campo Obligatorio.",
-                "format": "Formato incorrecto de documento. Adjuntar .png, .jpg, jpeg, .pdf",
+                "format": "Formato incorrecto de documento. Adjuntar en .pdf unicamente",
             }
         },
         "inability_detail": {
@@ -867,6 +867,19 @@ export const Static = {
 
     PAYROLL_ADJUST_BLANK_FIELDS: ["ccss_ivm", "ccss_eme", "rop_popular", "rent_tax", "loan_request",
         "child_support", "association", "other_deductions", "payroll_details"],
+
+    PAYROLL_GENERATE_FORM_DICT: {
+        "payroll_period": {
+            "div_id": {
+                "status": "id_payroll_period_status_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú.",
+            }
+        },
+    },
+
+    PAYROLL_GENERATE_BLANK_FIELDS: ["payroll_period"],
 
     // SETTLEMENT ADJUST
     SETTLEMENT_ENABLE_FORM_DICT: {

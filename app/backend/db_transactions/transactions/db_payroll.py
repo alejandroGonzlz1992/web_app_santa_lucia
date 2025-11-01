@@ -1,9 +1,10 @@
 # import
+from numpy.core.records import record
 from pydantic import BaseModel
 from fastapi import HTTPException, status
 from typing import Union
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import or_
+from sqlalchemy import or_, and_, func
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -118,7 +119,9 @@ class Payroll_Trans_Manager:
                 Payroll_User.renta_tax.label('_renta_tax'),
                 Payroll_User.child_support.label('_child_support'),
                 Payroll_User.debts.label('_debts'),
-                Payroll_User.association.label('_association'),
+                Payroll_User.vacations_amount.label('_vacations'),
+                Payroll_User.extra_hour_amount.label('_extra_hours'),
+                Payroll_User.holiday_amount.label('_holidays'),
                 Payroll_User.others.label('_others'),
                 Payroll_User.details.label('_details'),
                 # subject info
@@ -234,7 +237,9 @@ class Payroll_Trans_Manager:
         to_copy["ccss_ivm"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._ccss_ivm)
         to_copy["ccss_eme"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._ccss_eme)
         to_copy["rop"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._rop)
-        to_copy["association"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._association)
+        to_copy["vacations"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._vacations)
+        to_copy["extra_hours"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._extra_hours)
+        to_copy["holidays"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._holidays)
         to_copy["debt"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._debts)
         to_copy["support"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._child_support)
         to_copy["others"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._others)
@@ -268,3 +273,254 @@ class Payroll_Trans_Manager:
 
             # commit
             db.commit()
+
+    # query users for payroll
+    async def querying_users_payroll_records(
+            self, db: Union[Session, object]) -> list[object]:
+        # aliases
+        users = aliased(self.models.User)
+        roles = aliased(self.models.Role)
+        user_role = aliased(self.models.User_Role)
+
+        # rows
+        rows = (db.query(
+            users.id_record.label('_id'), users.name.label('_name'), users.lastname.label('_lastname'),
+            users.lastname2.label('_lastname2'), roles.id_record.label('_id_role'), roles.name.label('_role_name'),
+            roles.type.label('_role_type'), user_role.id_record.label('_user_role_id'),
+            user_role.gross_income.label('_gross_income')
+        ).join(
+            user_role, users.id_record == user_role.id_user
+        ).join(
+            roles, roles.id_record == user_role.id_role
+        ).filter(
+            user_role.status == True
+        ).filter(
+            roles.type != 'Administrador'
+        ).order_by(
+            users.lastname.asc(), users.name.asc()
+        ).all())
+
+        # return
+        return rows
+
+    # generating payroll calculation
+    async def generating_payroll_calculations(
+            self, db: Union[Session, object], users: list[object], schema: Union[dict, object]) -> None:
+        # variables
+        employees = {
+            "id_user_role": None, "payroll_amount": 0.0, "extra_hour_amount": 0.0, "holiday_amount": 0.0,
+            "vacations_amount": 0.0, "gross_total_amount": 0.0, "payment_date": 220
+        }
+
+        # dates
+        dates = schema["payroll_period"]
+
+        for user in users:
+            # calculate payroll amount
+            payroll_amount = await self.calculating_payroll_amount(db=db, user=user, dates=dates)
+            # skip
+            if payroll_amount == 0.0: continue
+            # update
+            employees["id_user_role"] = user._user_role_id
+            employees["payroll_amount"] = payroll_amount
+
+            # inability days
+
+
+            # calculate extra hours
+            extra_hour_amount = await self.calculating_extra_hours_amount(db=db, user=user, dates=dates)
+            employees["extra_hour_amount"] = extra_hour_amount
+
+            # calculate holidays
+            holiday_amount = await self.calculating_holiday_records(db=db, user=user, dates=dates)
+            employees["holiday_amount"] = holiday_amount
+
+            # calculate vacations
+            vacations_amount = await self.calculating_vacations_records(db=db, user=user, dates=dates)
+            employees["vacations_amount"] = vacations_amount
+
+            print(f'\n Information: {employees} \n ')
+
+
+    # calculating payroll amount
+    async def calculating_payroll_amount(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> float:
+        # variables
+        amount = 0.0
+        # records
+        records = await self.returning_checking_tracker_records(db=db, user=user, dates=dates)
+
+        # skip records
+        if not records:
+            return amount
+
+        for item in records:
+            daily_salary = ((user._gross_income/2) / 15)
+            salary_hour = (daily_salary / 8)
+            salary_obtain = (salary_hour * item._hours)
+            amount += float(salary_obtain)
+
+        # return
+        return round(amount, 2)
+
+    async def returning_checking_tracker_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> list[object]:
+        # extract start and end date
+        start, end = dates[0], dates[1]
+
+        rows = db.query(
+            self.models.Checkin_Tracker.id_record.label('_id'),
+            self.models.Checkin_Tracker.id_subject.label('_id_user'),
+            self.models.Checkin_Tracker.hours.label('_hours'),
+            self.models.Checkin_Tracker.log_date.label('_log_date'),
+        ).filter(
+            and_(
+                self.models.Checkin_Tracker.id_subject == user._user_role_id,
+                func.date(self.models.Checkin_Tracker.log_date).between(start, end)
+            )
+        ).order_by(
+            self.models.Checkin_Tracker.log_date.asc()
+        ).all()
+
+        # return
+        return rows or []
+
+    # calculating extra hour amount
+    async def calculating_extra_hours_amount(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> float:
+        # variables
+        amount = 0.0
+        # records
+        records = await self.returning_extra_hours_records(db=db, user=user, dates=dates)
+
+        # skip records
+        if not records:
+            return amount
+
+        for item in records:
+            daily_salary = ((user._gross_income / 2) / 15)
+            salary_hour = (daily_salary / 8)
+            salary_obtain = float((salary_hour * item._hours)) * 1.5
+            amount += float(salary_obtain)
+
+        return round(amount, 2)
+
+    async def returning_extra_hours_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> list[object]:
+        # extract start and end date
+        start, end = dates[0], dates[1]
+
+        rows = db.query(
+            self.models.Extra_Hour.id_record.label('_id'),
+            self.models.Extra_Hour.id_subject.label('_id_user'),
+            self.models.Extra_Hour.hours.label('_hours'),
+            self.models.Extra_Hour.log_date.label('_log_date'),
+        ).filter(
+            and_(
+                self.models.Extra_Hour.id_subject == user._user_role_id,
+                func.date(self.models.Extra_Hour.log_date).between(start, end)
+            )
+        ).order_by(
+            self.models.Extra_Hour.log_date.asc()
+        ).all()
+
+        # return
+        return rows or []
+
+    # calculating holiday amount
+    async def calculating_holiday_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> float:
+        # variables
+        amount = 0.0
+        # records
+        records = await self.returning_holiday_records(db=db, user=user, dates=dates)
+
+        # skip records
+        if not records:
+            return amount
+
+        for item in records:
+            daily_salary = ((user._gross_income / 2) / 15)
+            salary_hour = (daily_salary / 8)
+            salary_obtain = float((salary_hour * item._hours)) * 2
+            amount += float(salary_obtain)
+
+        return round(amount, 2)
+
+    async def returning_holiday_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> list[object]:
+        # extract start and end date
+        start, end = dates[0], dates[1]
+        # holiday calendar
+        calendar = [(h.month, h.day) for h in self.cns.HOLIDAY_CALENDAR.value.values()]
+
+        # dynamic filtering
+        holiday_filter = [
+            and_(
+                func.extract('month', self.models.Checkin_Tracker.log_date) == month,
+                func.extract('day', self.models.Checkin_Tracker.log_date) == day,
+            )
+            for month, day in calendar
+        ]
+
+        # query
+        rows = db.query(
+            self.models.Checkin_Tracker.id_record.label('_id'),
+            self.models.Checkin_Tracker.id_subject.label('_id_user'),
+            self.models.Checkin_Tracker.hours.label('_hours'),
+            self.models.Checkin_Tracker.log_date.label('_log_date'),
+        ).filter(
+            and_(
+                self.models.Checkin_Tracker.id_subject == user._user_role_id,
+                func.date(self.models.Checkin_Tracker.log_date).between(start, end),
+                or_(*holiday_filter),
+            )
+        ).order_by(
+            self.models.Checkin_Tracker.log_date.asc()
+        ).all()
+
+        # return
+        return rows or []
+
+    # calculating vacations amount
+    async def calculating_vacations_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> None:
+        # variables
+        amount = 0.0
+        # records
+        records = await self.returning_vacations_records(db=db, user=user, dates=dates)
+
+        # skip records
+        if not records:
+            return amount
+
+        for item in records:
+            daily_salary = ((user._gross_income / 2) / 15)
+            salary_hour = (daily_salary / 8)
+            salary_obtain = float((salary_hour * 8))
+            amount += float(salary_obtain)
+
+        return round(amount, 2)
+
+    async def returning_vacations_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> list[object]:
+        # extract start and end date
+        start, end = dates[0], dates[1]
+
+        rows = db.query(
+            self.models.Request_Vacation.id_record.label('_id'),
+            self.models.Request_Vacation.id_subject.label('_id_user'),
+            self.models.Request_Vacation.status.label('_status'),
+            self.models.Request_Vacation.log_date.label('_log_date'),
+        ).filter(
+            and_(
+                self.models.Request_Vacation.id_subject == user._user_role_id,
+                self.models.Request_Vacation.status == "Aprobado",
+                func.date(self.models.Request_Vacation.log_date).between(start, end),
+            )
+        ).order_by(
+            self.models.Request_Vacation.log_date.asc()
+        ).all()
+
+        # return
+        return rows or []

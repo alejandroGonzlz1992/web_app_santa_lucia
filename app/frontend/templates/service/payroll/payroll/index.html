@@ -54,42 +54,16 @@
                                style="color: darkblue; width: 25px; height: 25px;"></i>
                             Consulta de histórico de planillas realizadas hasta la fecha actual.
                         </div>
+                        {% if params.role == "Administrador"%}
+                            <!--Register Checkin Button-->
+                            <a class="mb-3 px-3 text-start" href="{{ url_for('getting_app_payroll_generate_endpoint') }}">
+                                <button class="btn btn-warning"><b>Generar Planillas</b></button>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-
-            <!--Filter By Date Field-->
-            <div class="col">
-                <div class="card mb-3">
-                    <div class="card-body" style="width: 25%;">
-                        <form id="id_filter_date_form" novalidate>
-                            <div class="mb-2">
-                                <h5 class="card-title mb-2">Ingresar Identificación de Usuario</h5>
-                                <input type="text" class="form-control" style="font-size: 12px; color: cadetblue;"
-                                       required placeholder="0-0000-0000" name="entity_identification"
-                                       id="id_input_field">
-                                <!--Span label-->
-                                <div id="identification_text" class="form-text text-start">
-                                    <span class="text-muted">
-                                        <p class="my-2" style="color: brown; font-size: 12px;">
-                                            • Ingresar números únicamente.
-                                        </p>
-                                    </span>
-                                </div>
-                                <button class="btn btn-info mt-2" type="button" id="id_filter_button">
-                                    Consultar
-                                </button>
-                                <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
-                                    Limpiar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
         </div>
 
@@ -109,8 +83,9 @@
                             <th scope="col">Fecha Pago</th>
                             <th scope="col">Segunda Fecha Pago</th>
                             <th scope="col" colspan="1"
-                                style="text-align: center; vertical-align: middle;">Administrar
+                                style="text-align: center; vertical-align: middle;">Consultar
                             </th>
+                            <th scope="col"></th>
                         </tr>
                         </thead>
                         <tbody>

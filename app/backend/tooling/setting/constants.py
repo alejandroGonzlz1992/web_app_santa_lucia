@@ -164,6 +164,7 @@ class Constants(Enum):
 
     # payroll
     URL_PAYROLL = '/planillas/ce'
+    URL_PAYROLL_GENERATE = "/generar_planillas"
     URL_PAYROLL_DETAILS = f'/detalles_planilla/{URL_ID}'
     URL_PAYROLL_DETAILS_PDF = f'/detalles/{URL_ID}/planilla'
     URL_PAYROLL_ADJUST = f'/ajustes_planilla/{URL_ID}'
@@ -267,7 +268,7 @@ class Constants(Enum):
             '_approval': 'La solicitud de permiso fue actualizada de forma exitosa.',
         },
         "_payroll": {
-            "_update": "El registro de planilla ha sido ajustado exitosamente."
+            "_update": "Se han generado los registros de planilla de manera exitosa."
         },
         "_settlement": {
             "_update": "El registro de liquidación ha sido ajustado exitosamente.",
@@ -325,15 +326,15 @@ class Constants(Enum):
 
     # holiday calendar
     HOLIDAY_CALENDAR = {
-        "new_year": date(1900, 1, 1),
-        "juan_santamaria": date(1900, 4, 11),
-        "holy_thurs": date(1900, 4, 17),
-        "holy_friday": date(1900, 4, 18),
-        "labor_day": date(1900, 5, 1),
-        "nicoya": date(1900, 7, 25),
-        "mother_day": date(1900, 8, 15),
-        "independence": date(1900, 9, 15),
-        "christmas": date(1900, 12, 25),
+        "new_year": date(date.today().year, 1, 1),
+        "juan_santamaria": date(date.today().year, 4, 11),
+        "holy_thurs": date(date.today().year, 4, 17),
+        "holy_friday": date(date.today().year, 4, 18),
+        "labor_day": date(date.today().year, 5, 1),
+        "nicoya": date(date.today().year, 7, 25),
+        "mother_day": date(date.today().year, 8, 15),
+        "independence": date(date.today().year, 9, 15),
+        "christmas": date(date.today().year, 12, 25),
     }
 
     # reports name fields
@@ -430,6 +431,34 @@ class Constants(Enum):
         'name': None, 'lastname': None, 'lastname2': None, 'current_date': None, 'identification': None,
         'payroll_id': None, 'payment_date': None, 'payment_date2': None, 'frecuency': None, 'jf_name': None,
         'jf_lastname': None, 'jf_lastname2': None, 'gross_amount': None, 'net_amount': None, 'rent_tax': None,
-        'ccss_ivm': None, 'ccss_eme': None, 'rop': None, 'association': None, 'debt': None, 'support': None,
-        'others': None, 'payment_details': None
+        'ccss_ivm': None, 'ccss_eme': None, 'rop': None, 'vacations': None, 'extra_hours': None, 'holidays': None,
+        'debt': None, 'support': None, 'others': None, 'payment_details': None
+    }
+
+    # payroll periods
+    PAYROLL_PERIODS = {
+        # "Enero Periodo 15": [date(1900, 1, 1), date(1900, 1, 15)],
+        # "Enero Periodo 30": [date(1900, 1, 16), date(1900, 1, 30)],
+        # "Febrero Periodo 15": [date(1900, 1, 31), date(1900, 2, 15)],
+        # "Febrero Periodo 30": [date(1900, 2, 16), date(1900, 2, 28)],
+        # "Marzo Periodo 15": [date(1900, 3, 1), date(1900, 3, 15)],
+        # "Marzo Periodo 30": [date(1900, 3, 16), date(1900, 3, 30)],
+        # "Abril Periodo 15": [date(1900, 3, 31), date(1900, 4, 15)],
+        # "Abril Periodo 30": [date(1900, 4, 16), date(1900, 4, 29)],
+        # "Mayo Periodo 15": [date(1900, 4, 30), date(1900, 5, 15)],
+        # "Mayo Periodo 30": [date(1900, 5, 16), date(1900, 4, 30)],
+        # "Junio Periodo 15": [date(1900, 5, 31), date(1900, 6, 15)],
+        # "Junio Periodo 30": [date(1900, 6, 16), date(1900, 6, 29)],
+        # "Julio Periodo 15": [date(1900, 6, 30), date(1900, 7, 15)],
+        # "Julio Periodo 30": [date(1900, 7, 16), date(1900, 7, 30)],
+        "Agosto Periodo 15": [date(date.today().year, 7, 31), date(date.today().year, 8, 15)],
+        "Agosto Periodo 30": [date(date.today().year, 8, 16), date(date.today().year, 8, 30)],
+        "Septiembre Periodo 15": [date(date.today().year, 9, 1), date(date.today().year, 9, 15)],
+        "Septiembre Periodo 30": [date(date.today().year, 9, 16), date(date.today().year, 9, 30)],
+        "Octubre Periodo 15": [date(date.today().year, 10, 1), date(date.today().year, 10, 15)],
+        "Octubre Periodo 30": [date(date.today().year, 10, 16), date(date.today().year, 10, 31)],
+        "Noviembre Periodo 15": [date(date.today().year, 11, 1), date(date.today().year, 11, 15)],
+        "Noviembre Periodo 30": [date(date.today().year, 11, 16), date(date.today().year, 11, 30)],
+        "Diciembre Periodo 15": [date(date.today().year, 12, 1), date(date.today().year, 12, 15)],
+        "Diciembre Periodo 30": [date(date.today().year, 12, 16), date(date.today().year, 12, 31)],
     }
