@@ -3,16 +3,16 @@
 
 <!--Page Title-->
 {% block title_browser %}
-    <title>Ferretería Santa Lucía | Módulos | Planillas | Generación </title>
+    <title>Ferretería Santa Lucía | Módulos | Aguinaldo | Generación Cuota </title>
 {% endblock %}
 
 <!--sidebar menu-->
 {% block sidebar %}
 <ul class="sidebar-nav">
-    <li class="sidebar-header"> <b>PLANILLAS</b> </li>
+    <li class="sidebar-header"> <b>AGUINALDO</b> </li>
     <li class="sidebar-item active">
-        <a class="sidebar-link" href="{{url_for('getting_app_payroll_base_endpoint')}}">
-            <i class="align-middle" data-feather="book"></i>
+        <a class="sidebar-link" href="{{url_for('getting_app_bonus_base_endpoint')}}">
+            <i class="align-middle" data-feather="dollar-sign"></i>
             <span class="align-middle">Regresar</span>
         </a>
     </li>
@@ -51,7 +51,7 @@
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops._payroll._period}}</div>
+                <div>{{params.ops._bonus._period}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -71,14 +71,14 @@
                 <div class="card-body text-start">
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h2 class="card-title mb-0">Generar Planillas</h2>
+                            <h2 class="card-title mb-0">Generar Cuotas de Aguinaldo</h2>
                         </div>
                         <div class="card-body text-start">
-                            <i class="align-start" data-feather="book"
+                            <i class="align-start" data-feather="dollar-sign"
                                style="color: darkblue; width: 25px; height: 25px;"></i>
-                            Seleccionar el periodo determinado para la generación de planillas. Tomar en consideración
-                            que los usuarios sin completar sus registros de jornadas o marcas y salidas
-                            no se tomaran en cuenta para el cálculo..
+                            Seleccionar el periodo determinado para la generación de cuotas de aguinald.
+                            Tomar en consideración que los usuarios sin completar sus registros de jornadas o
+                            marcas y salidas no se tomaran en cuenta para el cálculo.
                         </div>
                     </div>
                 </div>
@@ -90,14 +90,14 @@
             <div class="card mb-3">
                 <div class="card-body text-start">
 
-                    <!--Payroll Generate Form -->
-                    <form id="id_payroll_generate_form" method="post"
-                          action="{{ url_for('posting_app_payroll_generate_endpoint') }}" novalidate>
+                    <!--Bonus Generate Form -->
+                    <form id="id_bonus_generate_form" method="post"
+                          action="{{ url_for('posting_app_bonus_generate_endpoint') }}" novalidate>
 
                         <!--Hidden Input Field-->
                         <input type="hidden" value="POST" name="method">
 
-                        <h5 class="card-title my-3 text-start"><strong>Información de Planilla</strong></h5>
+                        <h5 class="card-title my-3 text-start"><strong>Información de Aguinaldo</strong></h5>
 
                         <!--Roles Field Groups-->
                         <div class="row">
@@ -105,12 +105,12 @@
                             <div class="col">
                                 <div class="py-1 text-start">
                                     <label class="form-label text-center" style="color: #3371db;">*
-                                    Periodo Planilla</label>
+                                    Periodo Cuota Aguinaldo</label>
                                     <div class="input-group">
-                                        <select class="form-select mb-2" id="id_payroll_period" name="payroll_period"
+                                        <select class="form-select mb-2" id="id_bonus_period" name="bonus_period"
                                                 style="color: cadetblue;">
                                             <option value="not_select" selected>
-                                                Seleccionar periodo de planilla </option>
+                                                Seleccionar periodo de cuota </option>
                                             {% for key, value in params.periods.items() %}
                                                 <option value="{{ value }}">{{ key }}</option>
                                             {% endfor %}
@@ -118,15 +118,15 @@
                                     </div>
 
                                     <!--Error Message Div-->
-                                    <div id="id_payroll_period_status_error" class="text-danger text-start"
+                                    <div id="id_bonus_period_status_error" class="text-danger text-start"
                                         style="font-size: 13px; display: none;">
                                     </div>
 
                                     <!--Span label-->
-                                    <div id="id_payroll_period_status_label" class="form-text text-start">
+                                    <div id="id_bonus_period_status_label" class="form-text text-start">
                                         <span class="text-muted fs-8">
                                             <p class="p-0 m-0" style="color: darkgrey;">
-                                                • Se debe seleccionar un periodo.
+                                                • Se debe seleccionar un periodo de cuota.
                                             </p>
                                         </span>
                                     </div>
@@ -141,7 +141,7 @@
                             <div class="row">
                                 <div class="col text-end">
                                     <button class="btn btn-lg btn-info" type="submit">
-                                        <b>GENERAR PLANILLAS</b>
+                                        <b>GENERAR CUOTAS AGUINALDO</b>
                                     </button>
                                 </div>
                                 <div class="col text-start">
@@ -165,9 +165,9 @@
 {% block scripts %}
     {{ super() }}
     <script type="module">
-        import {GeneratePayrollValidator} from '{{ url_for("static", path="tooling/validators/services/genPayroll.js") }}';
+        import {GenerateBonusValidator} from '{{ url_for("static", path="tooling/validators/services/genBonus.js") }}';
         document.addEventListener('DOMContentLoaded', () => {
-            new GeneratePayrollValidator('id_payroll_generate_form');
+            new GenerateBonusValidator('id_bonus_generate_form');
         });
     </script>
 {% endblock %}

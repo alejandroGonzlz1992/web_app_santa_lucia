@@ -49,6 +49,7 @@ class Constants(Enum):
     SUBJECT_INABILITY_UPDATE_REQUEST = "Ferretería Santa Lucía. Actualización de Solicitud de Incapacidad."
 
     SUBJECT_REPORT_REQUEST = "Ferretería Santa Lucía. Solicitud de Reporte."
+    SUBJECT_PDF_PAYROLL_STATEMENT = "Ferretería Santa Lucía. Comprobante de Planilla."
 
     # email links
     EMAIL_TO_LOGIN_SESSION = "http://127.0.0.1:8000/sesion/usuario"
@@ -157,6 +158,7 @@ class Constants(Enum):
 
     # bonus
     URL_BONUS = '/aguinaldos/ce'
+    URL_BONUS_GENERATE = "/generar_cuotas"
     URL_BONUS_DETAILS = f'/detalles/{URL_ID}'
     URL_BONUS_DETAILS_PDF = f'/detalles/{URL_ID}/aguinaldo'
     URL_BONUS_ADJUST = f'/ajustes/{URL_ID}'
@@ -268,7 +270,8 @@ class Constants(Enum):
             '_approval': 'La solicitud de permiso fue actualizada de forma exitosa.',
         },
         "_payroll": {
-            "_update": "Se han generado los registros de planilla de manera exitosa."
+            "_update": "Se han generado los registros de planilla de manera exitosa.",
+            "_period": "El periodo para la siguiente planilla aún no se ha completado para su generación."
         },
         "_settlement": {
             "_update": "El registro de liquidación ha sido ajustado exitosamente.",
@@ -277,7 +280,8 @@ class Constants(Enum):
         "_bonus": {
             "_update": "El registro de aguinaldo ha sido ajustado exitosamente.",
             "_fail": 'Existen errores en la información ingresada. Por favor validar.',
-            "_download": "Descarga de archivo exitosa."
+            "_download": "Descarga de archivo exitosa.",
+            "_period": "El periodo para la siguiente cuota de aguinaldo aún no ha sido completado."
         },
         '_profile': {
             '_errors': 'Existen errores en la información ingresada. Por favor validar.',
@@ -437,20 +441,6 @@ class Constants(Enum):
 
     # payroll periods
     PAYROLL_PERIODS = {
-        # "Enero Periodo 15": [date(1900, 1, 1), date(1900, 1, 15)],
-        # "Enero Periodo 30": [date(1900, 1, 16), date(1900, 1, 30)],
-        # "Febrero Periodo 15": [date(1900, 1, 31), date(1900, 2, 15)],
-        # "Febrero Periodo 30": [date(1900, 2, 16), date(1900, 2, 28)],
-        # "Marzo Periodo 15": [date(1900, 3, 1), date(1900, 3, 15)],
-        # "Marzo Periodo 30": [date(1900, 3, 16), date(1900, 3, 30)],
-        # "Abril Periodo 15": [date(1900, 3, 31), date(1900, 4, 15)],
-        # "Abril Periodo 30": [date(1900, 4, 16), date(1900, 4, 29)],
-        # "Mayo Periodo 15": [date(1900, 4, 30), date(1900, 5, 15)],
-        # "Mayo Periodo 30": [date(1900, 5, 16), date(1900, 4, 30)],
-        # "Junio Periodo 15": [date(1900, 5, 31), date(1900, 6, 15)],
-        # "Junio Periodo 30": [date(1900, 6, 16), date(1900, 6, 29)],
-        # "Julio Periodo 15": [date(1900, 6, 30), date(1900, 7, 15)],
-        # "Julio Periodo 30": [date(1900, 7, 16), date(1900, 7, 30)],
         "Agosto Periodo 15": [date(date.today().year, 7, 31), date(date.today().year, 8, 15)],
         "Agosto Periodo 30": [date(date.today().year, 8, 16), date(date.today().year, 8, 30)],
         "Septiembre Periodo 15": [date(date.today().year, 9, 1), date(date.today().year, 9, 15)],
@@ -462,3 +452,13 @@ class Constants(Enum):
         "Diciembre Periodo 15": [date(date.today().year, 12, 1), date(date.today().year, 12, 15)],
         "Diciembre Periodo 30": [date(date.today().year, 12, 16), date(date.today().year, 12, 31)],
     }
+
+    # bonus periods
+    BONUS_PERIODS = {
+        "Periodo Agosto": [date(date.today().year, 8, 1), date(date.today().year, 8, 30)],
+        "Periodo Septiembre": [date(date.today().year, 9, 1), date(date.today().year, 9, 30)],
+        "Periodo Octubre": [date(date.today().year, 10, 1), date(date.today().year, 10, 30)],
+        "Periodo Noviembre": [date(date.today().year, 11, 1), date(date.today().year, 11, 30)],
+        "Periodo Diciembre": [date(date.today().year, 12, 1), date(date.today().year, 12, 30)],
+    }
+

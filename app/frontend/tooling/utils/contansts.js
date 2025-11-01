@@ -1002,6 +1002,19 @@ export const Static = {
 
     BONUS_ENABLE_BLANK_FIELDS: ["bonus_month", "bonus_year", "bonus_amount", "bonus_update_date"],
 
+    BONUS_GENERATE_FORM_DICT: {
+        "bonus_period": {
+            "div_id": {
+                "status": "id_bonus_period_status_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú.",
+            }
+        },
+    },
+
+    BONUS_GENERATE_BLANK_FIELDS: ["bonus_period"],
+
     // PROFILE TRACKER
     PROFILE_TRACKER_FORM_DICT: {
         "check_out_date_field": {

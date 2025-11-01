@@ -1,6 +1,7 @@
 # import
 from pydantic_settings import BaseSettings
 from pathlib import Path
+from datetime import timedelta
 
 
 # local env class

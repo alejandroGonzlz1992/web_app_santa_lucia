@@ -1,5 +1,5 @@
 # import
-from fastapi import APIRouter, Request, Depends, BackgroundTasks
+from fastapi import APIRouter, Request, Depends, BackgroundTasks, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session, aliased
 from typing import Annotated, Union
@@ -15,6 +15,7 @@ from app.backend.db_transactions.transactions.db_payroll import Payroll_Trans_Ma
 from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.schema.trans.payroll import Update_Payroll_Record, Generate_Payroll_Record
 from app.backend.database.config import Session_Controller
+from app.backend.tooling.bg_tasks import bg_tasks
 
 
 # router
@@ -88,9 +89,22 @@ async def posting_app_payroll_generate_endpoint(
     try:
         # collecting all users
         users = await serv.querying_users_payroll_records(db=db)
+        # validating period selected
+        await serv.validating_payroll_periods(db=db, schema=model.model_dump())
 
         # payroll calculation
-        await serv.generating_payroll_calculations(db=db, users=users, schema=model.model_dump())
+        record = await serv.generating_payroll_calculations(db=db, users=users, schema=model.model_dump())
+        # collecting emails
+        emails_ = await serv.collecting_recipient_emails(db=db, id_payroll=record["payroll_id"])
+
+        # background task
+        background_tasks.add_task(bg_tasks.bg_task_send_payroll_report_request, emails_)
+
+    except HTTPException as http:
+        db.rollback() # -> db rollback
+        print(f'Error HTTPException: {http}')
+        return await getting_app_payroll_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_period')
 
     except SQLAlchemyError as op:
         db.rollback()  # -> db rollback
@@ -110,7 +124,8 @@ async def posting_app_payroll_generate_endpoint(
             'request': request, 'params': {
                 'domain': 'planillas', 'redirect': 'ce', 'fg': '_update'
             }
-        }
+        },
+        background=background_tasks
     )
 
 

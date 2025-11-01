@@ -202,3 +202,20 @@ async def bg_task_send_report_attachment_request(
 
     except Exception as e:
         logger.exception(f'[BG]: Failed sending Report Request notification email to recipients: {e}')
+
+
+# send payroll report request
+async def bg_task_send_payroll_report_request(recipients: Union[list[str], str]) -> None:
+
+    try:
+        # build email content
+        msg = await emailing.send_payroll_report_notification(rec=recipients)
+
+        # authenticate with gmail server and deliver
+        await emailing.authenticate_with_server(rec=recipients, msg=msg)
+
+        # logs
+        logger.info("[BG] Report PDF notification email queued/sent to recipients")
+
+    except Exception as e:
+        logger.exception(f'[BG]: Failed sending Report PDF notification email to recipients: {e}')

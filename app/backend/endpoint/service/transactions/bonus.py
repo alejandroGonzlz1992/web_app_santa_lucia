@@ -1,5 +1,5 @@
 # import
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
@@ -12,7 +12,7 @@ from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.db_transactions.transactions.db_bonus import Bonus_Trans_Manager
-from app.backend.schema.trans.bonus import Update_Bonus_Record
+from app.backend.schema.trans.bonus import Update_Bonus_Record, Generate_Bonus_Record
 from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.database.config import Session_Controller
 
@@ -46,7 +46,74 @@ async def getting_app_bonus_base_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/bonus/index.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records,
+                'role': user_login.role_type
+            }
+        }
+    )
+
+
+# GET -> Bonus Generate
+@bonus_route.get(Cns.URL_BONUS_GENERATE.value, response_class=HTMLResponse)
+async def getting_app_bonus_generate_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        fg: Annotated[str, None] = None
+) -> HTMLResponse:
+
+    # fetching current User logged-in
+    user_session = await trans.fetching_current_user(db=db, user=user_login)
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'service/payroll/bonus/generate.html', context={
+            'request': request, 'params': {
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session,
+                'periods': Cns.BONUS_PERIODS.value
+            }
+        }
+    )
+
+
+# POST -> Bonus Generate
+@bonus_route.post(Cns.URL_BONUS_GENERATE.value, response_class=HTMLResponse)
+async def posting_app_bonus_generate_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Generate_Bonus_Record, Depends(dependency=Generate_Bonus_Record.formatting)]
+) -> HTMLResponse:
+
+    try:
+        # collecting all users
+        users = await serv.querying_users_bonus_records(db=db)
+
+        print(f'\n {users} \n')
+
+    except HTTPException as http:
+        db.rollback() # -> db rollback
+        print(f'Error HTTPException: {http}')
+        return await getting_app_bonus_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_period')
+
+    except SQLAlchemyError as op:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        return await getting_app_bonus_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_orm_error')
+
+    except OperationalError as op:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        return await getting_app_bonus_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'base/redirect.html', context={
+            'request': request, 'params': {
+                'domain': 'aguinaldos', 'redirect': 'ce', 'fg': '_update'
             }
         }
     )

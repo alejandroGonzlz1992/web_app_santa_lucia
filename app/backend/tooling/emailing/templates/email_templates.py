@@ -637,3 +637,71 @@ def html_xlsx_report_sending(report_name: str) -> str:
             </table>
         """
 
+
+# html pdf report sending
+def html_payroll_report_sending(report_name: str, login_url: str) -> str:
+    return f"""
+            <table border="0" cellspacing="0" cellpadding="0" style="max-width:600px">
+                <tbody>
+                    <tr height="16"></tr>
+                    <tr>
+                        <td>
+                            <table bgcolor="#4184F3" width="100%" border="0" cellspacing="0" cellpadding="0"
+                                style="min-width:332px;max-width:600px;border:1px solid #e0e0e0;border-bottom:0;border-top-left-radius:3px;border-top-right-radius:3px">
+                                <tbody>
+                                    <tr>
+                                        <td height="72px" colspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="32px"></td>
+                                        <td
+                                            style="font-family:Roboto-Regular,Helvetica,Arial,sans-serif;font-size:24px;color:#ffffff;line-height:1.25">
+                                            Reporte {report_name.title()}
+                                        </td>
+                                        <td width="32px"></td>
+                                    </tr>
+                                    <tr>
+                                        <td height="18px" colspan="3"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table bgcolor="#FAFAFA" width="100%" border="0" cellspacing="0" cellpadding="0"
+                                style="min-width:332px;max-width:600px;border:1px solid #f0f0f0;border-bottom:1px solid #c0c0c0;border-top:0;border-bottom-left-radius:3px;border-bottom-right-radius:3px">
+                                <tbody>
+                                    <tr height="16px">
+                                        <td width="32px" rowspan="3"></td>
+                                        <td></td>
+                                        <td width="32px" rowspan="3"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Estimado Usuario.</p>
+                                            <p>Se ha generado el comprobante de planilla en formato PDF.</p>
+                                            <p>
+                                                La información contenida en este reporte es de carácter confidencial. 
+                                                Le recomendamos mantener discreción en el uso y distribución
+                                                de la información contenida.
+                                            </p>
+                                            <p>
+                                                No comparta esta contraseña con nadie y evite almacenarla en lugares inseguros.
+                                            </p>
+                                            <p>
+                                               Ingrese al sistema para descargar su comprobante de planilla.
+                                                <a href="{login_url}"><b>Iniciar Sesión</b></a>
+                                            </p>
+                                            <p>Estamos para servirle!</p>
+                                            <p>Ferretería Santa Lucía, Desamparados, Calle Fallas</p>
+                                        </td>
+                                    </tr>
+                                    <tr height="32px"></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        """

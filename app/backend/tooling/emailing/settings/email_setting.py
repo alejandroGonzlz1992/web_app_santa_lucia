@@ -1,4 +1,5 @@
 # import
+import os
 import random, string, smtplib, ssl
 from email import encoders
 from pydantic import BaseModel
@@ -324,3 +325,23 @@ class Email_Manager:
         msg["To"] = rec
         # return
         return msg.as_string()
+
+    # pdf attachment send
+    async def send_payroll_report_notification(self, rec: Union[list[str], str]) -> str:
+        # header top level
+        msg = self.builder["multipart"]("mixed")
+        msg["From"] = self.cns.EMAIL_SANTALUCIA_SENDER.value
+        msg["Subject"] = self.cns.SUBJECT_PDF_PAYROLL_STATEMENT.value
+
+        # html content
+        content = self.builder["text"](
+            self.template.html_payroll_report_sending(
+                report_name="Comprobante de Planilla", login_url=self.cns.EMAIL_TO_LOGIN_SESSION.value), "html")
+
+        # attach content
+        msg.attach(content)
+        # message to
+        msg["To"] = ", ".join(rec)
+        # return
+        return msg.as_string()
+

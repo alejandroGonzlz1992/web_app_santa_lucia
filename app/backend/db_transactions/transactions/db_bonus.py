@@ -254,3 +254,32 @@ class Bonus_Trans_Manager:
 
             # commit
             db.commit()
+
+    # query users for bonus
+    async def querying_users_bonus_records(
+            self, db: Union[Session, object]) -> list[object]:
+        # aliases
+        users = aliased(self.models.User)
+        roles = aliased(self.models.Role)
+        user_role = aliased(self.models.User_Role)
+
+        # rows
+        rows = (db.query(
+            users.id_record.label('_id'), users.name.label('_name'), users.lastname.label('_lastname'),
+            users.lastname2.label('_lastname2'), roles.id_record.label('_id_role'), roles.name.label('_role_name'),
+            roles.type.label('_role_type'), user_role.id_record.label('_user_role_id'),
+            user_role.gross_income.label('_gross_income')
+        ).join(
+            user_role, users.id_record == user_role.id_user
+        ).join(
+            roles, roles.id_record == user_role.id_role
+        ).filter(
+            user_role.status == True
+        ).filter(
+            roles.type != 'Administrador'
+        ).order_by(
+            users.lastname.asc(), users.name.asc()
+        ).all())
+
+        # return
+        return rows

@@ -66,17 +66,14 @@ async def verifying_access_token(token: str, exc: dict) -> Token_Data:
     try:
         # extract user_role_id from payload
         payload = jwt_decode(token, env.tkn_key, algorithms=[env.tkn_algo], options={"require": ["exp"]}, leeway=5)
-
         # extract data
         token_data = Token_Data(**payload)
-
         # validate id
         if token_data.user_id is None:
             raise exc
 
     except ExpiredSignatureError:
         raise exc['_http_session_expired']
-
     except InvalidTokenError:
         raise exc['_http_invalid_token']
 

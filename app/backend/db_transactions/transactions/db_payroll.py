@@ -15,6 +15,7 @@ import shutil
 
 # local import
 from app.backend.database import models
+from app.backend.database.models import Payroll_User
 from app.backend.tooling.setting.constants import Constants as Cns
 
 
@@ -113,6 +114,7 @@ class Payroll_Trans_Manager:
             db.query(
                 Payroll_User.id_record.label('_id'),
                 Payroll_User.net_amount.label('_net_amount'),
+                Payroll_User.total_gross_amount.label('_total_gross_amount'),
                 Payroll_User.ccss_ivm.label('_ccss_ivm'),
                 Payroll_User.ccss_eme.label('_ccss_eme'),
                 Payroll_User.ccss_rop.label('_rop'),
@@ -223,7 +225,7 @@ class Payroll_Trans_Manager:
         to_copy["lastname"] = record._emp_lastname
         to_copy["lastname2"] = record._emp_lastname2
         to_copy["current_date"] = await Payroll_Trans_Manager.formatting_date_to_crc_time(value=today_)
-        to_copy["identification"] = record._emp_id
+        to_copy["identification"] = record._ident
         to_copy["payroll_id"] = record._id
         to_copy["payment_date"] = await Payroll_Trans_Manager.formatting_date_to_crc_time(value=record._date_payment)
         to_copy["payment_date2"] = await Payroll_Trans_Manager.formatting_date_to_crc_time(value=record._date_payment2)
@@ -231,7 +233,7 @@ class Payroll_Trans_Manager:
         to_copy["jf_name"] = record._apr_name
         to_copy["jf_lastname"] = record._apr_lastname
         to_copy["jf_lastname2"] = record._apr_lastname2
-        to_copy["gross_amount"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._gross_income)
+        to_copy["gross_amount"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._total_gross_amount)
         to_copy["net_amount"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._net_amount)
         to_copy["rent_tax"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._renta_tax)
         to_copy["ccss_ivm"] = await Payroll_Trans_Manager.formatting_crc_money_style(value=record._ccss_ivm)
@@ -305,12 +307,12 @@ class Payroll_Trans_Manager:
 
     # generating payroll calculation
     async def generating_payroll_calculations(
-            self, db: Union[Session, object], users: list[object], schema: Union[dict, object]) -> None:
+            self, db: Union[Session, object], users: list[object], schema: Union[dict, object]) -> dict:
         # variables
         employees = {
             "id_user_role": None, "payroll_amount": 0.0, "inability_amount": 0.0, "extra_hour_amount": 0.0,
-            "holiday_amount": 0.0, "vacations_amount": 0.0, "gross_total_amount": 0.0, "payment_date": 220,
-            "net_total_amount": 0.0
+            "holiday_amount": 0.0, "vacations_amount": 0.0, "gross_total_amount": 0.0, "payment_date": 221,
+            "net_total_amount": 0.0, "payroll_id": None
         }
 
         # dates
@@ -347,8 +349,14 @@ class Payroll_Trans_Manager:
             # applying deductions
             taxes = await self.applying_deductions_to_payroll(db=db, prices=employees)
 
+            # applying taxes
+            await self.getting_tax_cut(gross=user._gross_income, tax=taxes)
+
             # registering information at db
             record = await self.registering_payroll_information(db=db, payroll=employees, tax=taxes)
+
+        # return
+        return employees
 
     # calculating payroll amount
     async def calculating_payroll_amount(
@@ -597,9 +605,45 @@ class Payroll_Trans_Manager:
         # return
         return calculated_amounts
 
+    # calculating tax cut
+    async def getting_tax_cut(self, gross: Union[Decimal, float], tax: dict) -> None:
+        # tax scale thresholds
+        TAX_SCALE = {
+            "Limit_1": 922000.0,
+            "Limit_2": 1352000.0,
+            "Limit_3": 2373000.0,
+            "Limit_4": 4745000.0,
+        }
+
+        to_float = float(gross)
+        rent_tax = 0.0
+
+        # --- TAX BRACKETS LOGIC ---
+        if to_float <= TAX_SCALE["Limit_1"]:
+            rent_tax = 0.0
+        elif to_float <= TAX_SCALE["Limit_2"]:
+            rent_tax = (to_float - TAX_SCALE["Limit_1"]) * 0.10
+        elif to_float <= TAX_SCALE["Limit_3"]:
+            rent_tax = (TAX_SCALE["Limit_2"] - TAX_SCALE["Limit_1"]) * 0.10 + (to_float - TAX_SCALE["Limit_2"]) * 0.15
+        elif to_float <= TAX_SCALE["Limit_4"]:
+            rent_tax = (
+                    (TAX_SCALE["Limit_2"] - TAX_SCALE["Limit_1"]) * 0.10
+                    + (TAX_SCALE["Limit_3"] - TAX_SCALE["Limit_2"]) * 0.15
+                    + (to_float - TAX_SCALE["Limit_3"]) * 0.20
+            )
+        else:
+            rent_tax = (
+                    (TAX_SCALE["Limit_2"] - TAX_SCALE["Limit_1"]) * 0.10
+                    + (TAX_SCALE["Limit_3"] - TAX_SCALE["Limit_2"]) * 0.15
+                    + (TAX_SCALE["Limit_4"] - TAX_SCALE["Limit_3"]) * 0.20
+                    + (to_float - TAX_SCALE["Limit_4"]) * 0.25
+            )
+
+        # assign result
+        tax["rent_tax"] = round(rent_tax, 2)
+
     # applying deductions
-    async def applying_deductions_to_payroll(
-            self, db: Union[Session, object], prices: dict) -> None:
+    async def applying_deductions_to_payroll(self, db: Union[Session, object], prices: dict) -> None:
         # tax records
         taxes = {"ccss_ivm": 0.0, "ccss_eme": 0.0, "rop": 0.0, "rent_tax": 0.0}
         # records
@@ -617,7 +661,7 @@ class Payroll_Trans_Manager:
 
         # updating net amount
         prices["net_total_amount"] = prices["gross_total_amount"] - (
-                taxes["ccss_ivm"] + taxes["ccss_eme"] + taxes["rop"])
+                taxes["ccss_ivm"] + taxes["ccss_eme"] + taxes["rop"] + taxes["rent_tax"])
 
         # return
         return taxes
@@ -635,7 +679,6 @@ class Payroll_Trans_Manager:
 
     # register payroll information
     async def registering_payroll_information(self, db:Union[Session, object], payroll: dict, tax: dict) -> object:
-        # records
         record = self.models.Payroll_User(
             net_amount=payroll["net_total_amount"],
             ccss_ivm=tax["ccss_ivm"],
@@ -658,5 +701,62 @@ class Payroll_Trans_Manager:
         # db refresh
         db.refresh(instance=record)
 
+        # add to dict
+        payroll["payroll_id"] = record.id_record
+
         # return
         return record
+
+    # collecting recipient emails
+    async def collecting_recipient_emails(
+            self, db: Union[Session, object], id_payroll: Union[int, str]) -> list[str]:
+        # aliases
+        payroll = aliased(self.models.Payroll_User)
+        user_role = aliased(self.models.User_Role)
+        employee = aliased(self.models.User)
+
+        # query
+        rows = db.query(
+            employee.email
+        ).select_from(
+            payroll
+        ).join(
+            user_role, user_role.id_record == payroll.id_user
+        ).join(
+            employee, employee.id_record == user_role.id_user
+        ).filter(
+            user_role.status.is_(True),
+        ).distinct().all()
+
+        # collect emails
+        emails = [r[0] for r in rows]
+
+        # return
+        return emails or []
+
+    # validating payroll periods
+    async def validating_payroll_periods(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
+        # variables
+        today = date.today()
+        selected_period = schema["payroll_period"]
+        start, end = selected_period[0], selected_period[1]
+
+        # validate if selected period has not started
+        if today < start:
+            raise self.http_exec(
+                self.status.HTTP_400_BAD_REQUEST,
+                detail=f"El período seleccionado ({start} → {end}) aún no ha comenzado."
+            )
+
+        # query records
+        records = db.query(
+            self.models.Checkin_Tracker
+        ).filter(
+            func.date(self.models.Checkin_Tracker.log_date).between(start, end)
+        ).count()
+
+        if records == 0:
+            raise self.http_exec(
+                self.status.HTTP_404_NOT_FOUND,
+                detail=f'No existen registros de asistencia para el período ({start} → {end}).')
