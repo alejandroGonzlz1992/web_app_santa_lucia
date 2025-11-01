@@ -308,8 +308,9 @@ class Payroll_Trans_Manager:
             self, db: Union[Session, object], users: list[object], schema: Union[dict, object]) -> None:
         # variables
         employees = {
-            "id_user_role": None, "payroll_amount": 0.0, "extra_hour_amount": 0.0, "holiday_amount": 0.0,
-            "vacations_amount": 0.0, "gross_total_amount": 0.0, "payment_date": 220
+            "id_user_role": None, "payroll_amount": 0.0, "inability_amount": 0.0, "extra_hour_amount": 0.0,
+            "holiday_amount": 0.0, "vacations_amount": 0.0, "gross_total_amount": 0.0, "payment_date": 220,
+            "net_total_amount": 0.0
         }
 
         # dates
@@ -324,8 +325,9 @@ class Payroll_Trans_Manager:
             employees["id_user_role"] = user._user_role_id
             employees["payroll_amount"] = payroll_amount
 
-            # inability days
-
+            # calculate inability days
+            inability_amount = await self.calculating_inability_amount(db=db, user=user, dates=dates)
+            employees["inability_amount"] = inability_amount
 
             # calculate extra hours
             extra_hour_amount = await self.calculating_extra_hours_amount(db=db, user=user, dates=dates)
@@ -339,8 +341,14 @@ class Payroll_Trans_Manager:
             vacations_amount = await self.calculating_vacations_records(db=db, user=user, dates=dates)
             employees["vacations_amount"] = vacations_amount
 
-            print(f'\n Information: {employees} \n ')
+            # gross total amount
+            await self.adding_up_gross_total(calculated_amounts=employees)
 
+            # applying deductions
+            taxes = await self.applying_deductions_to_payroll(db=db, prices=employees)
+
+            # registering information at db
+            record = await self.registering_payroll_information(db=db, payroll=employees, tax=taxes)
 
     # calculating payroll amount
     async def calculating_payroll_amount(
@@ -380,6 +388,59 @@ class Payroll_Trans_Manager:
             )
         ).order_by(
             self.models.Checkin_Tracker.log_date.asc()
+        ).all()
+
+        # return
+        return rows or []
+
+    # calculating inability amount
+    async def calculating_inability_amount(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> float:
+        # variables
+        amount = 0.0
+        # records
+        records = await self.returning_inability_records(db=db, user=user, dates=dates)
+
+        # skip records
+        if not records:
+            return amount
+
+        for item in records:
+            # counting days
+            days = (item._end_date - item._start_date).days + 1
+
+            if days > 3:
+                return amount
+
+            daily_salary = ((user._gross_income / 2) / 15)
+            daily_salary_inability = (float(daily_salary) * 0.6)
+            amount += float(daily_salary_inability)
+
+        # return
+        return round(amount, 2)
+
+    async def returning_inability_records(
+            self, db: Union[Session, object], user: object, dates: list[date]) -> list[object]:
+        # extract start and end date
+        start, end = dates[0], dates[1]
+
+        rows = db.query(
+            self.models.Inability.id_record.label('_id'),
+            self.models.Inability.date_start.label('_start_date'),
+            self.models.Inability.date_return.label('_end_date'),
+            self.models.Inability.id_subject.label('id_subject'),
+            self.models.Inability.status.label('_status'),
+            self.models.Inability.log_date.label('_log_date'),
+        ).filter(
+            and_(
+                self.models.Inability.id_subject == user._user_role_id,
+                self.models.Inability.status == "Aprobado",
+                # date range
+                self.models.Inability.date_start >= start,
+                self.models.Inability.date_start <= end,
+            )
+        ).order_by(
+            self.models.Inability.date_start.asc()
         ).all()
 
         # return
@@ -484,7 +545,7 @@ class Payroll_Trans_Manager:
 
     # calculating vacations amount
     async def calculating_vacations_records(
-            self, db: Union[Session, object], user: object, dates: list[date]) -> None:
+            self, db: Union[Session, object], user: object, dates: list[date]) -> float:
         # variables
         amount = 0.0
         # records
@@ -524,3 +585,78 @@ class Payroll_Trans_Manager:
 
         # return
         return rows or []
+
+    # adding up gross total amount
+    async def adding_up_gross_total(self, calculated_amounts: dict) -> dict:
+        # sum up values
+        calculated_amounts["gross_total_amount"] = round((
+                (calculated_amounts["payroll_amount"] + calculated_amounts["inability_amount"]) +
+                calculated_amounts["extra_hour_amount"] + calculated_amounts["holiday_amount"] +
+                calculated_amounts["vacations_amount"]), 2)
+
+        # return
+        return calculated_amounts
+
+    # applying deductions
+    async def applying_deductions_to_payroll(
+            self, db: Union[Session, object], prices: dict) -> None:
+        # tax records
+        taxes = {"ccss_ivm": 0.0, "ccss_eme": 0.0, "rop": 0.0, "rent_tax": 0.0}
+        # records
+        records = await self.querying_deductions_book(db=db)
+
+        for item in records:
+            if item._id == 200:
+                taxes["ccss_ivm"] = round((prices["gross_total_amount"] * item._percentage),2)
+
+            elif item._id == 201:
+                taxes["ccss_eme"] = round((prices["gross_total_amount"] * item._percentage),2)
+
+            elif item._id == 202:
+                taxes["rop"] = round((prices["gross_total_amount"] * item._percentage),2)
+
+        # updating net amount
+        prices["net_total_amount"] = prices["gross_total_amount"] - (
+                taxes["ccss_ivm"] + taxes["ccss_eme"] + taxes["rop"])
+
+        # return
+        return taxes
+
+    # query deductions records
+    async def querying_deductions_book(self, db:Union[Session, object]) -> list[object]:
+        # db query
+        records = db.query(
+            self.models.Deduction.id_record.label('_id'), self.models.Deduction.name.label('_name'),
+            self.models.Deduction.percentage.label('_percentage')
+        ).all()
+
+        # return
+        return records
+
+    # register payroll information
+    async def registering_payroll_information(self, db:Union[Session, object], payroll: dict, tax: dict) -> object:
+        # records
+        record = self.models.Payroll_User(
+            net_amount=payroll["net_total_amount"],
+            ccss_ivm=tax["ccss_ivm"],
+            ccss_eme=tax["ccss_eme"],
+            ccss_rop=tax["rop"],
+            renta_tax=tax["rent_tax"],
+            payroll_amount=payroll["payroll_amount"],
+            extra_hour_amount=payroll["extra_hour_amount"],
+            vacations_amount=payroll["vacations_amount"],
+            holiday_amount=payroll["holiday_amount"],
+            total_gross_amount=payroll["gross_total_amount"],
+            id_user=payroll["id_user_role"],
+            id_payment_date=payroll["payment_date"]
+        )
+
+        # db add
+        db.add(instance=record)
+        # db commit
+        db.commit()
+        # db refresh
+        db.refresh(instance=record)
+
+        # return
+        return record

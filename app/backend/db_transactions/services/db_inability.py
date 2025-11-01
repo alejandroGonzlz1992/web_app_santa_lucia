@@ -146,13 +146,22 @@ class Inability_Trans_Manager:
 
     # collect the subject and approver email
     async def collecting_subject_and_approver_email(
-            self, db: Union[Session, object], id_session: Union[int, str],) -> object:
+            self, db: Union[Session, object], id_session: Union[int, str], schema: Union[BaseModel, dict]) -> object:
         # aliases
         sub_user_role = aliased(self.models.User_Role)
         subject = aliased(self.models.User)
         approver = aliased(self.models.User)
+        role = aliased(self.models.Role)
 
-        rows = db.query(
+        role_type = db.query(
+            role.type
+        ).join(
+            sub_user_role, sub_user_role.id_role == role.id_record
+        ).filter(
+            sub_user_role.id_user == id_session
+        ).scalar()
+
+        query = db.query(
             # subject
             subject.email.label('_sub_email'),
             approver.email.label('_apr_email')
@@ -163,17 +172,34 @@ class Inability_Trans_Manager:
         ).join(
             approver, approver.id_record == sub_user_role.approver
         ).filter(
-            sub_user_role.id_user == id_session
-        ).filter(
             sub_user_role.status.is_(True)
-        ).first()
+        )
+
+        if role_type == "Administrador":
+            sub_id = db.query(
+                self.models.Inability.id_subject
+            ).filter(
+                self.models.Inability.id_record == schema["id"]
+            ).scalar()
+
+            query = query.filter(
+                sub_user_role.id_record  == sub_id
+            )
+
+        else:
+            query = query.filter(
+                sub_user_role.id_user == id_session
+            )
+
+        # run query
+        rows = query.first()
 
         # return
         return {"sub": rows._sub_email, "apr": rows._apr_email}
 
-    # collecting inability
-    async def current_inability_record(
-            self, db: Union[Session, object], id_session: Union[int, str]) -> object:
+    # collecting inability for update
+    async def current_inability_record_for_update(
+            self, db: Union[Session, object], id: Union[dict, object]) -> object:
         # aliases
         sub_user_role = aliased(self.models.User_Role)
         subject = aliased(self.models.User)
@@ -198,7 +224,40 @@ class Inability_Trans_Manager:
         ).join(
             subject, subject.id_record == sub_user_role.id_user
         ).filter(
-            sub_user_role.id_record == id_session
+            self.models.Inability.id_record == id
+        ).first())
+
+        # return
+        return rows
+
+    # collecting inability for create
+    async def current_inability_record_for_create(
+            self, db: Union[Session, object], schema: Union[BaseModel, dict]) -> object:
+        # aliases
+        sub_user_role = aliased(self.models.User_Role)
+        subject = aliased(self.models.User)
+        role_ = aliased(self.models.Role)
+        depat = aliased(self.models.Department)
+
+        rows = (db.query(
+            # inability
+            self.models.Inability.id_record.label('_id'),
+            self.models.Inability.date_start.label('_start'),
+            self.models.Inability.date_return.label('_return'),
+            self.models.Inability.doc_number.label('_doc_number'),
+            self.models.Inability.status.label('_status'),
+            # subject
+            subject.name.label('_emp_name'),
+            subject.lastname.label("_emp_lastname"),
+            subject.lastname2.label("_emp_lastname2")
+        ).select_from(
+            self.models.Inability
+        ).join(
+            sub_user_role, sub_user_role.id_record == self.models.Inability.id_subject
+        ).join(
+            subject, subject.id_record == sub_user_role.id_user
+        ).filter(
+            self.models.Inability.doc_number == schema["inability_number"]
         ).first())
 
         # return

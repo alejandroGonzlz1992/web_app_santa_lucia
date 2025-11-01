@@ -102,7 +102,7 @@ async def posting_app_inability_register_endpoint(
         emails_ = await serv.collecting_subject_and_approver_email(db=db, id_session=user_login.user_id)
 
         # inability record
-        record = await serv.current_inability_record(db=db, id_session=user_login.user_role_id)
+        record = await serv.current_inability_record_for_create(db=db, schema=model.model_dump())
 
         # send email
         background_tasks.add_task(
@@ -225,10 +225,11 @@ async def posting_app_inability_approvals_endpoint(
         await serv.updating_inability_status(db=db, schema=model.model_dump())
 
         # collect, current user's approver
-        emails_ = await serv.collecting_subject_and_approver_email(db=db, id_session=user_login.user_id)
+        emails_ = await serv.collecting_subject_and_approver_email(
+            db=db, id_session=user_login.user_id, schema=model.model_dump())
 
         # inability record
-        record = await serv.current_inability_record(db=db, id_session=user_login.user_role_id)
+        record = await serv.current_inability_record_for_update(db=db, id=model.id)
 
         # send email
         background_tasks.add_task(
