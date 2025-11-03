@@ -41,109 +41,81 @@
 <div class="mb-3">
     <div class="row">
 
-        <!--Title and Filter-->
         <div class="col">
             <div class="card mb-3">
                 <div class="card-body text-start">
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h2 class="card-title mb-0">Registro De Liquidaciones</h2>
+                            <h2 class="card-title mb-0">Registro de Liquidaciones</h2>
                         </div>
                         <div class="card-body text-start">
-                            <i class="align-start" data-feather="folder-minus"
+                            <i class="align-start" data-feather="dollar-sign"
                                style="color: darkblue; width: 25px; height: 25px;"></i>
-                            Consulta de histórico de liquidaciones realizadas hasta la fecha actual.
+                            Consulta de histórico de registros de liquidaciones realizadas hasta la fecha actual.
                         </div>
+                        {% if params.role == "Administrador" %}
+                            <!--Register Checkin Button-->
+                            <a class="mb-3 px-3 text-start" href="{{ url_for('getting_app_settlement_generate_endpoint') }}">
+                                <button class="btn btn-warning"><b>Generar Liquidación</b></button>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+    </div>
 
-            <!--Filter By Role Type-->
-            <div class="col">
-                <div class="card mb-3">
-                    <div class="card-body" style="width: 25%;">
-                        <form id="id_filter_role_type_form" novalidate>
-                            <div class="mb-2">
-                                <h5 class="card-title mb-2">Ingresar Identificación de Usuario</h5>
-                                <input type="text" class="form-control" style="font-size: 12px; color: cadetblue;"
-                                       required placeholder="0-0000-0000" name="entity_identification"
-                                       id="id_input_field">
-                                <!--Span label-->
-                                <div id="identification_text" class="form-text text-start">
-                                    <span class="text-muted">
-                                        <p class="my-2" style="color: brown; font-size: 12px;">
-                                            • Ingresar números únicamente.
-                                        </p>
-                                    </span>
-                                </div>
-                                <button class="btn btn-info mt-2" type="button" id="id_filter_button">
-                                    Consultar
-                                </button>
-                                <button class="btn btn-secondary mt-2" type="reset" id="id_reset_button">
-                                    Limpiar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
 
-        </div>
-
-        <div class="row">
-
-            <!--Breakdown Table-->
-            <div class="col">
-                <div class="col align-self-start text-start mt-3">
-                    <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
-                        <thead class="table-secondary">
-                        <tr>
-                            <th scope="col">Cod Registro</th>
-                            <th scope="col">Identificación</th>
-                            <th scope="col">Empleado</th>
-                            <th scope="col">Jefatura</th>
-                            <th scope="col">Tipo Liquidación</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Fecha de Registro</th>
-                            <th scope="col" colspan="1"
-                                style="text-align: center; vertical-align: middle;">Administrar
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in params.records %}
-                                <tr>
-                                    <th scope="row"><b></b>{{ item._id }}</th>
-                                    <td>{{ item._subj_ident }}</td>
-                                    <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
-                                    <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
-                                    <td>{{ item._type }}</td>
-                                    <td>{{ item._status }}</td>
-                                    <td>{{ item._log_date.date() }}</td>
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <a href="{{url_for('getting_app_settlement_details_endpoint', id=item._id)}}">
-                                            <i class="align-center" data-feather="refresh-ccw"></i>
-                                            Consultar Detalles
-                                        </a>
-                                    </td>
-                                    <td style="text-align: center; vertical-align: middle;">
-                                        <a href="{{url_for('getting_app_settlement_adjust_endpoint', id=item._id)}}">
-                                            <i class="align-center" data-feather="refresh-ccw"></i>
-                                            Ajustar Liquidación
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+        <!--Breakdown Table-->
+        <div class="col">
+            <div class="col align-self-start text-start mt-3">
+                <table class="table" style="border-collapse: separate; border-spacing: 0; border-radius: 8px;">
+                    <thead class="table-secondary">
+                    <tr>
+                        <th scope="col">Cod Registro</th>
+                        <th scope="col">Identificación</th>
+                        <th scope="col">Empleado</th>
+                        <th scope="col">Jefatura</th>
+                        <th scope="col">Tipo Liquidación</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Fecha de Registro</th>
+                        <th scope="col" colspan="1"
+                            style="text-align: center; vertical-align: middle;">Administrar
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in params.records %}
+                            <tr>
+                                <th scope="row"><b></b>{{ item._id }}</th>
+                                <td>{{ item._subj_ident }}</td>
+                                <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
+                                <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
+                                <td>{{ item._type }}</td>
+                                <td>{{ item._status }}</td>
+                                <td>{{ item._log_date.date() }}</td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_settlement_details_endpoint', id=item._id)}}">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Consultar Detalles
+                                    </a>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <a href="{{url_for('getting_app_settlement_adjust_endpoint', id=item._id)}}">
+                                        <i class="align-center" data-feather="refresh-ccw"></i>
+                                        Ajustar Liquidación
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
+
 {% endblock %}
 
 <!--local .js scripts -->

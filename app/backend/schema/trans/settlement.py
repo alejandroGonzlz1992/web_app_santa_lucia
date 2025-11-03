@@ -5,6 +5,20 @@ from decimal import Decimal
 from typing import Union
 
 
+# generate settlement
+class Generate_Settlement(BaseModel):
+    settlement_employee: str
+    settlement_type: str
+    settlement_detail: str
+
+    @classmethod
+    def formatting(cls, settlement_employee: str = Form(...), settlement_type: str = Form(...),
+                   settlement_detail: str = Form(...)):
+        # return
+        return cls(settlement_employee=settlement_employee, settlement_type=settlement_type,
+                   settlement_detail=settlement_detail)
+
+
 # update settlement record
 class Update_Settlement_Record(BaseModel):
     id: Union[int, str]

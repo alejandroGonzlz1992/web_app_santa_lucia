@@ -206,6 +206,7 @@ async def getting_app_bonus_adjust_endpoint(
     )
 
 
+# POST -> Bonus Adjustments
 @bonus_route.post(Cns.URL_BONUS_ADJUST_POST.value, response_class=HTMLResponse)
 async def posting_app_bonus_adjust_endpoint(
         request: Request,

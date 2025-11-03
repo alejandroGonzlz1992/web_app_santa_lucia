@@ -10,7 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError, OperationalError
 # local import
 from app.backend.tooling.setting.constants import Constants as Cns
 from app.backend.tooling.setting.security import getting_current_user
-from app.backend.schema.trans.settlement import Update_Settlement_Record
+from app.backend.schema.trans.settlement import Generate_Settlement, Update_Settlement_Record
 from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.db_transactions.transactions.db_settlement import Settlement_Trans_Manager
@@ -50,7 +50,77 @@ async def getting_app_settlement_base_endpoint(
         'service/payroll/settlement/index.html', context={
             'request': request, 'params': {
                 'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'records': records,
-                'logged_in': logged_in
+                'logged_in': logged_in, 'role': user_login.role_type
+            }
+        }
+    )
+
+
+# GET -> Settlement Generate
+@settlement_route.get(Cns.URL_SETTLEMENT_GENERATE.value, response_class=HTMLResponse)
+async def getting_app_settlement_generate_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        fg: Annotated[str, None] = None
+) -> HTMLResponse:
+
+    # fetching current User logged-in
+    user_session = await trans.fetching_current_user(db=db, user=user_login)
+
+    # fetching current users
+    users = await serv.querying_specific_users_for_settle_calculation(db=db)
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'service/payroll/settlement/generate.html', context={
+            'request': request, 'params': {
+                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'users': users
+            }
+        }
+    )
+
+
+# POST -> Settlement Generate
+@settlement_route.post(Cns.URL_SETTLEMENT_GENERATE.value, response_class=HTMLResponse)
+async def posting_app_settlement_generate_endpoint(
+        request: Request,
+        db: Annotated[Session, Depends(dependency=Session_Controller)],
+        user_login: Annotated[object, Depends(dependency=getting_current_user)],
+        model: Annotated[Generate_Settlement, Depends(Generate_Settlement.formatting)],
+) -> HTMLResponse:
+    try:
+        # collecting specific users
+        users = await serv.querying_specific_users_for_settle_calculation(db=db)
+        # validating period selected
+        await serv.validating_settlement_user_payroll(db=db, schema=model.model_dump())x
+
+        # bonus calculation
+        # record = await serv.generating_bonus_calculations(db=db, users=users, schema=model.model_dump())
+
+    except HTTPException as http:
+        db.rollback()  # -> db rollback
+        print(f'Error HTTPException: {http}')
+        return await getting_app_settlement_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_fail', exc='_no_records')
+
+    except SQLAlchemyError as op:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_error(exc=SQLAlchemyError)  # -> error logs
+        return await getting_app_settlement_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_orm_error')
+
+    except OperationalError as op:
+        db.rollback()  # -> db rollback
+        await exc_logs.logger_sql_alchemy_operational_error(exc=OperationalError)  # -> error logs
+        return await getting_app_settlement_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_ops_error')
+
+    # return
+    return Cns.HTML_.value.TemplateResponse(
+        'base/redirect.html', context={
+            'request': request, 'params': {
+                'domain': 'liquidaciones', 'redirect': 'ce', 'fg': '_update'
             }
         }
     )

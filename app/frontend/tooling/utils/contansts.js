@@ -956,6 +956,39 @@ export const Static = {
     SETTLEMENT_ENABLE_BLANK_FIELDS: ["cesantia_amount", "vacation_amount", "bonus_amount",
         "payroll_amount", "settlement_type", "settlement_status", "settlement_details"],
 
+    SETTLEMENT_GENERATE_FORM_DICT: {
+        "settlement_employee": {
+            "div_id": {
+                "status": "id_settlement_employee_status_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú.",
+            }
+        },
+        "settlement_type": {
+            "div_id": {
+                "status": "id_settlement_type_status_error",
+            },
+            "text": {
+                "status": "Debe seleccionar una de las opciones del menú.",
+            }
+        },
+        "settlement_detail": {
+            "div_id": {
+                "blank": "id_settlement_detail_blank_field_error",
+                "length": "id_settlement_detail_length_field_error",
+                "chars": "id_settlement_detail_spec_chars_field_error",
+            },
+            "text": {
+                "blank": "Campo Obligatorio.",
+                "length": "El detalle de liquidación debe tener mínimo 10 caracteres.",
+                "chars": "No se permiten caracteres especiales.",
+            }
+        },
+    },
+
+    SETTLEMENT_GENERATE_BLANK_FIELDS: ["settlement_employee", "settlement_type", "settlement_detail"],
+
     // BONUS ADJUST
     BONUS_ENABLE_FORM_DICT: {
         "bonus_month": {

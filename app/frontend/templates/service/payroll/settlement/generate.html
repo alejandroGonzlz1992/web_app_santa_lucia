@@ -1,0 +1,236 @@
+<!--Inherit-->
+{% extends 'base/index.html' %}
+
+<!--Page Title-->
+{% block title_browser %}
+    <title>Ferretería Santa Lucía | Módulos | Liquidaciones | Generación </title>
+{% endblock %}
+
+<!--sidebar menu-->
+{% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-header"> <b>LIQUIDACIONES</b> </li>
+    <li class="sidebar-item active">
+        <a class="sidebar-link" href="{{url_for('getting_app_settlement_base_endpoint')}}">
+            <i class="align-middle" data-feather="folder-minus"></i>
+            <span class="align-middle">Regresar</span>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+<!--ops bar-->
+{% block ops_bar %}
+    {% if params.fg == "_ops_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._ops_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_orm_error" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._session._fail._orm_error}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% elif params.fg == "_fail" %}
+        <div class="px-1 pt-2">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill"/>
+                </svg>
+                <div>{{params.ops._payroll._fail}}</div>
+                <div class="col text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+<!--main-->
+{% block container %}
+<div class="mb-3">
+
+    <div class="row">
+        <!--Left Main Menu-->
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Generar Liquidación</h2>
+                        </div>
+                        <div class="card-body text-start">
+                            <i class="align-start" data-feather="folder-minus"
+                               style="color: darkblue; width: 25px; height: 25px;"></i>
+                            Seleccionar el periodo determinado para la generación de liquidaciones. Tomar en consideración
+                            que los usuarios sin completar sus registros de jornadas o marcas y salidas
+                            no se tomaran en cuenta para el cálculo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Right Main Menu-->
+        <div class="col-md-8 col-xl-9">
+            <div class="card mb-3">
+                <div class="card-body text-start">
+
+                    <!--Settlement Generate Form -->
+                    <form id="id_settlement_generate_form" method="post"
+                          action="{{ url_for('posting_app_settlement_generate_endpoint') }}" novalidate>
+
+                        <!--Hidden Input Field-->
+                        <input type="hidden" value="POST" name="method">
+
+                        <h5 class="card-title my-3 text-start"><strong>Información de Liquidación</strong></h5>
+
+                        <!--Roles Field Groups-->
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">*
+                                    Empleado Registrado</label>
+                                    <div class="input-group">
+                                        <select class="form-select mb-2"
+                                                id="id_settlement_employee" name="settlement_employee"
+                                                style="color: cadetblue;">
+                                            <option value="not_select" selected>
+                                                Seleccionar empleado </option>
+                                            {% for item in params.users %}
+                                                <option value="{{ item._id_user_role }}">
+                                                    {{ item._emp_name }} {{ item._emp_lastname }}
+                                                    {{ item._emp_lastname2 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_no_records" %}
+                                        <div id="id_settlement_employee_period_exception_error"
+                                             class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._settlement._no_records }}
+                                        </div>
+                                    {% endif %}
+
+                                    <!--Error Message Div-->
+                                    <div id="id_settlement_employee_status_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+
+                                    <!--Span label-->
+                                    <div id="id_settlement_employee_status_label" class="form-text text-start">
+                                        <span class="text-muted fs-8">
+                                            <p class="p-0 m-0" style="color: darkgrey;">
+                                                • Se debe seleccionar un empleado para el cálculo.
+                                            </p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="py-1 text-start">
+                                    <label class="form-label text-center" style="color: #3371db;">*
+                                    Tipo Liquidación Laboral</label>
+                                    <div class="input-group">
+                                        <select class="form-select mb-2" id="id_settlement_type" name="settlement_type"
+                                                style="color: cadetblue;">
+                                            <option value="not_select" selected>
+                                                Seleccionar el tipo de liquidación laboral </option>
+                                            <option value="Responsabilidad Patronal"> Sin causa justa </option>
+                                            <option value="Sin Responsabilidad Patronal"> Renuncia </option>
+                                        </select>
+                                    </div>
+
+                                    <!--Error Message Div-->
+                                    <div id="id_settlement_type_status_error" class="text-danger text-start"
+                                        style="font-size: 13px; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="py-3 text-start">
+                                <label class="form-label text-center"
+                                       style="color: #3371db;">Detalle Liquidación</label> *
+                                <div class="input-group">
+                                    <textarea class="form-control" id="id_settlement_detail"
+                                              name="settlement_detail" rows="2"
+                                              style="color: cadetblue;"
+                                              placeholder="Ingresar detalle de liquidación"></textarea>
+                                </div>
+                            </div>
+
+                            <!--Address Details Validation Errors Field-->
+                            <div id="id_settlement_detail_blank_field_error"
+                                 class="text-danger text-start"
+                                style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_settlement_detail_spec_chars_field_error"
+                                 class="text-danger text-start"
+                                 style="font-size: 13px; display: none;">
+                            </div>
+                            <div id="id_settlement_detail_length_field_error"
+                                 class="text-danger text-start"
+                                 style="font-size: 13px; display: none;">
+                            </div>
+
+                        </div>
+
+                        <p class="py-2" style="color: brown;"><strong> * </strong>Campos obligatorios</p>
+
+                        <!--Submit Form-->
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="row">
+                                <div class="col text-end">
+                                    <button class="btn btn-lg btn-info" type="submit">
+                                        <b>GENERAR LIQUIDACION</b>
+                                    </button>
+                                </div>
+                                <div class="col text-start">
+                                    <button class="btn btn-lg btn-secondary" type="reset">
+                                        <b>LIMPIAR CAMPOS</b>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+<!--local .js scripts -->
+{% block scripts %}
+    {{ super() }}
+    <script type="module">
+        import {GenerateSettlementValidator} from '{{ url_for("static", path="tooling/validators/services/genSettlement.js") }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            new GenerateSettlementValidator('id_settlement_generate_form');
+        });
+    </script>
+{% endblock %}

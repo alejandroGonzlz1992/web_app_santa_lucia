@@ -174,6 +174,7 @@ class Constants(Enum):
 
     # settlement
     URL_SETTLEMENT = '/liquidaciones/ce'
+    URL_SETTLEMENT_GENERATE = "/generar_liquidaciones"
     URL_SETTLEMENT_DETAILS = f'/detalles/{URL_ID}'
     URL_SETTLEMENT_DETAILS_PDF = f'/detalles/{URL_ID}/liquidacion'
     URL_SETTLEMENT_ADJUST = f'/ajustes/{URL_ID}'
@@ -270,11 +271,14 @@ class Constants(Enum):
         },
         "_payroll": {
             "_update": "Se han generado los registros de planilla de manera exitosa.",
-            "_period": "El periodo para la siguiente planilla aún no se ha completado para su generación."
+            "_period": "El periodo para la siguiente planilla aún no se ha completado para su generación.",
+            "_fail": 'Existen errores en la información ingresada. Por favor validar.',
         },
         "_settlement": {
             "_update": "El registro de liquidación ha sido ajustado exitosamente.",
-            "_download": "Descarga de archivo exitosa."
+            "_download": "Descarga de archivo exitosa.",
+            "_fail": 'Existen errores en la información ingresada. Por favor validar.',
+            "_no_records": "El empleado seleccionado no cuenta con el mínimo de 4 registros de planillas para calcular la liquidación.",
         },
         "_bonus": {
             "_update": "El registro de aguinaldo ha sido ajustado exitosamente.",

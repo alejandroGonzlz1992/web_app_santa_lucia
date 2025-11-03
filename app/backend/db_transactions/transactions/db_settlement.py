@@ -5,7 +5,7 @@ from datetime import date, datetime
 from fastapi import HTTPException, status
 from typing import Union
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from docxtpl import DocxTemplate
@@ -267,6 +267,43 @@ class Settlement_Trans_Manager:
 
         # return
         return to_copy
+
+    # query specific users for settlement calculation
+    async def querying_specific_users_for_settle_calculation(self, db: Union[Session, object]) -> list[object]:
+        # query records
+        records = db.query(
+            self.models.User_Role.id_record.label('_id_user_role'), self.models.User.name.label('_emp_name'),
+            self.models.User.lastname.label('_emp_lastname'), self.models.User.lastname2.label('_emp_lastname2'),
+            self.models.Role.type.label('_role_type')
+        ).join(
+            self.models.User, self.models.User.id_record == self.models.User_Role.id_user
+        ).join(
+            self.models.Role, self.models.Role.id_record == self.models.User_Role.id_role
+        ).filter(
+            and_(self.models.User_Role.status.is_(True), self.models.Role.type != "Administrador")
+        ).order_by(
+            self.models.User_Role.id_record.asc()
+        ).all()
+
+        # return
+        return records
+
+    # validating settlement periods
+    async def validating_settlement_user_payroll(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
+
+        # validate previous month records
+        records = db.query(
+            self.models.Payroll_User
+        ).filter(
+            self.models.Payroll_User.id_user == schema["settlement_employee"]
+        ).count()
+
+        if records < 4:
+            raise self.http_exec(
+                self.status.HTTP_404_NOT_FOUND,
+                detail=f'El empleado seleccionado no cuenta con el mínimo de 4 registros de planilla '
+                       f'requeridos para calcular la liquidación. Registros actuales: {records}.')
 
     # update settlement record
     async def updating_settlement_record(self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
