@@ -132,3 +132,8 @@ class User_Inactive_Status_Exception(Exception):
 # user as active status
 class User_Active_Status_Exception(Exception):
     pass
+
+
+# bonus quota already
+class Bonus_Quota_Already_Exception(Exception):
+    pass

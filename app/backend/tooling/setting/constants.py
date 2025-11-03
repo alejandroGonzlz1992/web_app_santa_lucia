@@ -181,7 +181,6 @@ class Constants(Enum):
     # settlement to redirect
     URL_SETTLEMENT_TO_REDIRECT = "http://127.0.0.1:8000/liquidaciones/ce/detalles"
 
-
     # evaluation
     URL_EVALUATION = '/evaluaciones/ce'
     URL_EVALUATION_EMPLOYEE = '/empleados'
@@ -281,7 +280,8 @@ class Constants(Enum):
             "_update": "El registro de aguinaldo ha sido ajustado exitosamente.",
             "_fail": 'Existen errores en la información ingresada. Por favor validar.',
             "_download": "Descarga de archivo exitosa.",
-            "_period": "El periodo para la siguiente cuota de aguinaldo aún no ha sido completado."
+            "_not_start": "La cuota de aguinaldo solo puede ser generada hasta el 30 del mes.",
+            "_duplicate": "Ya existe un registro de cuota para el periodo seleccionado."
         },
         '_profile': {
             '_errors': 'Existen errores en la información ingresada. Por favor validar.',
@@ -427,7 +427,8 @@ class Constants(Enum):
     BONUS_QUERY_CONTEXT = {
         'name': None, 'lastname': None, 'lastname2': None, 'current_date': None, 'identification': None,
         'bonus_id': None, 'hire_date': None, 'jf_name': None, 'jf_lastname': None, 'jf_lastname2': None,
-        'gross_amount': None, 'total_amount': None, 'year': None, 'month': None
+        'gross_amount': None, 'total_amount': None, "month_amount": None, 'year': None, 'month': None,
+        'details': None
     }
 
     # payroll query context
@@ -462,3 +463,18 @@ class Constants(Enum):
         "Periodo Diciembre": [date(date.today().year, 12, 1), date(date.today().year, 12, 30)],
     }
 
+    # month catalog
+    MONTHS_CAT = {
+        1: "Enero",
+        2: "Febrero",
+        3: "Marzo",
+        4: "Abril",
+        5: "Mayo",
+        6: "Junio",
+        7: "Julio",
+        8: "Agosto",
+        9: "Septiembre",
+        10: "Octubre",
+        11: "Noviembre",
+        12: "Diciembre"
+    }

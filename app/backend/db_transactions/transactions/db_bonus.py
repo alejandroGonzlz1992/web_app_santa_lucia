@@ -1,9 +1,13 @@
 # import
+from time import process_time_ns
+
+from dns.reversename import to_address
+from openpyxl.styles.builtins import total
 from pydantic import BaseModel
 from fastapi import HTTPException, status
 from typing import Union
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -15,6 +19,7 @@ import shutil
 # local import
 from app.backend.database import models
 from app.backend.tooling.setting.constants import Constants as Cns
+from app.backend.tooling.setting.security import Bonus_Quota_Already_Exception
 
 
 # class
@@ -105,6 +110,7 @@ class Bonus_Trans_Manager:
         row = db.query(
             self.models.Bonus.id_record.label('_id'),
             self.models.Bonus.total_amount.label('_total_amount'),
+            self.models.Bonus.month_amount.label('_month_amount'),
             self.models.Bonus.year.label('_year'),
             self.models.Bonus.month.label('_month'),
             # subject info
@@ -222,7 +228,7 @@ class Bonus_Trans_Manager:
         to_copy["lastname"] = record._emp_lastname
         to_copy["lastname2"] = record._emp_lastname2
         to_copy["current_date"] = await Bonus_Trans_Manager.formatting_date_to_crc_time(value=today_)
-        to_copy["identification"] = record._emp_id
+        to_copy["identification"] = record._ident
         to_copy["bonus_id"] = record._id
         to_copy["hire_date"] = await Bonus_Trans_Manager.formatting_date_to_crc_time(value=record._hire_date)
         to_copy["jf_name"] = record._apr_name
@@ -230,8 +236,10 @@ class Bonus_Trans_Manager:
         to_copy["jf_lastname2"] = record._apr_lastname2
         to_copy["gross_amount"] = await Bonus_Trans_Manager.formatting_crc_money_style(value=record._gross_income)
         to_copy["total_amount"] = await Bonus_Trans_Manager.formatting_crc_money_style(value=record._total_amount)
+        to_copy["month_amount"] = await Bonus_Trans_Manager.formatting_crc_money_style(value=record._month_amount)
         to_copy["year"] = record._year
         to_copy["month"] = record._month
+        to_copy["details"] = f'Cuota de aguinaldo correspondiente al mes {record._month.upper()} del año {record._year}'
 
         # return
         return to_copy
@@ -256,8 +264,8 @@ class Bonus_Trans_Manager:
             db.commit()
 
     # query users for bonus
-    async def querying_users_bonus_records(
-            self, db: Union[Session, object]) -> list[object]:
+    async def querying_users_bonus_records(self, db: Union[Session, object]) -> list[object]:
+
         # aliases
         users = aliased(self.models.User)
         roles = aliased(self.models.Role)
@@ -283,3 +291,108 @@ class Bonus_Trans_Manager:
 
         # return
         return rows
+
+    # validating bonus periods
+    async def validating_bonus_periods(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> None:
+        # variables
+        today = date.today()
+        selected_period = schema["bonus_period"]
+        end_period = selected_period[1]
+        calendar = self.cns.MONTHS_CAT.value
+
+        # validate previous month records
+        records = db.query(
+            self.models.Bonus
+        ).all()
+
+        if not records:
+            pass
+
+        else:
+            for item in records:
+                month_name = calendar[end_period.month]
+                # validate
+                if month_name == item.month and end_period.year == item.year:
+                    raise Bonus_Quota_Already_Exception
+
+        # validate if selected period has not end already
+        if today < end_period:
+            raise self.http_exec(
+                self.status.HTTP_404_NOT_FOUND,
+                detail=f'La cuota de aguinaldo solo puede ser generada hasta el 30 del mes.')
+
+    # generating bonus calculations
+    async def generating_bonus_calculations(
+            self, db: Union[Session, object], users: list[object], schema: Union[dict, object]) -> None:
+        # variables
+        records = {
+            "id_user_role": None, "total_amount": 0.0, "month_amount": 0.0
+        }
+        # calendar
+        calendar = self.cns.MONTHS_CAT.value
+
+        # end_period
+        end_period = schema["bonus_period"][1]
+
+        for user in users:
+            # add user
+            records["id_user_role"] = user._user_role_id
+            # calculate monthly quota
+            records["month_amount"] = await self.calculating_bonus_quota(db=db, user=user)
+
+            # registering quota
+            quota = await self.registering_bonus_information(
+                db=db, quota=records, calendar=calendar, period=end_period)
+
+        # return
+        return records
+
+    # calculating bonus quota
+    async def calculating_bonus_quota(
+        self, db: Union[Session, object], user: object) -> float:
+        # variables
+        amount = float((user._gross_income / 12))
+        return amount
+
+    # registering quota
+    async def registering_bonus_information(
+            self, db: Union[Session, object], quota: dict, calendar: dict, period: date) -> object:
+        # accumulative analysis
+        current_year = date.today().year
+        current_month = period.month
+
+        # query last record for user
+        last_record = db.query(
+            self.models.Bonus
+        ).filter(
+            and_(self.models.Bonus.id_subject == quota["id_user_role"], self.models.Bonus.year == current_year)
+        ).order_by(
+            self.models.Bonus.id_record.desc()
+        ).first()
+
+        # total amount increment
+        if last_record:
+            total_amount = float(last_record.total_amount) + float(quota["month_amount"])
+
+        else:
+            total_amount = float(quota["month_amount"])
+
+        # new record
+        record = self.models.Bonus(
+            total_amount = total_amount,
+            month_amount = quota["month_amount"],
+            month = calendar[current_month],
+            id_subject = quota["id_user_role"],
+            year = current_year,
+        )
+
+        # db add
+        db.add(instance=record)
+        # db commit
+        db.commit()
+        # db refresh
+        db.refresh(instance=record)
+
+        # return
+        return record

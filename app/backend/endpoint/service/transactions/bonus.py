@@ -15,6 +15,7 @@ from app.backend.db_transactions.transactions.db_bonus import Bonus_Trans_Manage
 from app.backend.schema.trans.bonus import Update_Bonus_Record, Generate_Bonus_Record
 from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.database.config import Session_Controller
+from app.backend.tooling.setting.security import Bonus_Quota_Already_Exception
 
 
 # router
@@ -59,7 +60,8 @@ async def getting_app_bonus_generate_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],
         user_login: Annotated[object, Depends(dependency=getting_current_user)],
-        fg: Annotated[str, None] = None
+        fg: Annotated[str, None] = None,
+        exc: Annotated[str, None] = None
 ) -> HTMLResponse:
 
     # fetching current User logged-in
@@ -69,7 +71,7 @@ async def getting_app_bonus_generate_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/bonus/generate.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session,
+                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session,
                 'periods': Cns.BONUS_PERIODS.value
             }
         }
@@ -88,14 +90,21 @@ async def posting_app_bonus_generate_endpoint(
     try:
         # collecting all users
         users = await serv.querying_users_bonus_records(db=db)
+        # validating period selected
+        await serv.validating_bonus_periods(db=db, schema=model.model_dump())
 
-        print(f'\n {users} \n')
+        # bonus calculation
+        record = await serv.generating_bonus_calculations(db=db, users=users, schema=model.model_dump())
+
+    except Bonus_Quota_Already_Exception:
+        return await getting_app_bonus_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_fail', exc='_duplicate')
 
     except HTTPException as http:
         db.rollback() # -> db rollback
         print(f'Error HTTPException: {http}')
         return await getting_app_bonus_generate_endpoint(
-            request=request, db=db, user_login=user_login, fg='_period')
+            request=request, db=db, user_login=user_login, fg='_fail', exc='_not_start')
 
     except SQLAlchemyError as op:
         db.rollback()  # -> db rollback

@@ -45,13 +45,13 @@
                 </div>
             </div>
         </div>
-    {% elif params.fg == "_period" %}
+    {% elif params.fg == "_fail" %}
         <div class="px-1 pt-2">
             <div class="alert alert-danger d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops._bonus._period}}</div>
+                <div>{{params.ops._bonus._fail}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -116,6 +116,21 @@
                                             {% endfor %}
                                         </select>
                                     </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_not_start" %}
+                                        <div id="id_bonus_period_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._bonus._not_start }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if params.exc == "_duplicate" %}
+                                        <div id="id_bonus_period_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._bonus._duplicate }}
+                                        </div>
+                                    {% endif %}
 
                                     <!--Error Message Div-->
                                     <div id="id_bonus_period_status_error" class="text-danger text-start"
