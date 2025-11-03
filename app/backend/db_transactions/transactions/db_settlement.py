@@ -93,8 +93,6 @@ class Settlement_Trans_Manager:
             appr_user_role, appr_user_role.id_user == approver.id_record
         ).outerjoin(
             approver_role, approver_role.id_record == appr_user_role.id_role
-        ).filter(
-            subj_user_role.status.is_(False)
         )
 
         # get the user currently logged in
@@ -151,6 +149,7 @@ class Settlement_Trans_Manager:
             self.models.Settlement.vacations.label('_vacations_amount'),
             self.models.Settlement.bonus.label('_bonus_amount'),
             self.models.Settlement.payroll.label('_payroll_amount'),
+            self.models.Settlement.pre_check.label('_precheck_amount'),
             self.models.Settlement.status.label('_status'),
             self.models.Settlement.details.label('_details'),
             # subject info
@@ -242,7 +241,7 @@ class Settlement_Trans_Manager:
         return fill_pdf
 
     # fetching information from query
-    async def fetching_query_rows_into_dict(self, record: list, today_: date, default: float = 0.0) -> dict:
+    async def fetching_query_rows_into_dict(self, record: list, today_: date) -> dict:
         # map record names into dict keys
         to_copy = self.cns.SETTLE_QUERY_CONTEXT.value.copy()
         # fetch info
@@ -250,19 +249,27 @@ class Settlement_Trans_Manager:
         to_copy["lastname"] = record._emp_lastname
         to_copy["lastname2"] = record._emp_lastname2
         to_copy["current_date"] = await Settlement_Trans_Manager.formatting_date_to_crc_time(value=today_)
-        to_copy["identification"] = record._emp_id
+        to_copy["identification"] = record._ident
         to_copy["settlement_id"] = record._id
         to_copy["termination_date"] = await Settlement_Trans_Manager.formatting_date_to_crc_time(
             value=record._termination_date)
         to_copy["jf_name"] = record._apr_name
         to_copy["jf_lastname"] = record._apr_lastname
         to_copy["jf_lastname2"] = record._apr_lastname2
-        to_copy["total_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._total_amount)
-        to_copy["payroll_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._payroll_amount)
-        to_copy["cesantia_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._cesantia_amount)
-        to_copy["vacations_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._vacations_amount)
-        to_copy["bonus_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=record._bonus_amount)
-        to_copy["other_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(value=default)
+        to_copy["status"] = record._status
+        to_copy["settlement_type"] = record._type
+        to_copy["total_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(
+            value=record._total_amount)
+        to_copy["payroll_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(
+            value=record._payroll_amount)
+        to_copy["cesantia_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(
+            value=record._cesantia_amount)
+        to_copy["vacations_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(
+            value=record._vacations_amount)
+        to_copy["bonus_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(
+            value=record._bonus_amount)
+        to_copy["precheck_amount"] = await Settlement_Trans_Manager.formatting_crc_money_style(
+            value=record._precheck_amount)
         to_copy["settlement_details"] = record._details
 
         # return

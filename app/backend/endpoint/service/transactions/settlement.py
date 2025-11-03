@@ -1,5 +1,5 @@
 # import
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Annotated, Union
@@ -41,6 +41,8 @@ async def getting_app_settlement_base_endpoint(
 
     # query inability records
     results = await serv.query_settlement_records(db=db, id_login=user_login.user_id)
+    print(results)
+
     # ->
     records = results["records"]
     logged_in = results["logged_in"]
@@ -62,7 +64,8 @@ async def getting_app_settlement_generate_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],
         user_login: Annotated[object, Depends(dependency=getting_current_user)],
-        fg: Annotated[str, None] = None
+        fg: Annotated[str, None] = None,
+        exc: Annotated[str, None] = None
 ) -> HTMLResponse:
 
     # fetching current User logged-in
@@ -75,7 +78,7 @@ async def getting_app_settlement_generate_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/settlement/generate.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'users': users
+                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'users': users
             }
         }
     )
@@ -93,7 +96,7 @@ async def posting_app_settlement_generate_endpoint(
         # collecting specific users
         users = await serv.querying_specific_users_for_settle_calculation(db=db)
         # validating period selected
-        await serv.validating_settlement_user_payroll(db=db, schema=model.model_dump())x
+        await serv.validating_settlement_user_payroll(db=db, schema=model.model_dump())
 
         # bonus calculation
         # record = await serv.generating_bonus_calculations(db=db, users=users, schema=model.model_dump())

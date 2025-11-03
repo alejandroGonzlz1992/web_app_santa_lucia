@@ -422,9 +422,10 @@ class Constants(Enum):
     # settlement query context
     SETTLE_QUERY_CONTEXT = {
         'name': None, 'lastname': None, 'lastname2': None, 'current_date': None, 'identification': None,
-        'settlement_id': None, 'termination_date': None, 'jf_name': None, 'jf_lastname': None, 'jf_lastname2': None,
-        'total_amount': None, 'payroll_amount': None, 'cesantia_amount': None, 'vacations_amount': None,
-        'bonus_amount': None, 'other_amount': None, 'settlement_details': None
+        'settlement_id': None, 'status': None, 'settlement_type': None, 'termination_date': None, 'jf_name': None,
+        'jf_lastname': None, 'jf_lastname2': None, 'total_amount': None, 'payroll_amount': None,
+        'cesantia_amount': None, 'vacations_amount': None, 'bonus_amount': None, 'precheck_amount': None,
+        'other_amount': None, 'settlement_details': None
     }
 
     # bonus query context

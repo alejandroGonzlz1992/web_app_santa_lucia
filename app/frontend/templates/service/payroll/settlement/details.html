@@ -93,14 +93,17 @@
                     <!-- Deductions -->
                     <h6 class="text-uppercase text-muted mb-3 fs-6">Otros Montos</h6>
                     <ul class="list-unstyled fs-6 mb-4">
+                        <li class="mb-2"><b>Salario Actual </b>
+                            {{ "{:,.2f}".format(params.record._payroll_amount) }} CRC </li>
                         <li class="mb-2"><b>Cesantia</b>
                             {{ "{:,.2f}".format(params.record._cesantia_amount) }} CRC </li>
                         <li class="mb-2"><b>Vacaciones</b>
                             {{ "{:,.2f}".format(params.record._vacations_amount) }} CRC </li>
                         <li class="mb-2"><b>Aguinaldo</b>
                             {{ "{:,.2f}".format(params.record._bonus_amount) }} CRC </li>
-                        <li class="mb-2"><b>Salario Actual </b>
-                            {{ "{:,.2f}".format(params.record._payroll_amount) }} CRC </li>
+                        <li class="mb-2"><b>Preaviso </b>
+                            {{ "{:,.2f}".format(params.record._precheck_amount) }} CRC </li>
+
                     </ul>
 
                     <hr>
@@ -135,7 +138,7 @@
                         </li>
                         {% if not params.record._termination_date %}
                             <li class="mb-2"><strong>Fecha de Terminación:</strong>
-
+                                Sin fecha registrada.
                             </li>
                         {% else %}
                             <li class="mb-2"><strong>Fecha de Terminación:</strong>
