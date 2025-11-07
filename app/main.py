@@ -1,5 +1,5 @@
 # import
-from fastapi import Request, Depends, status
+from fastapi import Request, Depends, status, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from typing import Annotated
@@ -16,6 +16,23 @@ from app.backend.database.config import Session_Controller
 app = fastapi_app_config()
 # trans
 trans = Auth_Manager()
+
+
+# global exception redirect helper
+@app.exception_handler(HTTPException)
+async def redirect_unauthorized(
+        request: Request, exc: HTTPException) -> RedirectResponse:
+    # redirect-exceptions
+    if exc.status_code == status.HTTP_307_TEMPORARY_REDIRECT:
+        target_url = exc.headers.get('Location')
+
+        # redirect
+        redirect = RedirectResponse(
+            url=target_url, status_code=status.HTTP_303_SEE_OTHER)
+
+        redirect.delete_cookie('access_token')
+        redirect.delete_cookie('refresh_token')
+        return redirect
 
 
 # root endpoint

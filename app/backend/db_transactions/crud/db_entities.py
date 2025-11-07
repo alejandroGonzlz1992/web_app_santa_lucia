@@ -323,7 +323,6 @@ class Crud_Entities_Manager:
         # query user role
         id_user_role_current = db.query(
             self.models.User_Role.id_record.label('_id'),
-            self.models.User_Role.id_record.label('_id')
         ).filter(
             self.models.User_Role.id_user == user_id
         ).first()

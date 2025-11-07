@@ -409,6 +409,8 @@ class Permission_Trans_Manager:
             self.models.Vacation.id_subject == id_session
         ).first()
 
+        print(row)
+
         if row is None:
             pass
 

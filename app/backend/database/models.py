@@ -226,7 +226,7 @@ class Vacation(BASE):
     __tablename__ = 'vacation'
     __table_args__ = {'schema': 'serv'}
     id_record = Column(Integer, Identity(start=110, increment=1, cycle=True), primary_key=True)
-    available = Column(Integer, nullable=False, server_default='11')
+    available = Column(Integer, nullable=False, server_default='0')
     used_days = Column(Integer, nullable=False, server_default='0')
     id_subject = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
     # do revision in here --> drop column foreign key

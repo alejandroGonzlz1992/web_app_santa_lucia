@@ -104,8 +104,7 @@ async def posting_app_user_login_endpoint(
         # response
         resp = RedirectResponse(url=Cns.ROOT.value, status_code=status.HTTP_303_SEE_OTHER)
         # set up token for frontend
-        resp.set_cookie(key='access_token', value=token, httponly=True, max_age=env.tkn_expire,
-                        samesite='Strict', secure=False, path='/')
+        resp.set_cookie(key='access_token', value=token, httponly=True, secure=False, path='/')
 
         # return
         return resp
