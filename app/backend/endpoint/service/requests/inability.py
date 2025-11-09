@@ -99,7 +99,8 @@ async def posting_app_inability_register_endpoint(
             db=db, schema=model.model_dump(), file=in_bytes, id_session=user_login.user_role_id)
 
         # collect, current user's approver
-        emails_ = await serv.collecting_subject_and_approver_email(db=db, id_session=user_login.user_id)
+        emails_ = await serv.collecting_subject_and_approver_email(
+            db=db, id_session=user_login.user_id, schema=model.model_dump())
 
         # inability record
         record = await serv.current_inability_record_for_create(db=db, schema=model.model_dump())

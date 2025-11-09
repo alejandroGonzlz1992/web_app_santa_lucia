@@ -147,3 +147,8 @@ class Bonus_Quota_Already_Exception(Exception):
 # settlement payment already
 class Settlement_Payment_Already_Exception(Exception):
     pass
+
+
+# vacations status already
+class Vacation_Statuses_Exception(Exception):
+    pass

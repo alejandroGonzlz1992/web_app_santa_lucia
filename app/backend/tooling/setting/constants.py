@@ -262,6 +262,7 @@ class Constants(Enum):
             '_vacations': {
                 '_create': 'La solicitud de vacaciones fue registrada de forma exitosa.',
                 '_update': 'La solicitud de vacaciones fue actualizada de forma exitosa.',
+                '_no_approved_yet': 'No se puede registrar la solicitud en este momento. Pendientes de aprobación contra disponible.'
             },
             '_extrahour': {
                 '_create': 'La solicitud de horas extra fue registrada de forma exitosa.',
@@ -448,6 +449,8 @@ class Constants(Enum):
 
     # payroll periods
     PAYROLL_PERIODS = {
+        "Julio Periodo 15": [date(date.today().year, 6, 30), date(date.today().year, 7, 15)],
+        "Julio Periodo 30": [date(date.today().year, 7, 16), date(date.today().year, 7, 30)],
         "Agosto Periodo 15": [date(date.today().year, 7, 31), date(date.today().year, 8, 15)],
         "Agosto Periodo 30": [date(date.today().year, 8, 16), date(date.today().year, 8, 30)],
         "Septiembre Periodo 15": [date(date.today().year, 9, 1), date(date.today().year, 9, 15)],
@@ -462,6 +465,7 @@ class Constants(Enum):
 
     # bonus periods
     BONUS_PERIODS = {
+        "Periodo Julio": [date(date.today().year, 7, 1), date(date.today().year, 7, 30)],
         "Periodo Agosto": [date(date.today().year, 8, 1), date(date.today().year, 8, 30)],
         "Periodo Septiembre": [date(date.today().year, 9, 1), date(date.today().year, 9, 30)],
         "Periodo Octubre": [date(date.today().year, 10, 1), date(date.today().year, 10, 30)],

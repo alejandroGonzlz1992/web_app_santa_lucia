@@ -13,6 +13,7 @@ from app.backend.database.config import Session_Controller
 from app.backend.db_transactions.services.db_permission import Permission_Trans_Manager
 from app.backend.schema.service.Permission import Create_Extra_Hours, Create_Vacations, Update_Request
 from app.backend.tooling.bg_tasks import bg_tasks
+from app.backend.tooling.setting.security import Vacation_Statuses_Exception
 
 
 # router
@@ -284,6 +285,10 @@ async def posting_app_permission_vacations_register_endpoint(
         await serv.current_vacation_available_record(
             db=db, id_session=user_login.user_role_id, schema=model.model_dump())
 
+        # validate available days vs in_progress
+        await serv.validating_vacation_status(
+            db=db, id_session=user_login.user_role_id, schema=model.model_dump())
+
         # insert record on db
         current = await serv.registering_vacations_record(db=db, model=model.model_dump(), id_session=user_login.user_role_id)
         # collecting emails
@@ -294,8 +299,11 @@ async def posting_app_permission_vacations_register_endpoint(
         # bg tasks
         background_tasks.add_task(
             bg_tasks.bg_task_send_permission_vacations_requests, [emails_["user_email"], emails_["approver_email"]],
-            records
-        )
+            records)
+
+    except Vacation_Statuses_Exception:
+        return await getting_app_permission_vacations_register_endpoint(
+            request=request, db=db, user_login=user_login, fg='_no_approved_yet')
 
     except HTTPException:
         db.rollback()  # db rollback

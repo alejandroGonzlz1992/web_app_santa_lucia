@@ -1,11 +1,13 @@
 # import
 import string, random
 from re import compile
+from urllib import request
+
 from pydantic import BaseModel
 from fastapi import HTTPException, status
 from logging import getLogger
 from typing import Union
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, Session
 from sqlalchemy import or_
 from datetime import date, timedelta, datetime
 
@@ -13,6 +15,7 @@ from datetime import date, timedelta, datetime
 from app.backend.database import models
 from app.backend.database.models import User_Role
 from app.backend.tooling.setting.constants import Constants as Cns
+from app.backend.tooling.setting.security import Vacation_Statuses_Exception
 
 
 # logger
@@ -391,6 +394,7 @@ class Permission_Trans_Manager:
         )
         # add to model
         db.add(instance=vacations)
+
         # commit
         db.commit()
         # refresh
@@ -409,14 +413,39 @@ class Permission_Trans_Manager:
             self.models.Vacation.id_subject == id_session
         ).first()
 
-        print(row)
-
         if row is None:
             pass
 
         if row._available < int(schema["day_field_total"]):
             raise self.http_exec(status_code=self.status.HTTP_400_BAD_REQUEST,
                                  detail='Vacation available is less than 1')
+
+    # validating vacations if progress status
+    async def validating_vacation_status(
+            self, db: Union[Session, object], id_session: Union[int, str], schema: Union[BaseModel, object]) -> None:
+        # query available days
+        available = db.query(
+            self.models.Vacation.available.label('_available')
+        ).filter(
+            self.models.Vacation.id_subject == id_session
+        ).first()
+
+        # all requests from subject
+        requests = db.query(
+            self.models.Request_Vacation
+        ).filter(
+            self.models.Request_Vacation.id_subject == id_session,
+            self.models.Request_Vacation.status == 'En Proceso'
+        ).all()
+
+        # sum up days in 'en proceso' status + current requested days
+        total_days_in_progress = sum(req.days for req in requests)
+
+        # validate
+        if (total_days_in_progress + int(schema["day_field_total"])) > available._available:
+            raise Vacation_Statuses_Exception(
+                f'No se puede ingresar mas solicitudes de vacaciones. '
+                f'Disponibles {available._available}. En proceso {total_days_in_progress}.')
 
     # current vacation record
     async def current_vacation_request_record(self, db: object, id_request: Union[int, str]) -> object:
@@ -518,3 +547,4 @@ class Permission_Trans_Manager:
 
             # db commit
             db.commit()
+
