@@ -17,6 +17,7 @@ import shutil
 from app.backend.database import models
 from app.backend.database.models import Payroll_User
 from app.backend.tooling.setting.constants import Constants as Cns
+from app.backend.tooling.setting.security import Payroll_Period_Already_Exception
 
 
 # class
@@ -353,7 +354,7 @@ class Payroll_Trans_Manager:
             await self.getting_tax_cut(gross=user._gross_income, tax=taxes)
 
             # registering information at db
-            record = await self.registering_payroll_information(db=db, payroll=employees, tax=taxes)
+            record = await self.registering_payroll_information(db=db, payroll=employees, tax=taxes, dates=dates)
 
         # return
         return employees
@@ -678,7 +679,8 @@ class Payroll_Trans_Manager:
         return records
 
     # register payroll information
-    async def registering_payroll_information(self, db:Union[Session, object], payroll: dict, tax: dict) -> object:
+    async def registering_payroll_information(
+            self, db:Union[Session, object], payroll: dict, tax: dict, dates: dict) -> object:
         record = self.models.Payroll_User(
             net_amount=payroll["net_total_amount"],
             ccss_ivm=tax["ccss_ivm"],
@@ -691,6 +693,7 @@ class Payroll_Trans_Manager:
             holiday_amount=payroll["holiday_amount"],
             total_gross_amount=payroll["gross_total_amount"],
             id_user=payroll["id_user_role"],
+            payment_period=dates[1],
             id_payment_date=payroll["payment_date"]
         )
 
@@ -760,3 +763,14 @@ class Payroll_Trans_Manager:
             raise self.http_exec(
                 self.status.HTTP_404_NOT_FOUND,
                 detail=f'No existen registros de asistencia para el período ({start} → {end}).')
+
+        # query payroll_user record
+        current_period = db.query(
+            self.models.Payroll_User
+        ).filter(
+            self.models.Payroll_User.payment_period == end
+        ).first()
+
+        if current_period:
+            raise Payroll_Period_Already_Exception(
+                f'No existen registros de asistencia para el período ({start} → {end}).')

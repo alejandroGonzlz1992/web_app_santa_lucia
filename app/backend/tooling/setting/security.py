@@ -134,6 +134,16 @@ class User_Active_Status_Exception(Exception):
     pass
 
 
+# payroll period already
+class Payroll_Period_Already_Exception(Exception):
+    pass
+
+
 # bonus quota already
 class Bonus_Quota_Already_Exception(Exception):
+    pass
+
+
+# settlement payment already
+class Settlement_Payment_Already_Exception(Exception):
     pass

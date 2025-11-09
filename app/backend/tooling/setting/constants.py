@@ -273,6 +273,7 @@ class Constants(Enum):
             "_update": "Se han generado los registros de planilla de manera exitosa.",
             "_period": "El periodo para la siguiente planilla aún no se ha completado para su generación.",
             "_fail": 'Existen errores en la información ingresada. Por favor validar.',
+            "_duplicate": "Ya existe un registro para el periodo de planilla seleccionado."
         },
         "_settlement": {
             "_update": "El registro de liquidación ha sido ajustado exitosamente.",

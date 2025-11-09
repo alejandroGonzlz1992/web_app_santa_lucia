@@ -524,10 +524,12 @@ class Payroll_User(BASE):
     vacations_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     holiday_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
     total_gross_amount = Column(DECIMAL(10, 2), nullable=False, server_default='0.00')
-
     # do revision here -> add details column
     details = Column(String(250), nullable=False, server_default="Periodo regular de planilla")
+    # do revision here -> add payment period
+    payment_period = Column(Date, nullable=False)
     id_user = Column(Integer, ForeignKey('entity.user_role.id_record'), nullable=False)
+    # do revision here -> drop fk payment date
     id_payment_date = Column(Integer, ForeignKey('serv.payment_date.id_record'), nullable=False)
     log_date = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
     # backward relationship

@@ -51,7 +51,7 @@
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill"/>
                 </svg>
-                <div>{{params.ops._payroll._period}}</div>
+                <div>{{params.ops._payroll._fail}}</div>
                 <div class="col text-end">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -116,6 +116,22 @@
                                             {% endfor %}
                                         </select>
                                     </div>
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_period" %}
+                                        <div id="id_bonus_period_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._payroll._period }}
+                                        </div>
+                                    {% endif %}
+
+                                    <!--Query Exception-->
+                                    {% if params.exc == "_duplicate" %}
+                                        <div id="id_bonus_period_exception_error" class="text-danger text-start"
+                                            style="font-size: 13px; display: block;">
+                                            {{ params.ops._payroll._duplicate }}
+                                        </div>
+                                    {% endif %}
 
                                     <!--Error Message Div-->
                                     <div id="id_payroll_period_status_error" class="text-danger text-start"

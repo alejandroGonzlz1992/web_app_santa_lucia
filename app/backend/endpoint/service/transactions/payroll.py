@@ -14,6 +14,7 @@ from app.backend.db_transactions.auth.db_auth import Auth_Manager
 from app.backend.db_transactions.transactions.db_payroll import Payroll_Trans_Manager
 from app.backend.tooling.setting.error_log import Logs_Manager
 from app.backend.schema.trans.payroll import Update_Payroll_Record, Generate_Payroll_Record
+from app.backend.tooling.setting.security import Payroll_Period_Already_Exception
 from app.backend.database.config import Session_Controller
 from app.backend.tooling.bg_tasks import bg_tasks
 
@@ -60,7 +61,8 @@ async def getting_app_payroll_generate_endpoint(
         request: Request,
         db: Annotated[Session, Depends(dependency=Session_Controller)],
         user_login: Annotated[object, Depends(dependency=getting_current_user)],
-        fg: Annotated[str, None] = None
+        fg: Annotated[str, None] = None,
+        exc: Annotated[str, None] = None
 ) -> HTMLResponse:
 
     # fetching current User logged-in
@@ -70,7 +72,8 @@ async def getting_app_payroll_generate_endpoint(
     return Cns.HTML_.value.TemplateResponse(
         'service/payroll/payroll/generate.html', context={
             'request': request, 'params': {
-                'fg': fg, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session, 'periods': Cns.PAYROLL_PERIODS.value
+                'fg': fg, 'exc': exc, 'ops': Cns.OPS_CRUD.value, 'user_session': user_session,
+                'periods': Cns.PAYROLL_PERIODS.value
             }
         }
     )
@@ -100,11 +103,15 @@ async def posting_app_payroll_generate_endpoint(
         # background task
         background_tasks.add_task(bg_tasks.bg_task_send_payroll_report_request, emails_)
 
+    except Payroll_Period_Already_Exception:
+        return await getting_app_payroll_generate_endpoint(
+            request=request, db=db, user_login=user_login, fg='_fail', exc='_duplicate')
+
     except HTTPException as http:
         db.rollback() # -> db rollback
         print(f'Error HTTPException: {http}')
         return await getting_app_payroll_generate_endpoint(
-            request=request, db=db, user_login=user_login, fg='_period')
+            request=request, db=db, user_login=user_login, fg='_fail', exc='_period')
 
     except SQLAlchemyError as op:
         db.rollback()  # -> db rollback
