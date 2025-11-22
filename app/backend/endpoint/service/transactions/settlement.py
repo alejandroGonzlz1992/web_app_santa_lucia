@@ -93,13 +93,14 @@ async def posting_app_settlement_generate_endpoint(
         model: Annotated[Generate_Settlement, Depends(Generate_Settlement.formatting)],
 ) -> HTMLResponse:
     try:
-        # collecting specific users
-        users = await serv.querying_specific_users_for_settle_calculation(db=db)
         # validating period selected
         await serv.validating_settlement_user_payroll(db=db, schema=model.model_dump())
 
-        # bonus calculation
-        # record = await serv.generating_bonus_calculations(db=db, users=users, schema=model.model_dump())
+        # peform settlement calculation
+        records = await serv.generate_settlement_amount(db=db, schema=model.model_dump())
+
+        # register settlement information
+        await serv.register_settlement_info(db=db, record=records)
 
     except HTTPException as http:
         db.rollback()  # -> db rollback

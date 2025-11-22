@@ -5,10 +5,11 @@ from datetime import date, datetime
 from fastapi import HTTPException, status
 from typing import Union
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, func
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from docxtpl import DocxTemplate
+from datetime import date
 import subprocess
 import shutil
 
@@ -333,3 +334,187 @@ class Settlement_Trans_Manager:
 
             # commit
             db.commit()
+
+    # generate settlement amount
+    async def generate_settlement_amount(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> list[object]:
+        # variables
+        record = {
+            "id_user_role": None, "total_amount": 0.0, "cesantia_amount": 0.0, "vacations_amount": 0.0,
+            "bonus_amount": 0.0, "payroll_amount": 0.0, "pre_check_amount": 0.0, "status": None, "type": None,
+            "details": None
+        }
+
+        # query employee payroll records
+        payroll = await self.querying_employee_salary_info(db=db, schema=schema)
+        # counting records
+        counting = await self.counting_payment_periods(db=db, schema=schema)
+        # avg
+        avg_payment = await self.avg_monthly_and_daily_payments(payrolls=payroll, periods=counting)
+
+        # vacations
+        vacations = await self.calculate_vacation_amount(db=db, schema=schema, spd=avg_payment["avg_daily"])
+        record["vacations_amount"] = vacations
+
+        # bonus and last payroll
+        bonus_last_payroll = await Settlement_Trans_Manager.calculate_bonus_amount(payroll=payroll, periods=counting)
+        record["bonus_amount"] = bonus_last_payroll["bonus"]
+        record["payroll_amount"] = bonus_last_payroll["latest_payment"]
+
+        if schema["settlement_type"] == "Responsabilidad Patronal":
+            # cesantia
+            days_work = await Settlement_Trans_Manager.counting_employee_worked_days(payrolls=payroll)
+            # convert to month
+            months_work = days_work / 30
+            # days to pay
+            days_to_pay = await self.get_cesantia_days(month_worked=months_work)
+            # amount
+            cesantia_amount = round(float(avg_payment["avg_daily"]) * days_to_pay, 2)
+            # record
+            record["cesantia_amount"] = cesantia_amount
+            # settlement total
+            record["total_amount"] = round(
+                (vacations + bonus_last_payroll["bonus"] + bonus_last_payroll["latest_payment"] + cesantia_amount), 2)
+        else:
+            # settlement total
+            record["total_amount"] = round(
+                (vacations + bonus_last_payroll["bonus"] + bonus_last_payroll["latest_payment"]), 2)
+
+        # adding schema to records
+        record["id_user_role"] = schema["settlement_employee"]
+        record["type"] = schema["settlement_type"]
+        record["status"] = "Procesado"
+        record["details"] = schema["settlement_detail"]
+
+        # return
+        return record
+
+    # query salary information
+    async def querying_employee_salary_info(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> list[object]:
+
+        # query all users payrolls
+        payrolls = db.query(
+            self.models.Payroll_User.id_user.label('_id_user_role'),
+            self.models.Payroll_User.total_gross_amount.label('_gross_amount'),
+            self.models.Payroll_User.net_amount.label('_net_amount'),
+            self.models.Payroll_User.payment_period.label('_period')
+        ).filter(
+            self.models.Payroll_User.id_user == schema["settlement_employee"]
+        ).order_by(
+            self.models.Payroll_User.payment_period.desc()
+        ).all()
+
+        # return
+        return payrolls
+
+    # counting total payment months (records on payroll * 0.5)
+    async def counting_payment_periods(
+            self, db: Union[Session, object], schema: Union[BaseModel, object]) -> int:
+        records = db.query(
+            self.models.Payroll_User
+        ).filter(
+            self.models.Payroll_User.id_user == schema["settlement_employee"]
+        ).count()
+
+        return records
+
+    # avg payroll monthly avg payroll daily
+    async def avg_monthly_and_daily_payments(
+            self, payrolls: list[object], periods: int) -> dict:
+
+        # total gross
+        total_gross = sum([num._gross_amount for num in payrolls])
+        # avg monthly
+        avg_monthly = round(float(total_gross) / float((periods * 0.5)), 2)
+        # avg daily
+        avg_daily = round(float(avg_monthly) / 30, 2)
+
+        # return
+        return {"avg_month": avg_monthly, "avg_daily": avg_daily}
+
+    # count total vacation days as available
+    async def calculate_vacation_amount(
+            self, db: Union[Session, object], schema: Union[BaseModel, object], spd: Union[float, int]) -> float:
+        #
+        vacations = db.query(
+            func.coalesce(
+                func.sum(self.models.Vacation.available), 0)
+        ).filter(
+            self.models.Vacation.id_subject == schema["settlement_employee"]
+        ).scalar()
+
+        if vacations:
+            # calculate amount
+            amount = round(float(vacations) * spd, 2)
+        else:
+            amount = 0.0
+
+        # return
+        return amount
+
+    # sum up all gross_amount (payroll table) and divided by 12
+    @staticmethod
+    async def calculate_bonus_amount(payroll: list[object], periods: Union[int, float]) -> float:
+
+        payments = [num._gross_amount for num in payroll]
+        latest_payment = round(float(payments[0]), 2)
+        total_bonus = round(float(sum(payments[1::])), 2)
+        # bonus
+        bonus = round((latest_payment + total_bonus) / periods, 2)
+
+        # return
+        return {"bonus": bonus, "latest_payment": latest_payment}
+
+    # getting worked days
+    async def get_cesantia_days(self, month_worked: Union[float, int]) -> float:
+        for min_month, max_month, days in self.cns.CESANTIA_DAYS.value:
+            if month_worked >= min_month and month_worked < max_month:
+                return days
+
+        # default
+        return 0.0
+
+    # count total labored days (count days from first quincena until the lastone in Payroll table)
+    @staticmethod
+    async def counting_employee_worked_days(payrolls: list[object]) -> int:
+        # edge case
+        if not payrolls: return 0
+
+        # collect periods
+        periods = [row._period for row in payrolls]
+        # old and new payroll date
+        first_date, last_date = min(periods), max(periods)
+
+        # difference in days (inclusive)
+        days_worked = (last_date - first_date).days + 1
+
+        # return
+        return days_worked
+
+    # sum up all these value to obtain total amount settlement
+    @staticmethod
+    async def getting_settlement_total(values: Union[dict, object]) -> float:
+        pass
+
+    # register information on settlement table.
+    async def register_settlement_info(self, db: Union[Session, object], record: dict) -> None:
+        # settlement 
+        new_settlement = self.models.Settlement(
+            total_amount=record["total_amount"],
+            cesantia=record["cesantia_amount"],
+            vacations=record["vacations_amount"],
+            bonus=record["bonus_amount"],
+            payroll=record["payroll_amount"],
+            status=record["status"],
+            type=record["type"],
+            details=record["details"],
+            id_subject=record["id_user_role"]
+        )
+
+        # add
+        db.add(instance=new_settlement)
+        # commit
+        db.commit()
+        # refresh
+        db.refresh(instance=new_settlement)

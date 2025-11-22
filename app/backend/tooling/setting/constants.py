@@ -488,3 +488,17 @@ class Constants(Enum):
         11: "Noviembre",
         12: "Diciembre"
     }
+
+    # cesantia table
+    CESANTIA_DAYS = [
+        # start month, end month, days to pay
+        (2, 6, 7),  # >= 3  and < 6
+        (6, 12, 14),  # >= 6  and < 12
+        (12, 24, 19.5),  # >= 12 and < 24
+        (24, 36, 20),  # >= 24 and < 36
+        (36, 48, 20.5),  # >= 36 and < 48
+        (48, 60, 21),  # >= 48 and < 60
+        (60, 72, 21.24),  # >= 60 and < 72
+        (72, 84, 20.5),  # >= 72 and < 84
+        (84, float("inf"), 22),  # >= 84
+    ]
