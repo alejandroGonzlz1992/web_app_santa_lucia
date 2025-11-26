@@ -344,6 +344,7 @@ class Constants(Enum):
         "nicoya": date(date.today().year, 7, 25),
         "mother_day": date(date.today().year, 8, 15),
         "independence": date(date.today().year, 9, 15),
+        "militar_abolition": date(date.today().year, 12, 1),
         "christmas": date(date.today().year, 12, 25),
     }
 

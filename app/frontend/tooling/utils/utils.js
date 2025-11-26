@@ -90,12 +90,50 @@ export class Utils {
         return {"start": startDate, "current": currentDate};
     }
 
+    // holiday set
+    static defineHolidaySet() {
+        return new Set(
+            Static.HOLIDAY_CALENDAR.map(h => {
+                let mm = String(h.month).padStart(2, "0");
+                let dd = String(h.day).padStart(2, "0");
+                return `${mm}-${dd}`;
+            })
+        );
+    }
+
+    static mutatingInputDates(start, end) {
+        let startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        let returnDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+        return {"start": startDate, "return": returnDate};
+    }
+
     static fetchingDaysVacation(dates, field, inputField) {
-        /* get the days */
-        let totalDays = Math.max((dates["end"] - dates["start"]) / Static.MILLISECONDS_PER_DAY + 1);
+        /* mutates input dates */
+        let inputDate = Utils.mutatingInputDates(dates["start"], dates["end"]);
+        /* set holidays set */
+        let holidaySet = Utils.defineHolidaySet();
+
+        /* set total days counter */
+        let totalDays = 0;
+
+        /* traverse the input dates */
+        while (inputDate["start"] <= inputDate["return"]) {
+            let mm = String(inputDate["start"].getMonth() + 1).padStart(2, "0");
+            let dd = String(inputDate["start"].getDate()).padStart(2, "0");
+            let key = `${mm}-${dd}`;
+
+            if(!holidaySet.has(key)) {
+                totalDays += 1;
+            }
+
+            /* set the next day in the iteration */
+            inputDate["start"].setDate(inputDate["start"].getDate() + 1);
+
+        }
+
         /* fetch value into element */
         let fieldValue = document.getElementById(field);
-
         if(fieldValue) {
             fieldValue.value = totalDays;
         }

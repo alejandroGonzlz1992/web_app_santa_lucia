@@ -58,6 +58,7 @@ class Payroll_Trans_Manager:
 
         record = db.query(
             self.models.Payroll_User.id_record.label('_id'),
+            self.models.Payroll_User.payment_period.label('_period_date'),
             # subject info
             subject.identification.label('_subj_ident'),
             subject.name.label('_subj_name'),
@@ -69,8 +70,6 @@ class Payroll_Trans_Manager:
             approver.lastname2.label('_appr_lastname2'),
             # request status
             self.models.Payment_Date.frecuency.label('_frecuency'),
-            self.models.Payment_Date.date_payment.label('_payment_date'),
-            self.models.Payment_Date.date_payment2.label('_payment_date2')
         ).select_from(
             self.models.Payroll_User
         ).join(

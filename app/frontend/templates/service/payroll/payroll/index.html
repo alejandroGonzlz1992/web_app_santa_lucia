@@ -80,8 +80,7 @@
                             <th scope="col">Empleado</th>
                             <th scope="col">Jefatura</th>
                             <th scope="col">Frecuencia</th>
-                            <th scope="col">Fecha Pago</th>
-                            <th scope="col">Segunda Fecha Pago</th>
+                            <th scope="col">Periodo Pago</th>
                             <th scope="col" colspan="1"
                                 style="text-align: center; vertical-align: middle;">Consultar
                             </th>
@@ -96,8 +95,7 @@
                                 <td>{{ item._subj_name }} {{ item._subj_lastname }} {{ item._subj_lastname2 }}</td>
                                 <td>{{ item._appr_name }} {{ item._appr_lastname }} {{ item._appr_lastname2 }}</td>
                                 <td>{{ item._frecuency }}</td>
-                                <td>{{ item._payment_date }}</td>
-                                <td>{{ item._payment_date2 }}</td>
+                                <td>{{ item._period_date.strftime("%d-%m-%Y") }}</td>
                                 <td style="text-align: center; vertical-align: middle;">
                                     <a href="{{url_for('getting_app_payroll_details_endpoint', id=item._id)}}">
                                         <i class="align-center" data-feather="refresh-ccw"></i>

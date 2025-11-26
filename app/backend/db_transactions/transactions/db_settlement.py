@@ -499,7 +499,7 @@ class Settlement_Trans_Manager:
 
     # register information on settlement table.
     async def register_settlement_info(self, db: Union[Session, object], record: dict) -> None:
-        # settlement 
+        # settlement
         new_settlement = self.models.Settlement(
             total_amount=record["total_amount"],
             cesantia=record["cesantia_amount"],

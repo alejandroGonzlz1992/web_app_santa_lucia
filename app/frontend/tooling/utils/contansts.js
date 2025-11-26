@@ -44,6 +44,19 @@ export const Static = {
         ["#id_user_password_bttn", "#id_new_password_bttn", "#id_confirm_password_bttn"]
     ],
 
+    HOLIDAY_CALENDAR: [
+        { month: 1,  day: 1  },
+        { month: 4,  day: 11 },
+        { month: 4,  day: 17 },
+        { month: 4,  day: 18 },
+        { month: 5,  day: 1  },
+        { month: 7,  day: 25 },
+        { month: 8,  day: 15 },
+        { month: 9,  day: 15 },
+        { month: 12, day: 1  },
+        { month: 12, day: 25 },
+    ],
+
     /* regex Dictionary */
     REGEX: {
         "only_numbers": /^\d+$/,

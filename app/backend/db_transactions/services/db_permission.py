@@ -372,6 +372,8 @@ class Permission_Trans_Manager:
             # update date count
             current_date += timedelta(days=1)
 
+        print(f'\n start: {current_date}, end: {end_date}, days: {days} \n')
+
         # ensure days do not reach 0
         if days < 0:
             days = 0
@@ -383,10 +385,10 @@ class Permission_Trans_Manager:
     async def registering_vacations_record(self, db: object, model: Union[dict, object], id_session: int) -> object:
 
         # validating if holidays
-        days_ = await self.traversing_holidays(schema=model)
+        # days_ = await self.traversing_holidays(schema=model)
 
         vacations = self.models.Request_Vacation(
-            days=days_,
+            days=model["day_field_total"],
             date_start=model["start_date_field"],
             date_return=model["end_date_field"],
             type=model["request_vacation"],
